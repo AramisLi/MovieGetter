@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="new_custom_dialog" parent="@android:style/Theme.Dialog">
+        <!-- 边框 -->
+        <item name="android:windowFrame">@null</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 屏幕背景变暗 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 半透明 -->
+        <item name="android:windowIsTranslucent">false</item>
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 动画 -->
+    </style>
+
+    <style name="DialogAnimation_Bottom" parent="@android:style/Theme.Dialog">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter_bottom</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit_bottom</item>
+    </style>
+
+    <style name="dialog_loading" parent="@android:style/Theme.Dialog">
+        <!-- 边框 -->
+        <item name="android:windowFrame">@null</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 屏幕背景变暗 -->
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- 半透明 -->
+        <item name="android:windowIsTranslucent">false</item>
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 动画 -->
+    </style>
+
+    <style name="ActionSheetDialogStyle" parent="@android:style/Theme.Dialog">
+
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- 浮于Activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 边框 -->
+        <item name="android:windowFrame">@null</item>
+        <!-- Dialog以外的区域模糊效果 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 半透明 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- Dialog进入及退出动画 -->
+        <item name="android:windowAnimationStyle">@style/DialogAnimation_Bottom</item>
+    </style>
+
+
+    <!--Theme.AppCompat.Light-->
+    <!--<style name="Aramis.AppTheme.Base" parent="Theme.AppCompat.Light">-->
+        <!--<item name="windowActionBar">false</item>-->
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="android:windowAnimationStyle">@style/AnimationActivity</item>-->
+    <!--</style>-->
+    <!--<style name="AnimationActivity" parent="@android:style/Animation.Activity">-->
+        <!--<item name="android:activityOpenEnterAnimation">@anim/right_in</item>-->
+        <!--<item name="android:activityOpenExitAnimation">@anim/left_out</item>-->
+        <!--<item name="android:activityCloseEnterAnimation">@anim/left_in</item>-->
+        <!--<item name="android:activityCloseExitAnimation">@anim/right_out</item>-->
+    <!--</style>-->
+
+
+    <style name="Popupwindow">
+        <item name="android:windowEnterAnimation">@anim/anim_pop_top_in</item>
+        <item name="android:windowExitAnimation">@anim/anim_pop_top_out</item>
+    </style>
+
+</resources>

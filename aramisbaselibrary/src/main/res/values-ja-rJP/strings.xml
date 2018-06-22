@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">AramisBaseLibrary</string>
+
+    <string name="btn_cancel">キャンセル</string>
+    <string name="btn_photo">写真を撮る</string>
+    <string name="btn_gallery">フォトアルバム</string>
+
+</resources>

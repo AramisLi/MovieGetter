@@ -1,0 +1,61 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 27
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+ext.kotlin_version = '1.2.31'
+ext.anko_version='0.10.4'
+ext.support_version='27.1.1'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation 'junit:junit:4.12'
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation "com.android.support:animated-vector-drawable:$support_version"
+    implementation "com.android.support:recyclerview-v7:$support_version"
+    implementation "com.android.support:design:$support_version"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation "org.jetbrains.anko:anko:$anko_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
+    //rxvolley,已包含rxjava
+    implementation 'com.kymjs.rxvolley:rxvolley:1.1.4'
+    implementation 'com.kymjs.rxvolley:okhttp3:1.1.4'
+    //多包
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+
+    implementation files('libs/sun.misc.BASE64Decoder.jar')
+    implementation 'cn.aigestudio.wheelpicker:WheelPicker:1.1.2'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.alibaba:fastjson:1.2.37'
+
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+}

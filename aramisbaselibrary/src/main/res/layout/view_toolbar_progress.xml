@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/height_toolbar"
+    android:background="@color/bg_toolbar"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/text_toolbar_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/app_name"
+            android:textColor="#5d5d5d"
+            android:textSize="16sp" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image_toolbar_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:paddingLeft="12dp"
+            app:srcCompat="@drawable/ic_arrow_left" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image_toolbar_left"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:paddingLeft="12dp"
+            app:srcCompat="@drawable/ic_arrow_left_black" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image_toolbar_right"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="12dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_arrow_left" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:progressDrawable="@drawable/layer_list_progressbar"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/line_titlebar"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="#e4e4e4"
+            android:visibility="gone" />
+    </RelativeLayout>
+</android.support.v7.widget.Toolbar>

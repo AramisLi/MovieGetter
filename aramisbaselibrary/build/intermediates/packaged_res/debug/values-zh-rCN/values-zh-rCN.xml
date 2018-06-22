@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_gallery">相册</string>
+    <string name="btn_photo">拍照</string>
+</resources>

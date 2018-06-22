@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_dialog_camera"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/bg_dialog_pic_item"
+        android:gravity="center"
+        android:text="@string/btn_photo" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/color_user_line" />
+
+    <TextView
+        android:id="@+id/text_dialog_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/bg_dialog_pic_item"
+        android:gravity="center"
+        android:text="@string/btn_gallery" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/color_user_line" />
+
+    <TextView
+        android:id="@+id/text_dialog_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/bg_dialog_pic_item"
+        android:gravity="center"
+        android:text="@string/btn_cancel" />
+</LinearLayout>
