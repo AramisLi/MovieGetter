@@ -20,8 +20,8 @@ class MainActivity : MGBaseActivity(), MainView {
         setContentView(R.layout.activity_main)
         initView()
         button_start.setOnClickListener {
-//            presenter.crawlDYTT()
-            toast("go go go")
+            presenter.crawlDYTT()
+//            toast("go go go")
         }
     }
 

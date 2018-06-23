@@ -1,5 +1,6 @@
 package com.moviegetter.crawl.dytt
 
+import android.content.Context
 import android.os.Handler
 import com.moviegetter.crawl.base.BaseCrawler
 
@@ -11,8 +12,10 @@ import com.moviegetter.crawl.base.BaseCrawler
 class DYTTCrawler : BaseCrawler() {
     private val parser = DYTTParser()
     private var pipeline = DYTTPipeline()
-    fun startCrawl(handler: Handler?) {
-        val url = ""
-        super.startCrawl(url, parser, pipeline, handler)
+
+    fun startCrawl(context: Context?, pages: Int, handler: Handler?) {
+        super.startedAdds(listOf("http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"))
+        parser.setPages(pages)
+        super.startCrawl(context, parser, pipeline, handler)
     }
 }

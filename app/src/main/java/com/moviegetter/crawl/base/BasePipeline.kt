@@ -1,5 +1,6 @@
 package com.moviegetter.crawl.base
 
+import android.content.Context
 import android.os.Handler
 import java.lang.Exception
 
@@ -9,14 +10,14 @@ import java.lang.Exception
  *Description:
  */
 abstract class BasePipeline:Pipeline {
-    override fun pipe(items: List<Item>,handler: Handler?) {
+    override fun pipe(context: Context?,items: List<Item>,handler: Handler?) {
         try {
-            pipeHook(items)
+            pipeHook(context,items)
             handler?.sendEmptyMessage(CrawlerHandlerWhat.CRAWLER_DB_SUCCESS)
         }catch (e:Exception){
             handler?.sendEmptyMessage(CrawlerHandlerWhat.CRAWLER_DB_FAIL)
         }
     }
 
-    abstract fun pipeHook(items: List<Item>)
+    abstract fun pipeHook(context: Context?, items: List<Item>)
 }

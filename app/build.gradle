@@ -21,7 +21,7 @@ android {
         }
     }
 }
-ext.anko_version='0.10.4'
+ext.anko_version='0.10.5'
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
@@ -36,4 +36,7 @@ dependencies {
     implementation 'com.kymjs.rxvolley:rxvolley:1.1.4'
     implementation 'com.kymjs.rxvolley:okhttp3:1.1.4'
     implementation 'com.google.code.gson:gson:2.8.2'
+
+    implementation 'org.jsoup:jsoup:1.11.2'
+    implementation 'cn.wanghaomiao:JsoupXpath:2.1-Beta'
 }
