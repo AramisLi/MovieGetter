@@ -27,11 +27,18 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
         db?.createTable(DBConfig.TABLE_NAME_DYTT, true,
                 "movieId" to INTEGER + PRIMARY_KEY + UNIQUE,
                 "movieName" to TEXT,
-                "richText" to TEXT,
-                "download_urls" to TEXT,
                 "movie_update_time" to TEXT,
+                "richText" to TEXT,
+                "download_name" to TEXT,
+                "download_url" to TEXT,
+                "download_thunder" to TEXT,
                 "update_time" to TEXT,
                 "create_time" to TEXT)
+        db?.createTable("test", true,
+                "id" to INTEGER + PRIMARY_KEY + UNIQUE + AUTOINCREMENT,
+                "name" to TEXT,
+                "age" to INTEGER,
+                "text" to TEXT)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

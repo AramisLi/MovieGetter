@@ -8,6 +8,7 @@ import com.moviegetter.crawl.base.Item
  *Date:2018/6/23
  *Description:
  */
-class DYTTItem(val movieId: Int, val movieName: String, var richText: String?,
-               var downloadUrls: List<String>?, val movie_update_time: String?,
-               var update_time: String?, var create_time: String?) : Item()
+class DYTTItem(val movieId: Int, val movieName: String, val movie_update_time: String?,
+               var richText: String? = null, var downloadUrls: String? = null,
+               var update_time: String? = null, var create_time: String? = null,
+               var downloadName: String? = null, var downloadThunder: String? = null) : Item()

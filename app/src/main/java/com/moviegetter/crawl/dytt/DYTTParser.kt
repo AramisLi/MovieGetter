@@ -1,13 +1,14 @@
 package com.moviegetter.crawl.dytt
 
 import com.aramis.library.extentions.logE
+import com.aramis.library.extentions.now
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.base.Parser
 import com.moviegetter.crawl.base.Pipeline
+import com.moviegetter.utils.ThunderSiteConverUtil
 import okhttp3.Response
 import org.seimicrawler.xpath.JXDocument
 import java.nio.charset.Charset
-import kotlin.math.log
 
 /**
  *Created by Aramis
@@ -17,8 +18,10 @@ import kotlin.math.log
 class DYTTParser : Parser {
     private var pages = 10
     private val baseUrl = "http://www.dytt8.net"
+    //    "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
 //    "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
-//    "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
+    private val thunderUtils = ThunderSiteConverUtil()
+
     fun setPages(pages: Int) {
         this.pages = pages
     }
@@ -40,8 +43,6 @@ class DYTTParser : Parser {
 
         val sel = jxDocument.sel("//table/tbody")
         sel.forEach {
-//            logE(it.javaClass.name)
-//            logE("item:" + it)
             if (it is org.jsoup.nodes.Element) {
                 val name = it.select("a.ulink").text()
                 val detailUrl = it.select("a.ulink[href]").attr("href")
@@ -55,9 +56,7 @@ class DYTTParser : Parser {
                         } else {
                             null
                         }
-//                        logE("movie_update_time:$movie_update_time")
-                        val item = DYTTItem(movieID.toInt(), name, null, null, movie_update_time,
-                                null, null)
+                        val item = DYTTItem(movieID.toInt(), name, movie_update_time)
                         node.item = item
                     }
                     resultList.add(node)
@@ -81,30 +80,47 @@ class DYTTParser : Parser {
         val node = originNode
         val jxDocument = JXDocument.create(html)
         node.isItem = true
-        val richText_a = jxDocument.sel("//div/span/p")
-//        (node.item as DYTTItem).richText=if (richText_a!=null&&richText_a.isNotEmpty())richText_a[0] else null
-        logE("====================================================================")
         //富文本
-        if (richText_a!=null&&richText_a.isNotEmpty()){
-//            logE(richText_a[0].toString())
-            (node.item as DYTTItem).richText=richText_a[0].toString()
+        tryBlock {
+            (node.item as DYTTItem).richText = jxDocument.sel("//div/span/p").iterator().next().toString()
         }
-        val urls_a = jxDocument.sel("//div/span/table//a/text()")
-        if (urls_a!=null&&urls_a.isNotEmpty()){
-            val urls_b = jxDocument.sel("//div/span/table//a/@*")
-            for ( j in urls_b){
-                logE("===============cccccccccc :$j")
+        //downloadUrls
+        tryBlock {
+            val names = jxDocument.sel("//div[@id='Zoom']//table//td/a/text()")
+            val urls = jxDocument.sel("//div[@id='Zoom']//table//td/a/@href")
+            if (names.size == urls.size) {
+                val nameSb = StringBuilder()
+                val urlSb = StringBuilder()
+                val thSb = StringBuilder()
+                for (i in 0 until names.size) {
+                    nameSb.append(names[i])
+                    urlSb.append(urls[i])
+                    thSb.append(thunderUtils.encode(urls[i].toString()))
+                    if (i != names.size - 1) {
+                        nameSb.append(",")
+                        urlSb.append(",")
+                        thSb.append(",")
+                    }
+                }
+                if (nameSb.isNotEmpty()) {
+                    (node.item as DYTTItem).downloadName = String(nameSb)
+                    (node.item as DYTTItem).downloadUrls = String(urlSb)
+                    (node.item as DYTTItem).downloadThunder = String(thSb)
+                }
             }
-            val s=StringBuilder()
-//            urls_a.forEachIndexed { index, any ->
-//                s.append(any.toString())
-//
-//            }
-            logE("urls====================")
-            logE(urls_a[0].toString())
         }
-        logE(node.item.toString())
+        //更新时间
+        (node.item as DYTTItem).update_time = now()
 
+        logE(node.item.toString())
         return mutableListOf(node)
+    }
+
+    private fun tryBlock(block: () -> Unit) {
+        try {
+            block.invoke()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
