@@ -1,6 +1,7 @@
 package com.moviegetter.ui.main.pv
 
 import android.app.Activity
+import android.content.Context
 import android.os.Handler
 import android.view.View
 import com.aramis.library.base.BaseView
@@ -17,6 +18,9 @@ import org.jetbrains.anko.db.SqlOrderDirection
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import android.telephony.TelephonyManager
+
+
 
 /**
  *Created by Aramis
@@ -56,6 +60,10 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
                 countCrawlerFail++
                 "存储失败"
             }
+            CrawlerHandlerWhat.CRAWLER_SKIP -> {
+                countCrawlerTotal++
+                "跳过"
+            }
             CrawlerHandlerWhat.CRAWLER_FINISHED -> {
                 finished = true
                 "爬取完成"
@@ -69,7 +77,11 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
 
 
     fun crawlDYTT() {
-        dyttCrawler.startCrawl((mView as? Activity), 2, dyttHandler)
+        if (dyttCrawler.isRunning()) {
+            mView?.onCrawlFail(0, "正在同步中，请稍后")
+        } else {
+            dyttCrawler.startCrawl((mView as? Activity), 2, dyttHandler)
+        }
     }
 
     fun readDB() {
@@ -79,12 +91,12 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
                 logE("共有$count 条数据")
                 val isEmpty = count == 0
                 val list = if (!isEmpty) {
-                    select(DBConfig.TABLE_NAME_DYTT).orderBy("movie_update_timestamp",SqlOrderDirection.DESC).parseList(DYTTRowParser())
+                    select(DBConfig.TABLE_NAME_DYTT).orderBy("movie_update_timestamp", SqlOrderDirection.DESC).parseList(DYTTRowParser())
                 } else null
 
                 uiThread {
                     if (list == null) {
-                        mView?.onGetDataFail(0, "暂无数据")
+                        mView?.onGetDataFail(1, "暂无数据")
                     } else {
                         logE(list[0].toString())
                         mView?.onGetDataSuccess(list)
@@ -94,6 +106,7 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
         }
 
     }
+
 }
 
 interface MainView : BaseView {
@@ -103,6 +116,8 @@ interface MainView : BaseView {
 
     fun onGetDataSuccess(list: List<DYTTItem>)
     fun onGetDataFail(errorCode: Int, errorMsg: String)
+
+    fun onCrawlFail(errorCode: Int, errorMsg: String)
 }
 
 class DYTTRowParser : RowParser<DYTTItem> {

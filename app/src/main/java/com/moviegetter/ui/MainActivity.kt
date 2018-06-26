@@ -1,5 +1,6 @@
 package com.moviegetter.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
@@ -9,6 +10,7 @@ import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.crawl.dytt.DYTTItem
 import com.moviegetter.ui.component.OptionsPop
+import com.moviegetter.ui.main.activity.MovieDetailActivity
 import com.moviegetter.ui.main.adapter.DYTTListAdapter
 import com.moviegetter.ui.main.adapter.MainSimpleAdapter
 import com.moviegetter.ui.main.pv.MainPresenter
@@ -16,7 +18,17 @@ import com.moviegetter.ui.main.pv.MainView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_toolbar_mg.*
 import org.jetbrains.anko.dip
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
+import android.hardware.usb.UsbDevice.getDeviceId
+import android.telephony.TelephonyManager
+import android.Manifest.permission
+import android.Manifest.permission.READ_PHONE_STATE
+import android.content.Context
+import android.support.v4.app.ActivityCompat
+import android.content.pm.PackageManager
+
+
 
 class MainActivity : MGBaseActivity(), MainView {
     private val presenter = MainPresenter(this)
@@ -50,7 +62,6 @@ class MainActivity : MGBaseActivity(), MainView {
         optionPop?.listListener = { parent: AdapterView<*>, view: View, position: Int, id: Long ->
             when (position) {
                 0 -> {
-                    layout_sync_mg.visibility = View.VISIBLE
                     presenter.crawlDYTT()
                 }
                 1 -> toast("同步全部")
@@ -58,6 +69,31 @@ class MainActivity : MGBaseActivity(), MainView {
             }
             optionPop?.dismiss()
         }
+
+        //没有数据
+        view_empty.setClickListener(View.OnClickListener {
+            presenter.crawlDYTT()
+        })
+        //详情页
+        list_result.setOnItemClickListener { parent, view, position, id ->
+            startActivity<MovieDetailActivity>("data" to dataList[position])
+        }
+    }
+
+    fun getImei(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            //            toast("需要动态获取权限");
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE),1001 )
+        } else {
+            //            toast("不需要动态获取权限");
+            val TelephonyMgr = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            val IMEI = TelephonyMgr.deviceId
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
     }
 
     private fun initView() {
@@ -72,6 +108,7 @@ class MainActivity : MGBaseActivity(), MainView {
 
     @SuppressLint("SetTextI18n")
     override fun handleCrawlStatus(total: Int, update: Int, fail: Int, finished: Boolean) {
+        layout_sync_mg.visibility = View.VISIBLE
         text_mg_total.text = "同步:$total"
         text_mg_update.text = "更新:$update"
         text_mg_fail.text = "失败:$fail"
@@ -88,12 +125,21 @@ class MainActivity : MGBaseActivity(), MainView {
     }
 
     override fun onGetDataSuccess(list: List<DYTTItem>) {
+        view_empty.visibility = View.GONE
         dataList.clear()
         dataList.addAll(list)
         listAdapter.notifyDataSetChanged()
     }
 
     override fun onGetDataFail(errorCode: Int, errorMsg: String) {
+        if (errorCode == 1) {
+            view_empty.visibility = View.VISIBLE
+        } else {
+            toast(errorMsg)
+        }
+    }
+
+    override fun onCrawlFail(errorCode: Int, errorMsg: String) {
         toast(errorMsg)
     }
 

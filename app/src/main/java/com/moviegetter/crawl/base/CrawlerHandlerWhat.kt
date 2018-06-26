@@ -22,5 +22,6 @@ object CrawlerHandlerWhat {
     const val CRAWLER_DB_FAIL = 7
     //爬取完成 obj=null
     const val CRAWLER_FINISHED = 8
-
+    //已存在，跳过
+    const val CRAWLER_SKIP = 9
 }

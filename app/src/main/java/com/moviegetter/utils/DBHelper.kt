@@ -3,6 +3,7 @@ package com.moviegetter.utils
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.moviegetter.config.DBConfig
+import com.moviegetter.crawl.base.Item
 import org.jetbrains.anko.db.*
 
 /**
@@ -24,6 +25,13 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
+        db?.createTable(DBConfig.TABLE_NAME_USER, true,
+                "id" to INTEGER + PRIMARY_KEY + UNIQUE,
+                "name" to TEXT,
+                "imei" to TEXT,
+                "auth_code" to TEXT,
+                "role" to TEXT,
+                "create_time" to TEXT)
         db?.createTable(DBConfig.TABLE_NAME_DYTT, true,
                 "movieId" to INTEGER + PRIMARY_KEY + UNIQUE,
                 "movieName" to TEXT,
@@ -40,6 +48,18 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
                 "name" to TEXT,
                 "age" to INTEGER,
                 "text" to TEXT)
+//        data class IPZItem(val movieId: Int, val movieName: String, val movie_update_time: String?,
+//                           val xf_url:String?=null, var update_time: String? = null,
+//                           var create_time: String? = null, var movie_update_timestamp: Long = 0
+//        ) : Item()
+        db?.createTable(DBConfig.TABLE_NAME_ADY, true,
+                "movieId" to INTEGER + PRIMARY_KEY + UNIQUE,
+                "movieName" to TEXT,
+                "movie_update_time" to TEXT,
+                "xf_url" to TEXT,
+                "update_time" to TEXT,
+                "create_time" to TEXT,
+                "movie_update_timestamp" to INTEGER + DEFAULT("0"))
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

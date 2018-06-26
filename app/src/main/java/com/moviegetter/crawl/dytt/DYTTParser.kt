@@ -19,7 +19,6 @@ import java.nio.charset.Charset
  */
 class DYTTParser : Parser {
     private var pages = 10
-    private var currentPage = 1
     private val baseUrl = "http://www.dytt8.net"
     //    "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
 //    "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"

@@ -47,4 +47,12 @@
         android:layout_above="@id/button_start"
         android:layout_below="@id/layout_title" />
 
+    <com.moviegetter.widget.MovieEmptyView
+        android:id="@+id/view_empty"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true" />
+
 </RelativeLayout>

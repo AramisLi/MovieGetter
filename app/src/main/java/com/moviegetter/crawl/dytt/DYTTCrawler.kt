@@ -2,8 +2,12 @@ package com.moviegetter.crawl.dytt
 
 import android.content.Context
 import android.os.Handler
+import com.aramis.library.extentions.logE
+import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.base.BaseCrawler
 import com.moviegetter.crawl.base.CrawlNode
+import com.moviegetter.utils.database
+import org.jetbrains.anko.db.select
 
 /**
  *Created by Aramis
@@ -21,7 +25,16 @@ class DYTTCrawler : BaseCrawler() {
         super.startCrawl(context, parser, pipeline, handler)
     }
 
-    override fun preDownloadCondition(node: CrawlNode): Boolean {
-        return super.preDownloadCondition(node)
+    override fun preDownloadCondition(context: Context?, node: CrawlNode): Boolean {
+        return if ( node.level == 1) {
+            val movieId = node.url.substring(node.url.lastIndexOf("/")+1,node.url.lastIndexOf("."))
+            val count = context?.database?.use {
+                select(DBConfig.TABLE_NAME_DYTT).whereSimple("(movieId=?)", movieId).exec { this.count }
+            }
+            logE("===================跳过count:$count")
+            count == 0
+        } else {
+            true
+        }
     }
 }

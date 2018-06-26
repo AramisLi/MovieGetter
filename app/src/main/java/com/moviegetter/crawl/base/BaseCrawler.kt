@@ -11,35 +11,46 @@ import com.moviegetter.utils.OKhttpUtils
  *Description:
  */
 open class BaseCrawler : Crawler {
+    override fun isRunning(): Boolean {
+        return isRunning
+    }
+
     private val okhttpUtils = OKhttpUtils()
     private val array = mutableListOf<String>()
     private val nodeList = mutableListOf<CrawlNode>()
+    private var isRunning = false
 
     /**
      * 在爬取先执行的方法。
      * @return true=爬取,false=跳过
      */
-    open protected fun preDownloadCondition(node: CrawlNode): Boolean {
+    open protected fun preDownloadCondition(context: Context?, node: CrawlNode): Boolean {
         return true
     }
 
     protected fun startCrawl(context: Context?, parser: Parser?, pipeline: Pipeline?, handler: Handler?) {
         Thread(Runnable {
-
+            isRunning = true
             while (nodeList.size > 0) {
                 val node = savePop()
-                if (node != null && preDownloadCondition((node))) {
-                    val doUrl = node.url
-                    sendMessage(handler, CrawlerHandlerWhat.CRAWLER_START, doUrl)
-                    val response = okhttpUtils.fetch(doUrl, "GET")
-                    if (response != null && response.isSuccessful) {
-                        onFetchSuccess(context, node, response.body().bytes(), parser, pipeline, handler)
+                if (node != null) {
+                    if (preDownloadCondition(context, node)) {
+                        val doUrl = node.url
+                        sendMessage(handler, CrawlerHandlerWhat.CRAWLER_START, doUrl)
+                        val response = okhttpUtils.fetch(doUrl, "GET")
+                        if (response != null && response.isSuccessful) {
+                            onFetchSuccess(context, node, response.body().bytes(), parser, pipeline, handler)
+                        } else {
+                            sendMessage(handler, CrawlerHandlerWhat.CRAWLER_HTML_FAIL, response?.code().toString() + " " + doUrl)
+                        }
                     } else {
-                        sendMessage(handler, CrawlerHandlerWhat.CRAWLER_HTML_FAIL, response?.code().toString() + " " + doUrl)
+                        //跳过
+                        sendMessage(handler, CrawlerHandlerWhat.CRAWLER_SKIP)
                     }
                 }
             }
             sendMessage(handler, CrawlerHandlerWhat.CRAWLER_FINISHED)
+            isRunning = false
         }).start()
     }
 
