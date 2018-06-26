@@ -15,35 +15,25 @@ open class BaseCrawler : Crawler {
     private val array = mutableListOf<String>()
     private val nodeList = mutableListOf<CrawlNode>()
 
+    /**
+     * 在爬取先执行的方法。
+     * @return true=爬取,false=跳过
+     */
+    open protected fun preDownloadCondition(node: CrawlNode): Boolean {
+        return true
+    }
+
     protected fun startCrawl(context: Context?, parser: Parser?, pipeline: Pipeline?, handler: Handler?) {
         Thread(Runnable {
 
             while (nodeList.size > 0) {
                 val node = savePop()
-                if (node != null) {
+                if (node != null && preDownloadCondition((node))) {
                     val doUrl = node.url
-                    logE("开始爬取:$doUrl")
                     sendMessage(handler, CrawlerHandlerWhat.CRAWLER_START, doUrl)
                     val response = okhttpUtils.fetch(doUrl, "GET")
                     if (response != null && response.isSuccessful) {
-//                    val responseStr = response.body().string()
-                        sendMessage(handler, CrawlerHandlerWhat.CRAWLER_HTML_SUCCESS)
-                        val parseList = parser?.startParse(node, response, pipeline)
-                        if (parseList != null) {
-                            logE("解析完的列表长度${parseList.size}")
-                            sendMessage(handler, CrawlerHandlerWhat.CRAWLER_PARSER_SUCCESS, parseList.toString())
-                            val itemList = parseList.filter { it.isItem && it.item != null }.map { it.item!! }
-                            logE("最终要存入数据库的列表长度${itemList.size}")
-                            if (itemList.isNotEmpty()) {
-//                                pipeline?.pipe(context, itemList, handler)
-                            }
-                            val continueList = parseList.filter { !it.isItem }
-                            logE("继续要爬取的列表长度${continueList.size}")
-                            nodeList.addAll(continueList)
-                        } else {
-                            sendMessage(handler, CrawlerHandlerWhat.CRAWLER_PARSER_FAIL)
-                        }
-
+                        onFetchSuccess(context, node, response.body().bytes(), parser, pipeline, handler)
                     } else {
                         sendMessage(handler, CrawlerHandlerWhat.CRAWLER_HTML_FAIL, response?.code().toString() + " " + doUrl)
                     }
@@ -51,6 +41,27 @@ open class BaseCrawler : Crawler {
             }
             sendMessage(handler, CrawlerHandlerWhat.CRAWLER_FINISHED)
         }).start()
+    }
+
+    private fun onFetchSuccess(context: Context?, node: CrawlNode, responseBytes: ByteArray?, parser: Parser?, pipeline: Pipeline?, handler: Handler?) {
+        if (responseBytes != null) {
+            sendMessage(handler, CrawlerHandlerWhat.CRAWLER_HTML_SUCCESS)
+            val parseList = parser?.startParse(node, responseBytes, pipeline)
+            if (parseList != null) {
+                logE("解析完的列表长度${parseList.size}")
+                sendMessage(handler, CrawlerHandlerWhat.CRAWLER_PARSER_SUCCESS, parseList.toString())
+                val itemList = parseList.filter { it.isItem && it.item != null }.map { it.item!! }
+                logE("最终要存入数据库的列表长度${itemList.size}")
+                if (itemList.isNotEmpty()) {
+                    pipeline?.pipe(context, itemList, handler)
+                }
+                val continueList = parseList.filter { !it.isItem }
+                logE("继续要爬取的列表长度${continueList.size}")
+                nodeList.addAll(continueList)
+            } else {
+                sendMessage(handler, CrawlerHandlerWhat.CRAWLER_PARSER_FAIL)
+            }
+        }
     }
 
     override fun startCrawl(context: Context?, url: String, parser: Parser?, pipeline: Pipeline?, handler: Handler?) {

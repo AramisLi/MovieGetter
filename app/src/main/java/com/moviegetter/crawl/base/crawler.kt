@@ -15,7 +15,7 @@ interface Crawler {
 }
 
 interface Parser {
-    fun startParse(node:CrawlNode, response: Response, pipeline: Pipeline? = null): List<CrawlNode>?
+    fun startParse(node:CrawlNode, response: ByteArray, pipeline: Pipeline? = null): List<CrawlNode>?
 }
 
 interface Pipeline {

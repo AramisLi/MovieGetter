@@ -14,9 +14,23 @@ fun Any.logE(str: String? = "null") {
     LogUtils.e("===${javaClass.simpleName}===", str)
 }
 
-fun Any.now(format: String = "yyyy-MM-DD HH:mm:ss"): String {
+fun now(format: String = "yyyy-MM-dd HH:mm:ss"): String {
     val simpleDateFormat = SimpleDateFormat(format, Locale.getDefault())
     return simpleDateFormat.format(Date(System.currentTimeMillis()))
+}
+
+fun String.getTimestamp(format: String = "yyyy-MM-dd HH:mm:ss"): Long {
+    val simpleDateFormat = SimpleDateFormat(format, Locale.getDefault())
+    val date = simpleDateFormat.parse(this)
+    return date.time
+}
+
+fun tryBlock(block: () -> Unit) {
+    try {
+        block.invoke()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 fun keep(d: Double): String {

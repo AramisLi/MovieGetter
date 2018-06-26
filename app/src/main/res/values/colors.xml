@@ -4,4 +4,9 @@
     <color name="colorPrimaryLite">#2fb1d1</color>
     <color name="colorPrimaryDark">#4397E4</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="color_pop_black_click">#2a3137</color>
+    <color name="text_color_black">#464646</color>
+    <color name="text_color_gray">#979797</color>
+    <color name="color_pop_black">#323941</color>
 </resources>

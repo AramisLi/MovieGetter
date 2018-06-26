@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="left_default">15dp</dimen>
+    <dimen name="right_default">15dp</dimen>
+    <dimen name="height_btn_normal">40dp</dimen>
+    <dimen name="height_divider">8dp</dimen>
+    <dimen name="corner_default_dialog">10dp</dimen>
+    <dimen name="corner_audit_worker_pop">4dp</dimen>
+    <dimen name="corner_selection_item">4dp</dimen>
+
+
+</resources>

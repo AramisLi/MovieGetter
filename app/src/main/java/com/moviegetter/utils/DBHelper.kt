@@ -33,9 +33,10 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
                 "download_url" to TEXT,
                 "download_thunder" to TEXT,
                 "update_time" to TEXT,
-                "create_time" to TEXT)
+                "create_time" to TEXT,
+                "movie_update_timestamp" to INTEGER + DEFAULT("0"))
         db?.createTable("test", true,
-                "id" to INTEGER + PRIMARY_KEY + UNIQUE + AUTOINCREMENT,
+                "id" to INTEGER + PRIMARY_KEY + UNIQUE,
                 "name" to TEXT,
                 "age" to INTEGER,
                 "text" to TEXT)

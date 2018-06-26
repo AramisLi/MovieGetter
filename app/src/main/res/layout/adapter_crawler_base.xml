@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image_movie_thumb"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
+            android:layout_marginLeft="@dimen/left_default"
+            android:layout_marginTop="10dp"
+            android:background="#adc"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/text_movie_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:lines="2"
+            android:ellipsize="end"
+            android:layout_marginRight="@dimen/right_default"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/image_movie_thumb"
+            android:text="圣诞快乐飞机撒大家发生了肯定积分"
+            android:textColor="#0600C4"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/text_movie_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_movie_name"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="@dimen/right_default"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/image_movie_thumb"
+            android:text="更新时间"
+            android:textColor="@color/text_color_black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_movie_sync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_movie_update"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="@dimen/right_default"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@id/image_movie_thumb"
+            android:text="同步时间"
+            android:textColor="@color/text_color_black"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+</LinearLayout>

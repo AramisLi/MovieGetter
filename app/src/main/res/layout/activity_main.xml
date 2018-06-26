@@ -5,25 +5,46 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
+    <include
+        android:id="@+id/layout_title"
+        layout="@layout/view_toolbar_mg" />
+
+    <TextView
+        android:id="@+id/button_read_db"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/bg_btn_normal"
+        android:gravity="center"
+        android:text="读取数据库"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/button_start"
         android:layout_width="match_parent"
         android:layout_height="42dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
+        android:layout_above="@id/button_read_db"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="@drawable/bg_btn_normal"
         android:gravity="center"
         android:text="Start"
         android:textColor="#fff"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
+
 
     <ListView
         android:id="@+id/list_result"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/button_start" />
+        android:layout_above="@id/button_start"
+        android:layout_below="@id/layout_title" />
 
 </RelativeLayout>

@@ -5,11 +5,10 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="@dimen/height_toolbar"
-    android:background="@color/bg_toolbar"
+    android:background="@color/colorPrimary"
     app:contentInsetLeft="0dp"
     app:contentInsetStart="0dp">
 
-    <!--android:background="@drawable/bg_toolbar"-->
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -31,7 +30,7 @@
             android:layout_centerVertical="true"
             android:paddingLeft="12dp"
             android:paddingRight="20dp"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:srcCompat="@drawable/ic_arrow_left" />
 
         <android.support.v7.widget.AppCompatImageView

@@ -1,6 +1,11 @@
 package com.moviegetter
 
+import com.aramis.library.extentions.getTimestamp
+import com.aramis.library.extentions.logE
+import com.kymjs.rxvolley.client.HttpCallback
+import com.moviegetter.crawl.base.Downloader
 import com.moviegetter.test.Detalhtml
+import com.moviegetter.utils.OKhttpUtils
 import org.junit.Test
 import org.seimicrawler.xpath.JXDocument
 
@@ -18,9 +23,9 @@ class ExampleUnitTest {
 //            println(i.toString())
 //        }
 
-        val href=jxDocument.sel("//div[@id='Zoom']//table//td/a/@href").iterator().next()
+        val href = jxDocument.sel("//div[@id='Zoom']//table//td/a/@href").iterator().next()
         println("href===$href")
-        val name=jxDocument.sel("//div[@id='Zoom']//table//td/a/text()").iterator().next()
+        val name = jxDocument.sel("//div[@id='Zoom']//table//td/a/text()").iterator().next()
         println("name===$name")
 //        val encode = BASE64Encoder().encode(href.toString().toByteArray())
 
@@ -43,5 +48,69 @@ class ExampleUnitTest {
 //        println(ThunderSiteConverUtil().conver(test_th))
 //
 //        println(ThunderSiteConverUtil().encode(url))
+    }
+
+    @Test
+    fun testDownloader() {
+        val url = "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
+        Downloader.get(url, object : HttpCallback() {
+            override fun onSuccess(response: String?) {
+                super.onSuccess(response)
+//                println("onSuccess(response: String?)")
+//                println(response)
+                logE("onSuccess")
+            }
+
+            override fun onSuccess(headers: MutableMap<String, String>?, t: ByteArray?) {
+                super.onSuccess(headers, t)
+//                println("onSuccess(headers: MutableMap<String, String>?, t: ByteArray?)")
+            }
+
+            override fun onFailure(errorNo: Int, strMsg: String?) {
+                super.onFailure(errorNo, strMsg)
+//                println("onFailure(errorNo: Int, strMsg: String?)")
+//                println("errorNo:$errorNo,strMsg:$strMsg")
+                logE("onFailure")
+            }
+        })
+    }
+
+    @Test
+    fun testOkhttp() {
+        val util = OKhttpUtils()
+        val url = "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
+        val url2 = "http://www.dytt8.net/html/gndy/dyzz/20180525/56896.html"
+        val response = util.fetch(url2, "GET", jsonParams = false)
+        if (response != null) {
+            println(response.code())
+            println(response.body().string())
+        }
+    }
+
+    @Test
+    fun textNextPage() {
+//        val url = "http://www.dytt8.net/html/gndy/dyzz/index.html"
+        val url = "http://www.dytt8.net/html/gndy/dyzz/list_23_2.html"
+        fun nextPage(url: String): String {
+            val fore = url.lastIndexOf("/")
+            val back = url.lastIndexOf(".")
+            val _index = url.substring(fore + 1, back)
+            if (_index == "index") {
+                return url.substring(0, fore + 1) + "list_23_2.html"
+            } else {
+                val fore_2 = url.lastIndexOf("_")
+                val num = url.substring(fore_2 + 1, back).toInt()
+                return url.substring(0, fore_2 + 1) + (num + 1) + ".html"
+            }
+        }
+
+        println(nextPage(url))
+    }
+
+    @Test
+    fun testDate(){
+        val date_a="2018-04-30 19:49:07"
+
+        println(date_a.getTimestamp())
     }
 }

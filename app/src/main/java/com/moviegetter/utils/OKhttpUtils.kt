@@ -19,21 +19,23 @@ class OKhttpUtils {
                 if (jsonParams) {
                     requestBuilder.method(method, getOkHttpRequestBody(params))
                 } else {
-                    val formBody = FormBody.Builder()
                     params?.apply {
+                        val formBody = FormBody.Builder()
                         for ((k, v) in this) {
                             formBody.add(k, v)
                         }
+                        requestBuilder.method(method, formBody.build())
                     }
-                    requestBuilder.method(method, formBody.build())
                 }
             } else {
                 requestBuilder.get()
             }
-            requestBuilder.headers(getHeader(header))
+            header?.apply {
+                requestBuilder.headers(getHeader(header))
+            }
             val call = client.newCall(requestBuilder.build())
             return call.execute()
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return null
