@@ -109,8 +109,18 @@ class ExampleUnitTest {
 
     @Test
     fun testDate(){
-        val date_a="2018-04-30 19:49:07"
+//        val date_a="2018-04-30 19:49:07"
+//
+//        println(date_a.getTimestamp())
+        val movieId = getMovieId("/view/index40227.html")
+        println(movieId)
+        println(5 in 0..4)
 
-        println(date_a.getTimestamp())
+
+    }
+
+    private fun getMovieId(href:String):String{
+//        /view/index40227.html
+        return href.substring(href.indexOf("index")+5,href.indexOf("."))
     }
 }

@@ -2,6 +2,8 @@ package com.moviegetter.utils
 
 import com.google.gson.Gson
 import okhttp3.*
+import java.lang.Exception
+import java.net.SocketTimeoutException
 
 /**
  *Created by Aramis
@@ -35,6 +37,8 @@ class OKhttpUtils {
             }
             val call = client.newCall(requestBuilder.build())
             return call.execute()
+        } catch (e: SocketTimeoutException) {
+            e.printStackTrace()
         } catch (e: Exception) {
             e.printStackTrace()
         }

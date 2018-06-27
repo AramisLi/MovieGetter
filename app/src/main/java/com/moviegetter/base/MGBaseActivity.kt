@@ -1,11 +1,14 @@
 package com.moviegetter.base
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
+import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.RelativeLayout
+import android.widget.TextView
 import com.aramis.library.base.BaseActivity
 import com.moviegetter.R
-import org.jetbrains.anko.backgroundResource
 
 /**
  *Created by Aramis
@@ -19,7 +22,19 @@ abstract class MGBaseActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        val titleView = findViewById<Toolbar>(R.id.toolbar)
-        titleView?.backgroundResource = R.color.colorPrimary
+//        val titleView = findViewById<Toolbar>(R.id.toolbar)
+//        titleView?.backgroundResource = R.color.colorPrimary
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun formatCrawlStatusView(total:Int, update:Int, fail:Int, finished:Boolean) {
+        val layout = findViewById<RelativeLayout>(R.id.layout_sync_mg)
+        if (layout != null) {
+            layout.findViewById<TextView>(R.id.text_mg_total).text = "同步:$total"
+            layout.findViewById<TextView>(R.id.text_mg_update) .text = "更新:$update"
+            layout.findViewById<TextView>(R.id.text_mg_fail).text = "失败:$fail"
+            layout.findViewById<ImageView>(R.id.image_mg_finished).visibility = if (finished) View.VISIBLE else View.GONE
+            layout.findViewById<ProgressBar>(R.id.progress_mg).visibility = if (finished) View.GONE else View.VISIBLE
+        }
     }
 }

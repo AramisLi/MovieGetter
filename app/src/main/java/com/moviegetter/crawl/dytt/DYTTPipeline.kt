@@ -8,7 +8,9 @@ import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.base.BasePipeline
 import com.moviegetter.crawl.base.Item
 import com.moviegetter.utils.database
-import org.jetbrains.anko.db.*
+import org.jetbrains.anko.db.insert
+import org.jetbrains.anko.db.select
+import org.jetbrains.anko.db.update
 
 /**
  *Created by Aramis
@@ -35,7 +37,9 @@ class DYTTPipeline : BasePipeline() {
                             "download_name" to it.downloadName,
                             "download_url" to it.downloadUrls,
                             "download_thunder" to it.downloadThunder,
-                            "update_time" to it.update_time).whereArgs("movieId = {movieId}","movieId" to it.movieId).exec()
+                            "update_time" to it.update_time,
+                            "movie_update_timestamp" to (it.movie_update_time?.getTimestamp()
+                                    ?: 0)).whereArgs("movieId = {movieId}", "movieId" to it.movieId).exec()
                 } else {
                     //插入
                     insert(DBConfig.TABLE_NAME_DYTT,
@@ -48,7 +52,7 @@ class DYTTPipeline : BasePipeline() {
                             "download_thunder" to it.downloadThunder,
                             "update_time" to it.update_time,
                             "create_time" to now(),
-                            "movie_update_timestamp" to (it.movie_update_time?.getTimestamp() ?:0))
+                            "movie_update_timestamp" to (it.movie_update_time?.getTimestamp() ?: 0))
                 }
 
             }

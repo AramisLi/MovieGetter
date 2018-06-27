@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_new"
+        android:title="最新" />
+    <item
+        android:id="@+id/navigation_america"
+        android:title="欧美" />
+    <item
+        android:id="@+id/navigation_china"
+        android:title="中国" />
+    <item
+        android:id="@+id/navigation_japan"
+        android:title="日韩" />
+    <!--<item-->
+        <!--android:id="@+id/navigation_classic"-->
+        <!--android:title="经典" />-->
+</menu>

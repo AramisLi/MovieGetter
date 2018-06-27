@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import com.aramis.library.extentions.logE
 import com.moviegetter.utils.OKhttpUtils
+import java.lang.Exception
 
 /**
  *Created by Aramis
@@ -39,7 +40,12 @@ open class BaseCrawler : Crawler {
                         sendMessage(handler, CrawlerHandlerWhat.CRAWLER_START, doUrl)
                         val response = okhttpUtils.fetch(doUrl, "GET")
                         if (response != null && response.isSuccessful) {
-                            onFetchSuccess(context, node, response.body().bytes(), parser, pipeline, handler)
+                            try {
+                                onFetchSuccess(context, node, response.body().bytes(), parser, pipeline, handler)
+                            }catch (e:Exception){
+                                logE("=========================onFetchSuccess"+ node.level)
+                                e.printStackTrace()
+                            }
                         } else {
                             sendMessage(handler, CrawlerHandlerWhat.CRAWLER_HTML_FAIL, response?.code().toString() + " " + doUrl)
                         }

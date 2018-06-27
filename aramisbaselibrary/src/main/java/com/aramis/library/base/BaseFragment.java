@@ -42,49 +42,12 @@ public class BaseFragment extends Fragment {
         return mRootView == null ? null : mRootView.findViewById(id);
     }
 
-//    protected void toLoginActivity() {
-//        Intent intent = new Intent(mActivity, LoginSingleActivity.class);
-//        mActivity.startActivity(intent);
-//    }
-
-//    protected boolean checkAndToLogin() {
-//        if (!BunnySP.Companion.isLogin()) {
-//            toLoginActivity();
-//            return false;
-//        }
-//        return true;
-//    }
-
-//    protected boolean isLogin() {
-//        return isLogin(true);
-//    }
-//
-//    protected boolean isLogin(boolean toActivity) {
-//        boolean login = BunnySP.Companion.isLogin();
-//        if (toActivity && !login) {
-//            LogUtils.e(TAG,"fragment启动登录activity");
-//            toOtherActivity(LoginSingleActivity.class, null);
-//        }
-//        return login;
-//    }
-
     protected void toOtherActivity(Class clazz, Bundle bundle) {
         Intent intent = new Intent(mActivity, clazz);
         if (bundle != null) intent.putExtras(bundle);
         mActivity.startActivity(intent);
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        MobclickAgent.onPageStart("BaseFragment"); // 统计页面
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        MobclickAgent.onPageEnd("BaseFragment"); // 统计页面
-//    }
 
     protected void toWebActivity(String webUrl, String title) {
         Intent intent = new Intent(getActivity(), WebBrowserActivity.class);

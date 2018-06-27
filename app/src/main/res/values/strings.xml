@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">MovieGetter</string>
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="text_navigator_a">最新</string>
+    <string name="text_navigator_b">欧美</string>
+    <string name="text_navigator_c">中国</string>
+    <string name="text_navigator_d">日韩</string>
+    <string name="text_navigator_e">经典</string>
 </resources>

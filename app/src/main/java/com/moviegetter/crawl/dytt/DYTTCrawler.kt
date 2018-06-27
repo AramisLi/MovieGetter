@@ -2,7 +2,6 @@ package com.moviegetter.crawl.dytt
 
 import android.content.Context
 import android.os.Handler
-import com.aramis.library.extentions.logE
 import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.base.BaseCrawler
 import com.moviegetter.crawl.base.CrawlNode
@@ -31,7 +30,7 @@ class DYTTCrawler : BaseCrawler() {
             val count = context?.database?.use {
                 select(DBConfig.TABLE_NAME_DYTT).whereSimple("(movieId=?)", movieId).exec { this.count }
             }
-            logE("===================跳过count:$count")
+//            logE("===================跳过count:$count")
             count == 0
         } else {
             true

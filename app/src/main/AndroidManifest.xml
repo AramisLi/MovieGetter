@@ -32,6 +32,17 @@
         <activity
             android:name=".ui.main.activity.MovieDetailActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.main.activity.IPZActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.main.activity.UserActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".crawl.base.Main3Activity"
+            android:label="@string/title_activity_main3">
+
+        </activity>
     </application>
 
 </manifest>

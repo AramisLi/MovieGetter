@@ -48,10 +48,7 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
                 "name" to TEXT,
                 "age" to INTEGER,
                 "text" to TEXT)
-//        data class IPZItem(val movieId: Int, val movieName: String, val movie_update_time: String?,
-//                           val xf_url:String?=null, var update_time: String? = null,
-//                           var create_time: String? = null, var movie_update_timestamp: Long = 0
-//        ) : Item()
+
         db?.createTable(DBConfig.TABLE_NAME_ADY, true,
                 "movieId" to INTEGER + PRIMARY_KEY + UNIQUE,
                 "movieName" to TEXT,

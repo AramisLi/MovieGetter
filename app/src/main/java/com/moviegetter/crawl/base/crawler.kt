@@ -22,9 +22,10 @@ interface Pipeline {
     fun pipe(context: Context?, items: List<Item>, handler: Handler?)
 }
 
-open class Item:Serializable
+open class Item(var tag: String? = null) : Serializable
 
 class CrawlNode(val url: String, val level: Int, val parentNode: CrawlNode?,
-                var childrenNodes: List<CrawlNode>?, var item: Item?, var isItem: Boolean) : Serializable
+                var childrenNodes: List<CrawlNode>?, var item: Item?, var isItem: Boolean,
+                var tag: String? = null) : Serializable
 
 
