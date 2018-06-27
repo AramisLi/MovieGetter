@@ -9,4 +9,10 @@
     <string name="text_navigator_c">中国</string>
     <string name="text_navigator_d">日韩</string>
     <string name="text_navigator_e">经典</string>
+
+    <string name="text_navigator_ipz_a">亚洲</string>
+    <string name="text_navigator_ipz_b">欧美</string>
+    <string name="text_navigator_ipz_c">动漫</string>
+    <string name="text_navigator_ipz_d">自拍</string>
+    <string name="text_navigator_ipz_e">国产</string>
 </resources>

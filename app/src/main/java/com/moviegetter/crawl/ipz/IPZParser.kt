@@ -46,11 +46,13 @@ class IPZParser : Parser {
         val document = Jsoup.parse(html)
         val titles = document.select("div.list-pianyuan-box-l > a")
         val movieDates = document.select("div.list-pianyuan-box-r > div > span").filter { """\d+-\d+-\d+""".toRegex().matches(it.text()) }
+//        val img=document.select("div.list-pianyuan-box-l img")
         val resultList = titles.mapIndexed { index, element ->
-            val href=element.attr("href")
-            val movieId=getMovieId(href)
+            val href = element.attr("href")
+            val movieId = getMovieId(href)
             logE("href:$href,movieId:$movieId")
-            val item = IPZItem(movieId.toInt(), element.attr("title"), (if (index in movieDates.indices) movieDates[index].text() else null))
+            val item = IPZItem(movieId.toInt(), element.attr("title"), (if (index in movieDates.indices) movieDates[index].text() else null),
+                    thumb = baseUrl + element.child(0).attr("src"), position = originNode.position)
             CrawlNode(baseUrl + href, 1, originNode, null, item, false)
         }
         nextPage()
@@ -60,7 +62,9 @@ class IPZParser : Parser {
     private fun parseDetail(html: String, originNode: CrawlNode): List<CrawlNode>? {
         val document = Jsoup.parse(html)
         val a = document.select("div.vpl a")
-        return a.mapIndexed { index, element ->
+        val images = document.select("div.vpl > img").eachAttr("src").joinToString { "," }
+        return a.map { element ->
+            (originNode.item as? IPZItem)?.images = images
             CrawlNode(baseUrl + element.attr("href"), 2, originNode, null, originNode.item, false)
         }
     }

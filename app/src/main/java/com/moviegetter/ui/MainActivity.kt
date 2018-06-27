@@ -65,7 +65,7 @@ class MainActivity : MGBaseActivity(), MainView {
         optionPop?.listListener = { parent: AdapterView<*>, view: View, position: Int, id: Long ->
             when (position) {
                 0 -> {
-                    presenter.crawlDYTT()
+                    presenter.crawlDYTT(0)
                 }
                 1 -> toast("同步全部")
                 2 -> {

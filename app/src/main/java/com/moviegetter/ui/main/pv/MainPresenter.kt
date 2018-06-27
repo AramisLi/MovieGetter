@@ -76,11 +76,11 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
     }
 
 
-    fun crawlDYTT() {
+    fun crawlDYTT(position:Int) {
         if (dyttCrawler.isRunning()) {
             mView?.onCrawlFail(0, "正在同步中，请稍后")
         } else {
-            dyttCrawler.startCrawl((mView as? Activity), 2, dyttHandler)
+            dyttCrawler.startCrawl((mView as? Activity),position, 2, dyttHandler)
         }
     }
 

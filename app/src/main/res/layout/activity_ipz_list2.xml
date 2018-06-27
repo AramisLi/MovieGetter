@@ -14,7 +14,7 @@
         android:layout_height="50dp"
         android:background="?android:attr/windowBackground"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/navigation" />
+        app:menu="@menu/navigation_ipz" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_main"

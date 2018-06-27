@@ -47,7 +47,8 @@ dependencies {
 
     implementation 'cn.wanghaomiao:JsoupXpath:2.1-Beta'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-    compile 'com.github.huangyanbin:SmartTable:1.7.1'
+    implementation 'com.github.huangyanbin:SmartTable:1.7.1'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
 }

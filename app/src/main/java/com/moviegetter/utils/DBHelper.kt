@@ -56,7 +56,10 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
                 "xf_url" to TEXT,
                 "update_time" to TEXT,
                 "create_time" to TEXT,
-                "movie_update_timestamp" to INTEGER + DEFAULT("0"))
+                "movie_update_timestamp" to INTEGER + DEFAULT("0"),
+                "thumb" to TEXT,
+                "images" to TEXT,
+                "position" to INTEGER)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

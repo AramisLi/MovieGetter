@@ -13,4 +13,6 @@ object DBConfig {
     const val USER_ROLE_ROOT = "root"
     const val USER_ROLE_MANAGER = "manager"
     const val USER_ROLE_NORMAL = "normal"
+
+    var IsCompany = false
 }

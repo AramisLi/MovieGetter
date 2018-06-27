@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_navigator_ipz_a"
+        android:icon="@drawable/ic_navigator_a"
+        android:title="@string/text_navigator_ipz_a" />
+
+    <item
+        android:id="@+id/menu_navigator_ipz_b"
+        android:icon="@drawable/ic_navigator_b"
+        android:title="@string/text_navigator_ipz_b" />
+
+    <item
+        android:id="@+id/menu_navigator_ipz_c"
+        android:icon="@drawable/ic_navigator_c"
+        android:title="@string/text_navigator_ipz_c" />
+    <item
+        android:id="@+id/menu_navigator_ipz_d"
+        android:icon="@drawable/ic_navigator_d"
+        android:title="@string/text_navigator_ipz_d" />
+    <item
+        android:id="@+id/menu_navigator_ipz_e"
+        android:icon="@drawable/ic_navigator_e"
+        android:title="@string/text_navigator_ipz_e" />
+
+</menu>

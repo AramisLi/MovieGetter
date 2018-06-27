@@ -28,36 +28,41 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
     private val crawler = IPZCrawler()
     private val handler = CrawlerHandler().createByCount(l = { total, update, fail, finished ->
         mView?.handleCrawlStatus(total, update, fail, finished)
-        if (finished) {
-            getData()
-        }
     })
 
-    fun startCrawl() {
-        crawler.startCrawl((mView as? Activity), 2, handler)
+    fun startCrawl(position: Int) {
+        crawler.startCrawl((mView as? Activity), position, 2, handler)
     }
 
-    fun getData() {
+
+    fun startCrawlLite(position: Int, onFinished: (() -> Unit)? = null) {
+        crawler.startCrawlLite((mView as? Activity), position, 2, onFinished)
+    }
+
+    fun getData(position: Int, onSuccess: (results: List<IPZItem>) -> Unit, onFail: (errorCode: Int, errorMsg: String) -> Unit) {
         doAsync {
             (mView as? Activity)?.database?.use {
                 if (select(DBConfig.TABLE_NAME_ADY).exec { this.count } > 0) {
-                    val list = select(DBConfig.TABLE_NAME_ADY).orderBy("movie_update_timestamp", SqlOrderDirection.DESC).parseList(object : RowParser<IPZItem> {
+                    val list = select(DBConfig.TABLE_NAME_ADY).whereArgs("position={position}", "position" to position).orderBy("movie_update_timestamp", SqlOrderDirection.DESC).parseList(object : RowParser<IPZItem> {
                         override fun parseRow(columns: Array<Any?>): IPZItem {
 
                             return IPZItem((columns[0] as Long).toInt(), columns[1] as String,
                                     columns[2] as String, columns[3] as String?,
                                     columns[4] as String?, columns[5] as String?,
-                                    (columns[6] as? Long ?: 0L))
+                                    (columns[6] as? Long ?: 0L), columns[7] as String?,
+                                    columns[8] as String?)
                         }
 
                     })
                     uiThread {
                         mView?.onGetDataSuccess(list)
+                        onSuccess.invoke(list)
                     }
 
                 } else {
                     uiThread {
                         mView?.onGetDataFail(1, "列表为空")
+                        onFail.invoke(1, "列表为空")
                     }
                 }
             }

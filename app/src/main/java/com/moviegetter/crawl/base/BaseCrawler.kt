@@ -2,8 +2,11 @@ package com.moviegetter.crawl.base
 
 import android.content.Context
 import android.os.Handler
+import com.aramis.library.aramis.ArBus
 import com.aramis.library.extentions.logE
 import com.moviegetter.utils.OKhttpUtils
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.lang.Exception
 
 /**
@@ -42,8 +45,8 @@ open class BaseCrawler : Crawler {
                         if (response != null && response.isSuccessful) {
                             try {
                                 onFetchSuccess(context, node, response.body().bytes(), parser, pipeline, handler)
-                            }catch (e:Exception){
-                                logE("=========================onFetchSuccess"+ node.level)
+                            } catch (e: Exception) {
+                                logE("=========================onFetchSuccess" + node.level)
                                 e.printStackTrace()
                             }
                         } else {
@@ -58,6 +61,46 @@ open class BaseCrawler : Crawler {
             sendMessage(handler, CrawlerHandlerWhat.CRAWLER_FINISHED)
             isRunning = false
         }).start()
+    }
+
+    protected fun startCrawlLite(context: Context?, parser: Parser?, pipeline: Pipeline?,
+                                 onFinished: (() -> Unit)? = null) {
+        context?.doAsync {
+            isRunning = true
+            while (nodeList.size > 0) {
+                val node = savePop()
+                if (node != null) {
+                    if (preDownloadCondition(context, node)) {
+                        val doUrl = node.url
+                        postMessage(CrawlerHandlerWhat.CRAWLER_START, doUrl)
+
+                        val response = okhttpUtils.fetch(doUrl, "GET")
+                        if (response != null && response.isSuccessful) {
+                            try {
+                                onFetchSuccess(context, node, response.body().bytes(), parser, pipeline, null)
+                            } catch (e: Exception) {
+                                logE("=========================onFetchSuccess" + node.level)
+                                e.printStackTrace()
+                            }
+                        } else {
+                            postMessage(CrawlerHandlerWhat.CRAWLER_HTML_FAIL, response?.code().toString() + " " + doUrl)
+                        }
+                    } else {
+                        //跳过
+                        postMessage(CrawlerHandlerWhat.CRAWLER_SKIP)
+                    }
+                }
+            }
+            postMessage(CrawlerHandlerWhat.CRAWLER_FINISHED)
+            isRunning = false
+            uiThread {
+                onFinished?.invoke()
+            }
+        }
+    }
+
+    private fun postMessage(what: Int, obj: Any? = null) {
+        ArBus.getDefault().post(CrawlLiteMessage(what, obj))
     }
 
     private fun onFetchSuccess(context: Context?, node: CrawlNode, responseBytes: ByteArray?, parser: Parser?, pipeline: Pipeline?, handler: Handler?) {
@@ -97,13 +140,13 @@ open class BaseCrawler : Crawler {
         }
     }
 
-    protected fun startedAdd(url: String) {
-        nodeList.add(CrawlNode(url, 0, null, mutableListOf(), null, false))
+    protected fun startedAdd(url: String, position: Int, tag: String? = null) {
+        nodeList.add(CrawlNode(url, 0, null, mutableListOf(), null, false, tag, position))
     }
 
-    protected fun startedAdds(urls: List<String>) {
-        nodeList.addAll(urls.map { CrawlNode(it, 0, null, mutableListOf(), null, false) })
-    }
+//    protected fun startedAdds(urls: List<String>) {
+//        nodeList.addAll(urls.map { CrawlNode(it, 0, null, mutableListOf(), null, false) })
+//    }
 
     private fun sendMessage(handler: Handler?, what: Int, obj: Any? = null) {
         val message = handler?.obtainMessage()
