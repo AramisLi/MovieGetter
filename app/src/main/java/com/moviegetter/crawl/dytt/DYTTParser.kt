@@ -37,42 +37,90 @@ class DYTTParser : Parser {
         }
     }
 
-    private fun parseList(html: String, originNode: CrawlNode): MutableList<CrawlNode> {
+    private fun parseList(html: String, originNode: CrawlNode): List<CrawlNode>? {
         val resultList = mutableListOf<CrawlNode>()
         try {
-            val jxDocument = JXDocument.create(html)
+//            val jxDocument = JXDocument.create(html)
+            logE("干啥呢 干啥呢 干啥呢 干啥呢")
             val doc = Jsoup.parse(html)
-            val sel = jxDocument.sel("//table/tbody")
-            sel.forEach {
-                if (it is org.jsoup.nodes.Element) {
-                    val name = it.select("a.ulink").text()
-                    val detailUrl = it.select("a.ulink[href]").attr("href")
-                    if (name.isNotBlank() && detailUrl.isNotBlank()) {
-                        val movieID = """(\d+)""".toRegex().findAll(detailUrl).iterator().next().next()?.value
-                        val node = CrawlNode(baseUrl + detailUrl.trim(), 1, originNode, null, null, false)
-                        val movie_update_time_c = it.select("tr td font").text()
-                        if (movieID != null) {
-                            val movie_update_time = if (movie_update_time_c != null) {
-                                """(\d+-\d+-\d+ \d+:\d+:\d+)""".toRegex().findAll(movie_update_time_c).iterator().next().value
-                            } else {
-                                null
-                            }
-                            val item = DYTTItem(movieID.toInt(), name, movie_update_time)
-                            node.item = item
-                        }
-                        resultList.add(node)
-                    }
-                }
+
+            doc.select("div.co_content8 tbody").forEach {
+                val a = it.select("a.ulink").first { it.hasAttr("href") && """.*\d+\.html$""".toRegex().matches(it.attr("href")) }
+//                logE(a.toString())
+                val detailUrl = a.attr("href")
+//                logE(detailUrl)
+                val movieIDValue="""/(\d+)\.html$""".toRegex().findAll(detailUrl).first().value
+                val movieID = movieIDValue.substring(1,movieIDValue.lastIndexOf("."))
+//                logE(movieID)
+                val movieName = a.text()
+//                logE(movieName)
+                val movieUpdateTimeC = it.select("tr>td>font").first().text()
+                val movieUpdateTime="""(\d+-\d+-\d+ \d+:\d+:\d+)""".toRegex().findAll(movieUpdateTimeC).first().value
+//                logE(movieUpdateTime)
+
+                val node = CrawlNode(baseUrl + detailUrl.trim(), 1, originNode, null, null, false)
+                val item = DYTTItem(movieID.toInt(), movieName, movieUpdateTime, position = originNode.position
+                        ?: 0)
+                node.item = item
+////                        }
+                resultList.add(node)
             }
-            nextPage(originNode.url, doc)?.apply {
-                resultList.add(CrawlNode(this, 0, null, null, null, false))
-            }
+//            doc.select("a.ulink")
+//                    .filter {
+//                        //                logE(it.attr("href"))
+////                logE(""".*\d+\.html$""".toRegex().matches(it.attr("href")).toString())
+//                        it.hasAttr("href") && """.*\d+\.html$""".toRegex().matches(it.attr("href"))
+//                    }.forEach {
+//
+//                        val detailUrl = it.attr("href")
+//                        val movieID = """/(\d+)\.html$""".toRegex().findAll(detailUrl).first().value
+//                        val node = CrawlNode(baseUrl + detailUrl.trim(), 1, originNode, null, null, false)
+//                        val movie_update_time_c = doc.select("tr td>font").text()
+////                        if (movieID != null) {
+//                        val movie_update_time = if (movie_update_time_c != null) {
+//                            """(\d+-\d+-\d+ \d+:\d+:\d+)""".toRegex().findAll(movie_update_time_c).iterator().next().value
+//                        } else {
+//                            null
+//                        }
+//                        val item = DYTTItem(movieID.toInt(), name, movie_update_time, position = originNode.position
+//                                ?: 0)
+//                        node.item = item
+////                        }
+//                        resultList.add(node)
+//                    }
+//            name.forEach { logE(it.toString()) }
+//            val sel = jxDocument.sel("//table/tbody")
+//            sel.forEach {
+//                if (it is org.jsoup.nodes.Element) {
+//
+////                    val detailUrl = it.select("a.ulink[href]").attr("href")
+//
+//                    if (name.isNotBlank() && detailUrl.isNotBlank()) {
+//                        val movieID = """(\d+)""".toRegex().findAll(detailUrl).iterator().next().next()?.value
+//                        val node = CrawlNode(baseUrl + detailUrl.trim(), 1, originNode, null, null, false)
+//                        val movie_update_time_c = it.select("tr td font").text()
+//                        if (movieID != null) {
+//                            val movie_update_time = if (movie_update_time_c != null) {
+//                                """(\d+-\d+-\d+ \d+:\d+:\d+)""".toRegex().findAll(movie_update_time_c).iterator().next().value
+//                            } else {
+//                                null
+//                            }
+//                            val item = DYTTItem(movieID.toInt(), name, movie_update_time, position = originNode.position?:0)
+//                            node.item = item
+//                        }
+//                        resultList.add(node)
+//                    }
+//                }
+//            }
+//            nextPage(originNode.url, doc)?.apply {
+//                resultList.add(CrawlNode(this, 0, null, null, null, false))
+//            }
 
         } catch (e: Exception) {
             e.printStackTrace()
             logE("列表解析失败")
         }
-
+//        return null
         return resultList
     }
 

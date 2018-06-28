@@ -20,18 +20,14 @@ abstract class MGBaseActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onStart() {
-        super.onStart()
-//        val titleView = findViewById<Toolbar>(R.id.toolbar)
-//        titleView?.backgroundResource = R.color.colorPrimary
-    }
 
     @SuppressLint("SetTextI18n")
-    fun formatCrawlStatusView(total:Int, update:Int, fail:Int, finished:Boolean) {
+    fun formatCrawlStatusView(total: Int, update: Int, fail: Int, finished: Boolean) {
         val layout = findViewById<RelativeLayout>(R.id.layout_sync_mg)
         if (layout != null) {
+            layout.visibility = View.VISIBLE
             layout.findViewById<TextView>(R.id.text_mg_total).text = "同步:$total"
-            layout.findViewById<TextView>(R.id.text_mg_update) .text = "更新:$update"
+            layout.findViewById<TextView>(R.id.text_mg_update).text = "更新:$update"
             layout.findViewById<TextView>(R.id.text_mg_fail).text = "失败:$fail"
             layout.findViewById<ImageView>(R.id.image_mg_finished).visibility = if (finished) View.VISIBLE else View.GONE
             layout.findViewById<ProgressBar>(R.id.progress_mg).visibility = if (finished) View.GONE else View.VISIBLE

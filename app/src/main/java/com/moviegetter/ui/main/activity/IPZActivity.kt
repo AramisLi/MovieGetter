@@ -11,11 +11,11 @@ import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.OptionsPop
 import com.moviegetter.ui.main.adapter.IPZListAdapter
-import com.moviegetter.ui.main.fragment.MainFragment
+import com.moviegetter.ui.main.fragment.*
 import com.moviegetter.ui.main.pv.IPZPresenter
 import com.moviegetter.ui.main.pv.IPZView
 import com.moviegetter.utils.BottomNavigationViewHelper
-import kotlinx.android.synthetic.main.activity_main2.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_toolbar_mg.*
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.startActivity
@@ -53,7 +53,7 @@ class IPZActivity : MGBaseActivity(), IPZView {
         })
         optionPop = OptionsPop(this, listOf("同步本页", "同步全部", "下载播放器"))
 
-        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, (0..4).map { MainFragment() })
+        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(IPZFragmentA(), IPZFragmentB(),IPZFragmentC(), IPZFragmentD(),IPZFragmentE()))
         viewpager_main.adapter = fragmentAdapter
         viewpager_main.addOnPageChangeListener(object: ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(state: Int) {
@@ -69,11 +69,11 @@ class IPZActivity : MGBaseActivity(), IPZView {
         BottomNavigationViewHelper.disableShiftMode(bottomNavigationView)
         bottomNavigationView.setOnNavigationItemReselectedListener {
             when (it.itemId) {
-                R.id.navigation_new -> viewpager_main.setCurrentItem(0, false)
-                R.id.navigation_america -> viewpager_main.setCurrentItem(1, false)
-                R.id.navigation_china -> viewpager_main.setCurrentItem(2, false)
-                R.id.navigation_japan -> viewpager_main.setCurrentItem(3, false)
-//                R.id.navigation_classic -> viewpager_main.setCurrentItem(4, false)
+                R.id.menu_navigator_ipz_a -> viewpager_main.setCurrentItem(0, false)
+                R.id.menu_navigator_ipz_b -> viewpager_main.setCurrentItem(1, false)
+                R.id.menu_navigator_ipz_c -> viewpager_main.setCurrentItem(2, false)
+                R.id.menu_navigator_ipz_d -> viewpager_main.setCurrentItem(3, false)
+                R.id.menu_navigator_ipz_e -> viewpager_main.setCurrentItem(4, false)
             }
         }
     }
@@ -113,7 +113,7 @@ class IPZActivity : MGBaseActivity(), IPZView {
     }
 
     override fun handleCrawlStatus(total: Int, update: Int, fail: Int, finished: Boolean) {
-        formatCrawlStatusView(total, update, fail, finished)
+//        formatCrawlStatusView(total, update, fail, finished)
     }
 
     override fun onGetDataSuccess(result: List<IPZItem>) {

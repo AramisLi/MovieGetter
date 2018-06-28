@@ -101,8 +101,7 @@ open class CrawlerHandler {
                         fail = 0
                         finished = false
                     }
-                }
-        )
+                })
     }
 
 }

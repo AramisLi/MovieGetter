@@ -1,6 +1,5 @@
 package com.moviegetter
 
-import com.aramis.library.extentions.getTimestamp
 import com.aramis.library.extentions.logE
 import com.kymjs.rxvolley.client.HttpCallback
 import com.moviegetter.crawl.base.Downloader
@@ -108,7 +107,7 @@ class ExampleUnitTest {
     }
 
     @Test
-    fun testDate(){
+    fun testDate() {
 //        val date_a="2018-04-30 19:49:07"
 //
 //        println(date_a.getTimestamp())
@@ -119,8 +118,20 @@ class ExampleUnitTest {
 
     }
 
-    private fun getMovieId(href:String):String{
+    private fun getMovieId(href: String): String {
 //        /view/index40227.html
-        return href.substring(href.indexOf("index")+5,href.indexOf("."))
+        return href.substring(href.indexOf("index") + 5, href.indexOf("."))
+    }
+
+    @Test
+    fun testJson() {
+        val linkList = listOf(56910, 56912, 56913, 56914, 56926, 56942, 56943, 56945, 56959, 56980, 56981, 56983)
+
+        val a = linkList.joinToString { "," }.toString()
+        val b=linkList.joinToString(",")
+        println(a)
+        println(b)
+        val c="movieId in (%s)".format(linkList.joinToString(","))
+        println(c)
     }
 }

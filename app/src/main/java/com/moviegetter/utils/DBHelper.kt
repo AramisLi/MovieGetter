@@ -32,6 +32,7 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
                 "auth_code" to TEXT,
                 "role" to TEXT,
                 "create_time" to TEXT)
+
         db?.createTable(DBConfig.TABLE_NAME_DYTT, true,
                 "movieId" to INTEGER + PRIMARY_KEY + UNIQUE,
                 "movieName" to TEXT,
@@ -43,6 +44,14 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
                 "update_time" to TEXT,
                 "create_time" to TEXT,
                 "movie_update_timestamp" to INTEGER + DEFAULT("0"))
+
+        db?.createTable(DBConfig.TABLE_NAME_DYTT_LINK, true,
+                "id" to INTEGER + PRIMARY_KEY + UNIQUE,
+                "movieId" to INTEGER,
+                "movieName" to TEXT,
+                "position" to INTEGER,
+                "create_time" to TEXT)
+
         db?.createTable("test", true,
                 "id" to INTEGER + PRIMARY_KEY + UNIQUE,
                 "name" to TEXT,

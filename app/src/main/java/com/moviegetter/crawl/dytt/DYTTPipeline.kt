@@ -7,6 +7,7 @@ import com.aramis.library.extentions.now
 import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.base.BasePipeline
 import com.moviegetter.crawl.base.Item
+import com.moviegetter.utils.DYTTDBHelper
 import com.moviegetter.utils.database
 import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.db.select
@@ -53,6 +54,9 @@ class DYTTPipeline : BasePipeline() {
                             "update_time" to it.update_time,
                             "create_time" to now(),
                             "movie_update_timestamp" to (it.movie_update_time?.getTimestamp() ?: 0))
+
+                    //链接表插入
+                    DYTTDBHelper.linkInsert(context, it.movieId, it.movieName, it.position)
                 }
 
             }

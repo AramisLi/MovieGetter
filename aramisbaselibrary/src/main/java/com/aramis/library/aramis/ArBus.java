@@ -34,6 +34,10 @@ public class ArBus {
         bus.onNext(event);
     }
 
+    public Subject<Object, Object> bus() {
+        return bus;
+    }
+
     public <T> Observable<T> take(final Class<T> eventType) {
         return bus.filter(new Func1<Object, Boolean>() {
             @Override
@@ -42,4 +46,8 @@ public class ArBus {
             }
         }).cast(eventType);
     }
+
+//    public Observable<Object> observeOn(Scheduler scheduler){
+//        return bus.observeOn(scheduler);
+//    }
 }

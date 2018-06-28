@@ -7,6 +7,10 @@ import com.aramis.library.extentions.logE
 import com.moviegetter.utils.OKhttpUtils
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import rx.Observable
+import rx.Observer
+import rx.Subscription
+import rx.android.schedulers.AndroidSchedulers
 import java.lang.Exception
 
 /**
@@ -44,7 +48,7 @@ open class BaseCrawler : Crawler {
                         val response = okhttpUtils.fetch(doUrl, "GET")
                         if (response != null && response.isSuccessful) {
                             try {
-                                onFetchSuccess(context, node, response.body().bytes(), parser, pipeline, handler)
+                                onFetchSuccess(context, null, null, node, response.body().bytes(), parser, pipeline, handler,null)
                             } catch (e: Exception) {
                                 logE("=========================onFetchSuccess" + node.level)
                                 e.printStackTrace()
@@ -63,7 +67,7 @@ open class BaseCrawler : Crawler {
         }).start()
     }
 
-    protected fun startCrawlLite(context: Context?, parser: Parser?, pipeline: Pipeline?,
+    protected fun startCrawlLite(context: Context?, tag: String, position: Int, parser: Parser?, pipeline: Pipeline?,
                                  onFinished: (() -> Unit)? = null) {
         context?.doAsync {
             isRunning = true
@@ -72,26 +76,30 @@ open class BaseCrawler : Crawler {
                 if (node != null) {
                     if (preDownloadCondition(context, node)) {
                         val doUrl = node.url
-                        postMessage(CrawlerHandlerWhat.CRAWLER_START, doUrl)
+                        logE("开始爬取 url:$doUrl")
+                        postMessage(tag, position, CrawlerHandlerWhat.CRAWLER_START, doUrl,sub=null)
 
                         val response = okhttpUtils.fetch(doUrl, "GET")
                         if (response != null && response.isSuccessful) {
+                            logE("获取html成功 code:${response.code()}")
                             try {
-                                onFetchSuccess(context, node, response.body().bytes(), parser, pipeline, null)
+                                onFetchSuccess(context, null, null, node, response.body().bytes(), parser, pipeline, null,sub=null)
                             } catch (e: Exception) {
                                 logE("=========================onFetchSuccess" + node.level)
                                 e.printStackTrace()
                             }
                         } else {
-                            postMessage(CrawlerHandlerWhat.CRAWLER_HTML_FAIL, response?.code().toString() + " " + doUrl)
+                            logE("获取html失败 code:${response?.code()}")
+                            postMessage(tag, position, CrawlerHandlerWhat.CRAWLER_HTML_FAIL, response?.code().toString() + " " + doUrl,null)
                         }
                     } else {
                         //跳过
-                        postMessage(CrawlerHandlerWhat.CRAWLER_SKIP)
+                        logE("跳过 url:${node.url}")
+                        postMessage(tag, position, CrawlerHandlerWhat.CRAWLER_SKIP,sub=null)
                     }
                 }
             }
-            postMessage(CrawlerHandlerWhat.CRAWLER_FINISHED)
+            postMessage(tag, position, CrawlerHandlerWhat.CRAWLER_FINISHED,sub=null)
             isRunning = false
             uiThread {
                 onFinished?.invoke()
@@ -99,17 +107,23 @@ open class BaseCrawler : Crawler {
         }
     }
 
-    private fun postMessage(what: Int, obj: Any? = null) {
-        ArBus.getDefault().post(CrawlLiteMessage(what, obj))
+    private fun postMessage(tag: String, position: Int, what: Int, obj: Any? = null,sub:Observer<CrawlLiteMessage>?) {
+        ArBus.getDefault().post(CrawlLiteMessage(what, obj, tag, position))
+//        if (sub!=null){
+//            Observable.create<CrawlLiteMessage> { CrawlLiteMessage(what, obj, tag, position) }.observeOn(AndroidSchedulers.mainThread()).subscribe(sub)
+//        }
     }
 
-    private fun onFetchSuccess(context: Context?, node: CrawlNode, responseBytes: ByteArray?, parser: Parser?, pipeline: Pipeline?, handler: Handler?) {
+    private fun onFetchSuccess(context: Context?, tag: String?, position: Int?, node: CrawlNode, responseBytes: ByteArray?, parser: Parser?, pipeline: Pipeline?, handler: Handler?,sub:Observer<CrawlLiteMessage>?) {
         if (responseBytes != null) {
             sendMessage(handler, CrawlerHandlerWhat.CRAWLER_HTML_SUCCESS)
+            if (tag != null && position != null) postMessage(tag, position, CrawlerHandlerWhat.CRAWLER_HTML_SUCCESS,sub=sub)
+
             val parseList = parser?.startParse(node, responseBytes, pipeline)
             if (parseList != null) {
                 logE("解析完的列表长度${parseList.size}")
                 sendMessage(handler, CrawlerHandlerWhat.CRAWLER_PARSER_SUCCESS, parseList.toString())
+                if (tag != null && position != null) postMessage(tag, position, CrawlerHandlerWhat.CRAWLER_PARSER_SUCCESS, parseList.toString(),sub)
                 val itemList = parseList.filter { it.isItem && it.item != null }.map { it.item!! }
                 logE("最终要存入数据库的列表长度${itemList.size}")
                 if (itemList.isNotEmpty()) {
@@ -120,6 +134,8 @@ open class BaseCrawler : Crawler {
                 nodeList.addAll(continueList)
             } else {
                 sendMessage(handler, CrawlerHandlerWhat.CRAWLER_PARSER_FAIL)
+                if (tag != null && position != null) postMessage(tag, position, CrawlerHandlerWhat.CRAWLER_PARSER_FAIL,sub=sub)
+
             }
         }
     }
