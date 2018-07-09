@@ -53,7 +53,7 @@ class IPZParser : Parser {
             logE("href:$href,movieId:$movieId")
             val item = IPZItem(movieId.toInt(), element.attr("title"), (if (index in movieDates.indices) movieDates[index].text() else null),
                     thumb = baseUrl + element.child(0).attr("src"), position = originNode.position)
-            CrawlNode(baseUrl + href, 1, originNode, null, item, false)
+            CrawlNode(baseUrl + href, 1, originNode, null, item, false, originNode.tag, originNode.position)
         }
         nextPage()
         return resultList
@@ -65,7 +65,7 @@ class IPZParser : Parser {
         val images = document.select("div.vpl > img").eachAttr("src").joinToString { "," }
         return a.map { element ->
             (originNode.item as? IPZItem)?.images = images
-            CrawlNode(baseUrl + element.attr("href"), 2, originNode, null, originNode.item, false)
+            CrawlNode(baseUrl + element.attr("href"), 2, originNode, null, originNode.item, false, originNode.tag, originNode.position)
         }
     }
 
@@ -73,7 +73,7 @@ class IPZParser : Parser {
         val document = Jsoup.parse(html)
         val scripts = document.select("div.playbox2-c script")
         return scripts.filter { it.attr("src").isNotBlank() }.mapIndexed { index, element ->
-            CrawlNode(baseUrl + element.attr("src"), 3, originNode, null, originNode.item, false)
+            CrawlNode(baseUrl + element.attr("src"), 3, originNode, null, originNode.item, false, originNode.tag, originNode.position)
         }
     }
 

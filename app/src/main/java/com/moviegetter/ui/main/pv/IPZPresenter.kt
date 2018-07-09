@@ -5,11 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import com.aramis.library.base.BaseView
-import com.aramis.library.extentions.logE
 import com.moviegetter.base.MGBasePresenter
 import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.base.CrawlerHandler
-import com.moviegetter.crawl.base.CrawlerHandlerWhat
 import com.moviegetter.crawl.ipz.IPZCrawler
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.utils.database
@@ -25,6 +23,7 @@ import org.jetbrains.anko.uiThread
  *Description:
  */
 class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
+    private val playDownloadUrl = "http://down.xfplay.com/xfplay.apk"
     private val crawler = IPZCrawler()
     private val handler = CrawlerHandler().createByCount(l = { total, update, fail, finished ->
         mView?.handleCrawlStatus(total, update, fail, finished)
@@ -38,6 +37,8 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
     fun startCrawlLite(position: Int, onFinished: (() -> Unit)? = null) {
         crawler.startCrawlLite((mView as? Activity), position, 2, onFinished)
     }
+
+
 
     fun getData(position: Int, onSuccess: (results: List<IPZItem>) -> Unit, onFail: (errorCode: Int, errorMsg: String) -> Unit) {
         doAsync {

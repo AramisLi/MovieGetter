@@ -9,23 +9,21 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.view.ViewPager
 import android.telephony.TelephonyManager
 import android.view.View
-import android.widget.*
-import com.aramis.library.aramis.ArBus
+import android.widget.AdapterView
 import com.aramis.library.base.BasePresenter
 import com.aramis.library.component.adapter.DefaultFrgPagerAdapter
+import com.aramis.library.component.dialog.DefaultHintDialog
 import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
+import com.moviegetter.bean.User
 import com.moviegetter.config.Config
-import com.moviegetter.crawl.base.CrawlLiteMessage
+import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.base.CrawlLiteSubscription
-import com.moviegetter.crawl.dytt.DYTTItem
-import com.moviegetter.crawl.ipz.TestRxJava
-import com.moviegetter.crawl.ipz.TestRxJavaEvent
+import com.moviegetter.ui.component.DownloadDialog
 import com.moviegetter.ui.component.OptionsPop
 import com.moviegetter.ui.main.activity.IPZActivity
 import com.moviegetter.ui.main.activity.UserActivity
-import com.moviegetter.ui.main.adapter.DYTTListAdapter
 import com.moviegetter.ui.main.adapter.MainSimpleAdapter
 import com.moviegetter.ui.main.fragment.*
 import com.moviegetter.ui.main.pv.MainPresenter
@@ -36,10 +34,7 @@ import kotlinx.android.synthetic.main.view_toolbar_mg.*
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
-import rx.Subscriber
 import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.observers.Subscribers
 
 
 class MainActivity : MGBaseActivity(), MainView {
@@ -47,11 +42,16 @@ class MainActivity : MGBaseActivity(), MainView {
     private val statusDataList = mutableListOf<String>()
     private val statusAdapter = MainSimpleAdapter(statusDataList)
     private var optionPop: OptionsPop? = null
-    private val dataList = mutableListOf<DYTTItem>()
-    private var listAdapter = DYTTListAdapter(dataList)
+//    private val dataList = mutableListOf<DYTTItem>()
+//    private var listAdapter = DYTTListAdapter(dataList)
 
     private var fragmentAdapter: DefaultFrgPagerAdapter? = null
+    //接受状态的bus
     private var crawlSubscription: Subscription? = null
+    //新世界dialog
+    private var newWorldDialog: DefaultHintDialog? = null
+    //下载dialog
+    private var downloadDialog: DownloadDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +59,14 @@ class MainActivity : MGBaseActivity(), MainView {
         initView()
         initBus()
         setListener()
+
+        mgRequestPermissions()
+    }
+
+    private fun mgRequestPermissions() {
+        val imei = getImei()
+        logE("===imei:$imei")
+        presenter.checkNewWorld(imei)
     }
 
     private fun initBus() {
@@ -71,16 +79,21 @@ class MainActivity : MGBaseActivity(), MainView {
     }
 
     private fun setListener() {
+//        list_
         optionPop?.listListener = { parent: AdapterView<*>, view: View, position: Int, id: Long ->
             when (position) {
-                //同步本页
+            //同步本页
                 0 -> {
-                    presenter.startCrawlLite(viewpager_main.currentItem)
+                    presenter.startCrawlLite(viewpager_main.currentItem,2)
                 }
-                1 -> toast("同步全部")
+                1 -> {
+                    toast("同步10页时间较长，请耐心等待")
+                    presenter.startCrawlLite(viewpager_main.currentItem,10)
+                }
                 2 -> {
-                    toast("设置")
-                    startActivity<IPZActivity>()
+                    //新世界
+                    toNewWorld()
+
                 }
                 3 -> {
                     startActivity<UserActivity>()
@@ -90,20 +103,33 @@ class MainActivity : MGBaseActivity(), MainView {
         }
     }
 
-    fun getImei() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+    fun getImei(): String? {
+        return if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             //            toast("需要动态获取权限");
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), 1001)
+            null
         } else {
             //            toast("不需要动态获取权限");
             val TelephonyMgr = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
             val IMEI = TelephonyMgr.deviceId
+            return IMEI
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissions.forEachIndexed { index, s ->
+            when (s) {
+            //imei
+                Manifest.permission.READ_PHONE_STATE -> {
+                    if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
+                        mgRequestPermissions()
+                    } else {
 
+                    }
+                }
+            }
+        }
     }
 
     private fun initView() {
@@ -112,7 +138,7 @@ class MainActivity : MGBaseActivity(), MainView {
         })
 //        list_result.adapter = listAdapter
 
-        optionPop = OptionsPop(this, listOf("同步本页", "同步全部", "新世界", "User"))
+        optionPop = OptionsPop(this, listOf("同步1页", "同步10页"))
 
         fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(MainFragmentA(), MainFragmentB(), MainFragmentC(), MainFragmentD(), MainFragmentE()))
         viewpager_main.adapter = fragmentAdapter
@@ -140,6 +166,21 @@ class MainActivity : MGBaseActivity(), MainView {
             }
             false
         }
+
+        newWorldDialog = DefaultHintDialog(this, "提示", "您是vip用户，可查看新世界，是否立即打开？")
+        newWorldDialog?.setPositiveClickListener("打开") {
+            toNewWorld()
+            newWorldDialog?.dismiss()
+        }
+        newWorldDialog?.setNegativeClickListener("取消") {
+            newWorldDialog?.dismiss()
+        }
+
+        downloadDialog = DownloadDialog(this, mutableListOf(), mutableListOf())
+    }
+
+    private fun toNewWorld() {
+        startActivity<IPZActivity>()
     }
 
     @SuppressLint("SetTextI18n")
@@ -157,23 +198,33 @@ class MainActivity : MGBaseActivity(), MainView {
         statusAdapter.notifyDataSetChanged()
     }
 
-    override fun onGetDataSuccess(list: List<DYTTItem>) {
+//    override fun onGetDataSuccess(list: List<DYTTItem>) {
 //        view_empty.visibility = View.GONE
-        dataList.clear()
-        dataList.addAll(list)
-        listAdapter.notifyDataSetChanged()
-    }
+//        dataList.clear()
+//        dataList.addAll(list)
+//        listAdapter.notifyDataSetChanged()
+//    }
 
-    override fun onGetDataFail(errorCode: Int, errorMsg: String) {
-        if (errorCode == 1) {
-//            view_empty.visibility = View.VISIBLE
-        } else {
-            toast(errorMsg)
-        }
-    }
+//    override fun onGetDataFail(errorCode: Int, errorMsg: String) {
+//        if (errorCode == 1) {
+////            view_empty.visibility = View.VISIBLE
+//        } else {
+//            toast(errorMsg)
+//        }
+//    }
 
     override fun onCrawlFail(errorCode: Int, errorMsg: String) {
         toast(errorMsg)
+    }
+
+    override fun checkNewWorld(user: User) {
+        //显示新世界dialog
+        newWorldDialog?.show()
+        val list = mutableListOf("同步1页", "同步10页", "新世界")
+        if (user.role == DBConfig.USER_ROLE_ROOT) {
+            list.add("User")
+        }
+        optionPop?.notifyDataSetChanged(list)
     }
 
     override fun onDestroy() {

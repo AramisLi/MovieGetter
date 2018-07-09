@@ -32,7 +32,7 @@ class IPZCrawler : BaseCrawler() {
     fun startCrawlLite(context: Context?, position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
         super.startedAdd("$baseUrl/list/index1.html", position, null)
         parser.pages = pages
-        super.startCrawlLite(context,Config.TAG_ADY,position, parser, pipeline,onFinished)
+        super.startCrawlLite(context, Config.TAG_ADY, position, parser, pipeline, onFinished)
     }
 
     override fun preDownloadCondition(context: Context?, node: CrawlNode): Boolean {

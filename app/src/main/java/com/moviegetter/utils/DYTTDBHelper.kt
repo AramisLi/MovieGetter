@@ -1,6 +1,9 @@
 package com.moviegetter.utils
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import com.aramis.library.extentions.logE
 import com.aramis.library.extentions.now
 import com.moviegetter.config.DBConfig
@@ -29,8 +32,18 @@ object DYTTDBHelper {
                         "position" to position,
                         "create_time" to now())
             }
-        }else{
+        } else {
             logE("link保存 已经存在 movieId:$movieId,position:$position")
+        }
+    }
+
+    fun toPlayer(activity: Activity?, data: String, onFail: (() -> Unit)? = null) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(data))
+            intent.addCategory("android.intent.category.DEFAULT")
+            activity?.startActivity(intent)
+        } catch (e: Exception) {
+            onFail?.invoke()
         }
     }
 }

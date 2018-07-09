@@ -26,6 +26,8 @@ import org.jetbrains.anko.textColor
 class OptionsPop(context: Context, val list: List<String>, imageResList: List<Int>? = null) {
     private val popWindow: PopupWindow
     var listListener: ((parent: AdapterView<*>, view: View, position: Int, id: Long) -> Unit)? = null
+    private val innerListDataList = mutableListOf<String>()
+    private var innerListViewAdapter: ListViewAdapter? = null
 
     //黑色主题
     var isBlackTheme = true
@@ -37,7 +39,9 @@ class OptionsPop(context: Context, val list: List<String>, imageResList: List<In
         view.findViewById<AppCompatImageView>(R.id.triangle_add_pop).imageResource = if (isBlackTheme) R.drawable.ic_ico_triangle_up_black else R.drawable.ic_ico_triangle_up
 
         val listView = view.findViewById<NoScrollListView>(R.id.list_add_pop)
-        listView.adapter = ListViewAdapter(list, imageResList)
+        innerListDataList.addAll(list)
+        innerListViewAdapter = ListViewAdapter(innerListDataList, imageResList)
+        listView.adapter = innerListViewAdapter
         listView.setOnItemClickListener { parent, ccview, position, id ->
             listListener?.invoke(parent, ccview, position, id)
         }
@@ -45,6 +49,14 @@ class OptionsPop(context: Context, val list: List<String>, imageResList: List<In
         popWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popWindow.isOutsideTouchable = true
         popWindow.isTouchable = true
+
+
+    }
+
+    fun notifyDataSetChanged(list: List<String>) {
+        innerListDataList.clear()
+        innerListDataList.addAll(list)
+        innerListViewAdapter?.notifyDataSetChanged()
     }
 
     fun show(view: View, xoff: Int = 0, yoff: Int = 0) {
@@ -59,11 +71,11 @@ class OptionsPop(context: Context, val list: List<String>, imageResList: List<In
         return popWindow.isShowing
     }
 
-    private inner class ListViewAdapter(list: List<String>, val imageResList: List<Int>? = null) : SimpleBaseAdapter<String>(list) {
+    private inner class ListViewAdapter(val list: List<String>, val imageResList: List<Int>? = null) : SimpleBaseAdapter<String>(list) {
 
         override fun initDatas(holder: SimpleBaseAdapterHolder, bean: String, position: Int) {
             (holder as ViewHolder).text_pop_list_item.text = bean
-            holder.text_pop_list_item.textColor=if (isBlackTheme) Color.WHITE else ContextCompat.getColor(mContext!!,R.color.text_color_black)
+            holder.text_pop_list_item.textColor = if (isBlackTheme) Color.WHITE else ContextCompat.getColor(mContext!!, R.color.text_color_black)
             holder.layout_pop_list_item.backgroundResource = when (position) {
                 0 -> if (isBlackTheme) R.drawable.bg_list_corner_up_black else R.drawable.bg_list_corner_up
                 list.size - 1 -> if (isBlackTheme) R.drawable.bg_list_corner_down_black else R.drawable.bg_list_corner_down

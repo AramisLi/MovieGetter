@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/layout_down_right"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/text_dialog_link"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:background="@drawable/bg_btn_normal"
+            android:gravity="center"
+            android:text="复制链接"
+            android:textColor="#fff"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/text_dialog_xunlei"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/bg_btn_normal"
+            android:gravity="center"
+            android:text="迅雷下载"
+            android:textColor="#fff"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:gravity="center_vertical"
+        android:lines="2"
+        android:ellipsize="end"
+        android:id="@+id/text_dialog_name"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="12dp"
+        android:textSize="13sp"
+        android:layout_toLeftOf="@id/layout_down_right" />
+</RelativeLayout>

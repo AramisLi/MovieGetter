@@ -13,8 +13,10 @@ import com.moviegetter.crawl.base.CrawlLiteMessage
 import com.moviegetter.crawl.base.CrawlerHandlerWhat
 import com.moviegetter.crawl.dytt.DYTTItem
 import com.moviegetter.ui.MainActivity
+import com.moviegetter.ui.component.DownloadDialog
 import com.moviegetter.ui.main.adapter.DYTTListAdapter
 import com.moviegetter.ui.main.pv.MainPresenter
+import com.moviegetter.utils.DYTTDBHelper
 import kotlinx.android.synthetic.main.frg_main.view.*
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription
@@ -31,6 +33,7 @@ abstract class MainFragment : MGBaseFragment() {
     private var position = 0
     private var presenter: MainPresenter? = null
     private var crawlSubscription: Subscription? = null
+    private var downloadDialog: DownloadDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,20 +79,43 @@ abstract class MainFragment : MGBaseFragment() {
     }
 
     private fun setListener() {
-        mRootView.list_result.adapter = adapter
         mRootView.view_empty.setOnClickListener {
             startCrawl()
+        }
+        //列表点击事件
+        adapter.onItemClick={item, position ->
+            if (item.downloadName != null && item.downloadThunder != null) {
+                if (item.downloadName!!.contains(",")) {
+                    downloadDialog?.show(item.downloadName!!.split(","),
+                            item.downloadThunder!!.split(","))
+                } else {
+                    downloadDialog?.show(mutableListOf(item.downloadName!!),
+                            mutableListOf(item.downloadThunder!!))
+                }
+            } else {
+                toast("下载地址不存在")
+            }
+
+        }
+        downloadDialog?.onLinkClick = { link, position ->
+            toast("复制" + link)
+        }
+        downloadDialog?.onDownloadClick = { link, position ->
+            DYTTDBHelper.toPlayer(activity,link){
+                toast("未发现迅雷，请下载安装")
+            }
         }
     }
 
     private fun startCrawl() {
-        presenter?.startCrawlLite(position) {
+        presenter?.startCrawlLite(position,2) {
             initData()
         }
     }
 
     private fun initView() {
         mRootView.list_result.adapter = adapter
+        downloadDialog = DownloadDialog(activity!!, mutableListOf(), mutableListOf())
     }
 
 

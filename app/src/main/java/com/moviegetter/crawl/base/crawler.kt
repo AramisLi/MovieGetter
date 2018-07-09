@@ -26,6 +26,6 @@ open class Item : Serializable
 
 class CrawlNode(val url: String, val level: Int, val parentNode: CrawlNode?,
                 var childrenNodes: List<CrawlNode>?, var item: Item?, var isItem: Boolean,
-                var tag: String? = null, var position: Int? = null) : Serializable
+                var tag: String? = null, var position: Int) : Serializable
 
 

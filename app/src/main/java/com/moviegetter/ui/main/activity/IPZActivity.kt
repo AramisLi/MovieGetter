@@ -51,7 +51,7 @@ class IPZActivity : MGBaseActivity(), IPZView {
         setTitleRightText("选项", View.OnClickListener {
             optionPop?.show(it, -dip(70), dip(2))
         })
-        optionPop = OptionsPop(this, listOf("同步本页", "同步全部", "下载播放器"))
+        optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "下载播放器"))
 
         fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(IPZFragmentA(), IPZFragmentB(),IPZFragmentC(), IPZFragmentD(),IPZFragmentE()))
         viewpager_main.adapter = fragmentAdapter

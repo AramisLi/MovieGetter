@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="304dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_dialog_hint"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text_dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="请选择"
+            android:textColor="#2f0101"
+            android:textSize="15sp" />
+
+        <View
+            android:id="@+id/line_dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_below="@id/text_dialog_title"
+            android:background="@color/color_user_line" />
+
+        <ListView
+            android:dividerHeight="1px"
+            android:divider="#ddd"
+            android:id="@+id/list_dialog_down"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/line_dialog_title" />
+
+    </RelativeLayout>
+</RelativeLayout>

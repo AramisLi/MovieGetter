@@ -4,12 +4,14 @@ import android.app.Activity
 import com.aramis.library.base.BaseView
 import com.aramis.library.extentions.logE
 import com.moviegetter.base.MGBasePresenter
+import com.moviegetter.bean.User
 import com.moviegetter.config.Config
 import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.dytt.DYTTCrawler
 import com.moviegetter.crawl.dytt.DYTTItem
 import com.moviegetter.utils.database
 import org.jetbrains.anko.db.RowParser
+import org.jetbrains.anko.db.SqlOrderDirection
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -52,6 +54,7 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
                 if (linkList.isNotEmpty()) {
                     select(DBConfig.TABLE_NAME_DYTT)
                             .whereArgs("movieId in (%s)".format(linkList.joinToString(",")))
+                            .orderBy("movie_update_timestamp", SqlOrderDirection.DESC)
                             .parseList(object : RowParser<DYTTItem> {
                                 override fun parseRow(columns: Array<Any?>): DYTTItem {
                                     return DYTTItem((columns[0] as Long).toInt(), columns[1] as String,
@@ -85,12 +88,33 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
         }
     }
 
-    fun startCrawlLite(position: Int, onFinished: (() -> Unit)? = null) {
+    fun startCrawlLite(position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
         if (dyttCrawler.isRunning()) {
             mView?.onCrawlFail(0, "正在同步中，请稍后")
         } else {
-            dyttCrawler.startCrawlLite((mView as? Activity), Config.TAG_DYTT, position, 2, onFinished)
+            dyttCrawler.startCrawlLite((mView as? Activity), Config.TAG_DYTT, position, pages, onFinished)
         }
+    }
+
+    /**
+     * 检查是否可以阅读新世界
+     */
+    fun checkNewWorld(imei: String?) {
+        imei?.apply {
+            doAsync {
+                activity?.database?.use {
+                    val userList = select(DBConfig.TABLE_NAME_USER).whereArgs("imei=${this@apply}").parseList(UserRowParser())
+                    if (userList.isNotEmpty() && (userList[0].role == DBConfig.USER_ROLE_VIP
+                                    || userList[0].role == DBConfig.USER_ROLE_MANAGER
+                                    || userList[0].role == DBConfig.USER_ROLE_ROOT)) {
+                        uiThread {
+                            mView?.checkNewWorld(userList[0])
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 }
@@ -100,8 +124,23 @@ interface MainView : BaseView {
     //    fun handleCrawlStatus(what: Int, obj: Any?)
     fun handleCrawlStatusStr(str: String)
 
-    fun onGetDataSuccess(list: List<DYTTItem>)
-    fun onGetDataFail(errorCode: Int, errorMsg: String)
+//    fun onGetDataSuccess(list: List<DYTTItem>)
+//    fun onGetDataFail(errorCode: Int, errorMsg: String)
 
     fun onCrawlFail(errorCode: Int, errorMsg: String)
+
+    fun checkNewWorld(user: User)
+}
+
+class UserRowParser : RowParser<User> {
+    override fun parseRow(columns: Array<Any?>): User {
+        return User((columns[0] as Long).toInt(),
+                columns[1] as String,
+                columns[2] as String,
+                columns[3] as String?,
+                columns[4] as String,
+                columns[5] as String?
+        )
+    }
+
 }

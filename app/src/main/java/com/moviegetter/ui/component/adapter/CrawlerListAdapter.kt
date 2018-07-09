@@ -26,11 +26,14 @@ abstract class CrawlerBaseListAdapter(list: List<Item>) : SimpleBaseAdapter<Item
         return CrawlerBaseHolder(convertView.findViewById(R.id.image_movie_thumb),
                 convertView.findViewById(R.id.text_movie_name),
                 convertView.findViewById(R.id.text_movie_update),
-                convertView.findViewById(R.id.text_movie_sync))
+                convertView.findViewById(R.id.text_movie_sync),
+                convertView.findViewById(R.id.text_movie_download)
+        )
     }
 
     inner class CrawlerBaseHolder(val image_movie_thumb: AppCompatImageView,
                                   val text_movie_name: TextView,
                                   val text_movie_update: TextView,
-                                  val text_movie_sync: TextView) : SimpleBaseAdapterHolder()
+                                  val text_movie_sync: TextView,
+                                  val text_movie_download: TextView) : SimpleBaseAdapterHolder()
 }

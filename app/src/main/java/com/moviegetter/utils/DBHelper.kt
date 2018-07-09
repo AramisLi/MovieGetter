@@ -73,6 +73,21 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
     }
+
+    fun initUser() {
+        this.use {
+            insert(DBConfig.TABLE_NAME_USER, "id" to "1",
+                    "name" to "乐视",
+                    "imei" to "868897020889812",
+                    "auth_code" to "",
+                    "role" to "root")
+            insert(DBConfig.TABLE_NAME_USER, "id" to "2",
+                    "name" to "刘伟",
+                    "imei" to "861759034263086",
+                    "auth_code" to "",
+                    "role" to "vip")
+        }
+    }
 }
 
 val Context.database: DBHelper
