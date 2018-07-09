@@ -96,11 +96,7 @@ class IPZActivity : MGBaseActivity(), IPZView {
                 }
                 1 -> toast("同步全部")
                 2 -> {
-                    toast("设置")
-                    startActivity<IPZActivity>()
-                }
-                3->{
-                    startActivity<UserActivity>()
+                    presenter.downloadPlayer()
                 }
             }
             optionPop?.dismiss()

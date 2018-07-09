@@ -3,13 +3,15 @@ package com.moviegetter.ui.main.pv
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
+//import android.widget.Toast
 import com.aramis.library.base.BaseView
+import com.kymjs.rxvolley.toolbox.RxVolleyContext.toast
 import com.moviegetter.base.MGBasePresenter
 import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.base.CrawlerHandler
 import com.moviegetter.crawl.ipz.IPZCrawler
 import com.moviegetter.crawl.ipz.IPZItem
+import com.moviegetter.utils.DYTTDBHelper
 import com.moviegetter.utils.database
 import org.jetbrains.anko.db.RowParser
 import org.jetbrains.anko.db.SqlOrderDirection
@@ -29,6 +31,13 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
         mView?.handleCrawlStatus(total, update, fail, finished)
     })
 
+    fun downloadPlayer() {
+        DYTTDBHelper.toPlayer(activity, playDownloadUrl) {
+
+            toast("还是不行")
+        }
+    }
+
     fun startCrawl(position: Int) {
         crawler.startCrawl((mView as? Activity), position, 2, handler)
     }
@@ -37,7 +46,6 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
     fun startCrawlLite(position: Int, onFinished: (() -> Unit)? = null) {
         crawler.startCrawlLite((mView as? Activity), position, 2, onFinished)
     }
-
 
 
     fun getData(position: Int, onSuccess: (results: List<IPZItem>) -> Unit, onFail: (errorCode: Int, errorMsg: String) -> Unit) {
@@ -78,7 +86,7 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
             intent.addCategory("android.intent.category.DEFAULT")
             (mView as? Activity)?.startActivity(intent)
         } catch (e: Exception) {
-            Toast.makeText((mView as? Activity), "没有安装", Toast.LENGTH_LONG).show()
+//            Toast.makeText((mView as? Activity), "没有安装", Toast.LENGTH_LONG).show()
         }
     }
 }
