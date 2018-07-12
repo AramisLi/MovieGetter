@@ -19,7 +19,7 @@ interface Parser {
 }
 
 interface Pipeline {
-    fun pipe(context: Context?, items: List<Item>, handler: Handler?)
+    fun pipe(context: Context?, items: List<Item>, handler: Handler?,statusCallback:((what:Int,obj:Any?)->Unit)?=null)
 }
 
 open class Item : Serializable

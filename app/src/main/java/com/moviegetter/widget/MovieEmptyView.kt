@@ -12,6 +12,7 @@ import android.widget.TextView
 import com.moviegetter.R
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.dip
+import org.jetbrains.anko.px2dip
 import org.jetbrains.anko.textColor
 
 /**

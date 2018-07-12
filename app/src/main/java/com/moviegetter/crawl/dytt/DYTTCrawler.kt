@@ -26,12 +26,12 @@ class DYTTCrawler : BaseCrawler() {
             "http://www.dytt8.net/html/gndy/rihan/index.html",
             "http://www.dytt8.net/html/gndy/jddy/index.html")
 
-    fun startCrawl(context: Context?, position: Int, pages: Int, handler: Handler?) {
-//        super.startedAdds(listOf("http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"))
-        super.startedAdd("http://www.dytt8.net/html/gndy/dyzz/index.html", position, null)
-        parser.setPages(pages)
-        super.startCrawl(context, parser, pipeline, handler)
-    }
+//    fun startCrawl(context: Context?, position: Int, pages: Int, handler: Handler?) {
+////        super.startedAdds(listOf("http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"))
+//        super.startedAdd("http://www.dytt8.net/html/gndy/dyzz/index.html", position, null)
+//        parser.setPages(pages)
+//        super.startCrawl(context, parser, pipeline, handler)
+//    }
 
     fun startCrawlLite(context: Context?, tag: String, position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
         super.startedAdd(urls[position], position, null)
@@ -49,7 +49,7 @@ class DYTTCrawler : BaseCrawler() {
             if (!notSkip) {
                 logE("link 检查")
                 DYTTDBHelper.linkInsert(context, movieId.toInt(), ((node.item as? DYTTItem)?.movieName
-                        ?: ""), (node.position ?: -1))
+                        ?: ""), node.position)
             }
             notSkip
         } else {

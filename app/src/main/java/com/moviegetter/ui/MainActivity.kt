@@ -16,13 +16,13 @@ import com.aramis.library.component.dialog.DefaultHintDialog
 import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
-import com.moviegetter.bean.User
 import com.moviegetter.config.Config
 import com.moviegetter.config.DBConfig
+import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.CrawlLiteSubscription
-import com.moviegetter.ui.component.DownloadDialog
 import com.moviegetter.ui.component.OptionsPop
 import com.moviegetter.ui.main.activity.IPZActivity
+import com.moviegetter.ui.main.activity.SettingActivity
 import com.moviegetter.ui.main.activity.UserActivity
 import com.moviegetter.ui.main.adapter.MainSimpleAdapter
 import com.moviegetter.ui.main.fragment.*
@@ -42,16 +42,13 @@ class MainActivity : MGBaseActivity(), MainView {
     private val statusDataList = mutableListOf<String>()
     private val statusAdapter = MainSimpleAdapter(statusDataList)
     private var optionPop: OptionsPop? = null
-//    private val dataList = mutableListOf<DYTTItem>()
-//    private var listAdapter = DYTTListAdapter(dataList)
-
     private var fragmentAdapter: DefaultFrgPagerAdapter? = null
     //接受状态的bus
     private var crawlSubscription: Subscription? = null
     //新世界dialog
     private var newWorldDialog: DefaultHintDialog? = null
-    //下载dialog
-    private var downloadDialog: DownloadDialog? = null
+    //markInId
+    private var markInId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,11 +58,23 @@ class MainActivity : MGBaseActivity(), MainView {
         setListener()
 
         mgRequestPermissions()
+        requestMarkIn()
+    }
+
+    private fun requestMarkIn() {
+        presenter.requestMarkIn()
+    }
+
+    private fun requestMarkOut(markInId: Int) {
+        presenter.requestMarkOut(markInId)
     }
 
     private fun mgRequestPermissions() {
         val imei = getImei()
         logE("===imei:$imei")
+        if (imei != null) {
+            MGsp.putImei(imei)
+        }
         presenter.checkNewWorld(imei)
     }
 
@@ -84,11 +93,11 @@ class MainActivity : MGBaseActivity(), MainView {
             when (position) {
             //同步本页
                 0 -> {
-                    presenter.startCrawlLite(viewpager_main.currentItem,2)
+                    presenter.startCrawlLite(viewpager_main.currentItem, 2)
                 }
                 1 -> {
                     toast("同步10页时间较长，请耐心等待")
-                    presenter.startCrawlLite(viewpager_main.currentItem,10)
+                    presenter.startCrawlLite(viewpager_main.currentItem, 10)
                 }
                 2 -> {
                     //新世界
@@ -96,6 +105,9 @@ class MainActivity : MGBaseActivity(), MainView {
 
                 }
                 3 -> {
+                    startActivity<SettingActivity>()
+                }
+                4 -> {
                     startActivity<UserActivity>()
                 }
             }
@@ -175,8 +187,6 @@ class MainActivity : MGBaseActivity(), MainView {
         newWorldDialog?.setNegativeClickListener("取消") {
             newWorldDialog?.dismiss()
         }
-
-        downloadDialog = DownloadDialog(this, mutableListOf(), mutableListOf())
     }
 
     private fun toNewWorld() {
@@ -198,36 +208,33 @@ class MainActivity : MGBaseActivity(), MainView {
         statusAdapter.notifyDataSetChanged()
     }
 
-//    override fun onGetDataSuccess(list: List<DYTTItem>) {
-//        view_empty.visibility = View.GONE
-//        dataList.clear()
-//        dataList.addAll(list)
-//        listAdapter.notifyDataSetChanged()
-//    }
-
-//    override fun onGetDataFail(errorCode: Int, errorMsg: String) {
-//        if (errorCode == 1) {
-////            view_empty.visibility = View.VISIBLE
-//        } else {
-//            toast(errorMsg)
-//        }
-//    }
-
     override fun onCrawlFail(errorCode: Int, errorMsg: String) {
         toast(errorMsg)
     }
 
-    override fun checkNewWorld(user: User) {
-        //显示新世界dialog
-        newWorldDialog?.show()
+    override fun checkNewWorld(role: String) {
+        if (!MGsp.getNewWorldDialog()) {
+            //显示新世界dialog
+            newWorldDialog?.show()
+            MGsp.setNewWorldDialog()
+        }
+
         val list = mutableListOf("同步1页", "同步10页", "新世界")
-        if (user.role == DBConfig.USER_ROLE_ROOT) {
+        if (role == DBConfig.USER_ROLE_VIP || role == DBConfig.USER_ROLE_MANAGER || role == DBConfig.USER_ROLE_ROOT) {
+            list.add("设置")
+        }
+        if (role == DBConfig.USER_ROLE_ROOT) {
             list.add("User")
         }
         optionPop?.notifyDataSetChanged(list)
     }
 
+    override fun onMarkInSuccess(markId: Int) {
+        this.markInId = markId
+    }
+
     override fun onDestroy() {
+        requestMarkOut(markInId)
         super.onDestroy()
         crawlSubscription?.unsubscribe()
     }

@@ -3,7 +3,6 @@ package com.moviegetter.utils
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.moviegetter.config.DBConfig
-import com.moviegetter.crawl.base.Item
 import org.jetbrains.anko.db.*
 
 /**
@@ -80,12 +79,17 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
                     "name" to "乐视",
                     "imei" to "868897020889812",
                     "auth_code" to "",
-                    "role" to "root")
+                    "role" to DBConfig.USER_ROLE_ROOT)
             insert(DBConfig.TABLE_NAME_USER, "id" to "2",
                     "name" to "刘伟",
                     "imei" to "861759034263086",
                     "auth_code" to "",
-                    "role" to "vip")
+                    "role" to DBConfig.USER_ROLE_VIP)
+            insert(DBConfig.TABLE_NAME_USER, "id" to "3",
+                    "name" to "Mix2",
+                    "imei" to "865736039728368",
+                    "auth_code" to "",
+                    "role" to DBConfig.USER_ROLE_VIP)
         }
     }
 }

@@ -18,8 +18,11 @@ class MGApplication : BunnyApplication() {
     override fun onCreate() {
         super.onCreate()
         MGsp.init(this)
+        //首次打开
         if (MGsp.firstOpen()) {
             DBHelper.getInstance(this@MGApplication).initUser()
+            //默认为开启新世界图片
+            MGsp.getConfigSP(this)?.edit()?.putBoolean("showADYPicture", true)?.apply()
             MGsp.closeFirstOpen()
         }
     }

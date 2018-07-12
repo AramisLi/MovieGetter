@@ -128,10 +128,37 @@ class ExampleUnitTest {
         val linkList = listOf(56910, 56912, 56913, 56914, 56926, 56942, 56943, 56945, 56959, 56980, 56981, 56983)
 
         val a = linkList.joinToString { "," }.toString()
-        val b=linkList.joinToString(",")
+        val b = linkList.joinToString(",")
         println(a)
         println(b)
-        val c="movieId in (%s)".format(linkList.joinToString(","))
+        val c = "movieId in (%s)".format(linkList.joinToString(","))
         println(c)
+    }
+
+    @Test
+    fun testNextPage() {
+        val url = "http://www.54xfw.com/list/index1.html"
+        val url2 = "http://www.54xfw.com/list/index1_11.html"
+        val url_1 = "http://www.54xfw.com/list/index12.html"
+        val re = """index(\d+)""".toRegex()
+        val a = re.findAll(url).iterator()
+        val b = re.findAll(url_1).iterator()
+        val c=re.containsMatchIn(url)
+        val d=re.matchEntire(url)?.value
+        println("123")
+        println(a.next().value)
+        println(b.next().value)
+        println(c)
+        println(d)
+
+        val index2=url.substring(0,url.lastIndexOf("."))+"_2"+url.substring(url.lastIndexOf("."),url.length)
+        println(index2)
+
+        val index_child = url2.substring(url2.lastIndexOf("_") + 1, url2.lastIndexOf(".")).toInt()
+        println(index_child)
+
+        val next_page=url2.substring(0, url2.lastIndexOf("_") + 1) + (index_child + 1) +
+                url2.substring(url2.lastIndexOf("."), url2.length)
+        println(next_page)
     }
 }

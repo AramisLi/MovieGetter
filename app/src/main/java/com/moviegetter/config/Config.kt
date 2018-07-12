@@ -8,4 +8,6 @@ package com.moviegetter.config
 object Config {
     const val TAG_DYTT = DBConfig.TABLE_NAME_DYTT
     const val TAG_ADY = DBConfig.TABLE_NAME_ADY
+
+
 }

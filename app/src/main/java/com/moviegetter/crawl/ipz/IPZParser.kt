@@ -26,8 +26,21 @@ class IPZParser : Parser {
         }
     }
 
-    private fun nextPage() {
-
+    private fun nextPage(url: String): String? {
+        if (url.contains("_")) {
+            //index1_2
+            val indexChild = url.substring(url.lastIndexOf("_") + 1, url.lastIndexOf(".")).toInt()
+            if (indexChild < pages) {
+                return url.substring(0, url.lastIndexOf("_") + 1) + (indexChild + 1).toString() +
+                        url.substring(url.lastIndexOf("."), url.length)
+            }
+        } else {
+            //index1
+            if (pages != 1) {
+                return url.substring(0, url.lastIndexOf(".")) + "_2" + url.substring(url.lastIndexOf("."), url.length)
+            }
+        }
+        return null
     }
 
     private fun getBaseUrl(originUrl: String) {
@@ -46,7 +59,6 @@ class IPZParser : Parser {
         val document = Jsoup.parse(html)
         val titles = document.select("div.list-pianyuan-box-l > a")
         val movieDates = document.select("div.list-pianyuan-box-r > div > span").filter { """\d+-\d+-\d+""".toRegex().matches(it.text()) }
-//        val img=document.select("div.list-pianyuan-box-l img")
         val resultList = titles.mapIndexed { index, element ->
             val href = element.attr("href")
             val movieId = getMovieId(href)
@@ -54,8 +66,12 @@ class IPZParser : Parser {
             val item = IPZItem(movieId.toInt(), element.attr("title"), (if (index in movieDates.indices) movieDates[index].text() else null),
                     thumb = baseUrl + element.child(0).attr("src"), position = originNode.position)
             CrawlNode(baseUrl + href, 1, originNode, null, item, false, originNode.tag, originNode.position)
+        }.toMutableList()
+        //下一页
+        nextPage(originNode.url)?.apply {
+            resultList.add(CrawlNode(this, 0, null, mutableListOf(), null, false, originNode.tag, originNode.position))
         }
-        nextPage()
+
         return resultList
     }
 

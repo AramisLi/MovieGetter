@@ -74,7 +74,8 @@ class IPZPipeline : BasePipeline() {
                             "movie_update_timestamp" to (it.movie_update_time?.getTimestamp("yyyy-MM-dd")
                                     ?: 0),
                             "thumb" to it.thumb,
-                            "images" to it.images)
+                            "images" to it.images,
+                            "position" to it.position)
                 }
             }
         }

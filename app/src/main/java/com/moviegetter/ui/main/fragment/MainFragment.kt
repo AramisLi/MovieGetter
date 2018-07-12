@@ -17,6 +17,7 @@ import com.moviegetter.ui.component.DownloadDialog
 import com.moviegetter.ui.main.adapter.DYTTListAdapter
 import com.moviegetter.ui.main.pv.MainPresenter
 import com.moviegetter.utils.DYTTDBHelper
+import com.moviegetter.utils.MovieGetterHelper
 import kotlinx.android.synthetic.main.frg_main.view.*
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription
@@ -33,7 +34,10 @@ abstract class MainFragment : MGBaseFragment() {
     private var position = 0
     private var presenter: MainPresenter? = null
     private var crawlSubscription: Subscription? = null
+    //下载dialog
     private var downloadDialog: DownloadDialog? = null
+    //当前列表点击的位置
+    private var currentClickPosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,7 +87,8 @@ abstract class MainFragment : MGBaseFragment() {
             startCrawl()
         }
         //列表点击事件
-        adapter.onItemClick={item, position ->
+        adapter.onItemClick = { item, position ->
+            currentClickPosition = position
             if (item.downloadName != null && item.downloadThunder != null) {
                 if (item.downloadName!!.contains(",")) {
                     downloadDialog?.show(item.downloadName!!.split(","),
@@ -91,24 +96,33 @@ abstract class MainFragment : MGBaseFragment() {
                 } else {
                     downloadDialog?.show(mutableListOf(item.downloadName!!),
                             mutableListOf(item.downloadThunder!!))
+//                    toast(item.downloadThunder!!)
                 }
             } else {
                 toast("下载地址不存在")
             }
 
         }
-        downloadDialog?.onLinkClick = { link, position ->
-            toast("复制" + link)
+        downloadDialog?.onLinkClick = { link, linkPosition ->
+            //            toast("复制" + link)
+            MovieGetterHelper.copyToClipboard(activity!!, link)
+            toast("复制成功")
         }
-        downloadDialog?.onDownloadClick = { link, position ->
-            DYTTDBHelper.toPlayer(activity,link){
+        downloadDialog?.onDownloadClick = { link, linkPosition ->
+            //打开迅雷
+            DYTTDBHelper.toPlayer(activity, link) {
                 toast("未发现迅雷，请下载安装")
+            }
+            //保存已下载
+            presenter?.saveDownloaded(dataList[currentClickPosition].movieId) {
+                dataList[currentClickPosition].downloaded = 1
+                adapter.notifyDataSetChanged()
             }
         }
     }
 
     private fun startCrawl() {
-        presenter?.startCrawlLite(position,2) {
+        presenter?.startCrawlLite(position, 2) {
             initData()
         }
     }

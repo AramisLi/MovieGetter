@@ -15,3 +15,6 @@ import java.io.Serializable
 //        "create_time" to TEXT
 data class User(val id: Int, val name: String, val imei: String, val auth_code: String?,
                 val role: String, val create_time: String?) : Serializable
+
+data class BaseBean(val code: Int, val msg: String, val extra: String?,
+                       val result: Any? = null) : Serializable

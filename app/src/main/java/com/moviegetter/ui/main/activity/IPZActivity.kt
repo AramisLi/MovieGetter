@@ -4,22 +4,27 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.view.View
 import android.widget.AdapterView
+import com.aramis.library.aramis.ArBus
 import com.aramis.library.base.BasePresenter
 import com.aramis.library.component.adapter.DefaultFrgPagerAdapter
+import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
+import com.moviegetter.config.Config
+import com.moviegetter.crawl.base.CrawlLiteSubscription
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.OptionsPop
 import com.moviegetter.ui.main.adapter.IPZListAdapter
 import com.moviegetter.ui.main.fragment.*
 import com.moviegetter.ui.main.pv.IPZPresenter
 import com.moviegetter.ui.main.pv.IPZView
+import com.moviegetter.ui.main.pv.TitleItemBean
 import com.moviegetter.utils.BottomNavigationViewHelper
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_ipz_list2.*
 import kotlinx.android.synthetic.main.view_toolbar_mg.*
 import org.jetbrains.anko.dip
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
+import rx.Subscription
 
 /**
  *Created by Aramis
@@ -31,20 +36,47 @@ class IPZActivity : MGBaseActivity(), IPZView {
     private val dataList = mutableListOf<IPZItem>()
     private val adapter = IPZListAdapter(dataList)
     private var optionPop: OptionsPop? = null
-    private var fragmentAdapter:DefaultFrgPagerAdapter?=null
+    private var fragmentAdapter: DefaultFrgPagerAdapter? = null
+    //接受状态的bus
+    private var crawlSubscription: Subscription? = null
+    //标题，条目数量
+    private val titleItemCountArray = intArrayOf(0, 0, 0, 0, 0)
+    private var titleItemCountSubscription: Subscription? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ipz_list2)
         initView()
+        initBus()
         setListener()
 
-        initData()
     }
 
-    private fun initData() {
-//        presenter.getData()
+    private fun initBus() {
+        crawlSubscription = CrawlLiteSubscription().getCrawlCountSubscription({
+            it.tag == Config.TAG_ADY
+        }, { total, update, fail, finished ->
+            formatCrawlStatusView(total, update, fail, finished)
+//            if (finished) {
+//                formatTitle(viewpager_main.currentItem)
+//            }
+        })
+        titleItemCountSubscription = ArBus.getDefault().take(TitleItemBean::class.java).filter {
+            it.tag == Config.TAG_ADY
+        }.subscribe {
+            titleItemCountArray[it.position] = it.count
+            if (viewpager_main.currentItem == it.position) {
+                formatTitle(viewpager_main.currentItem)
+            }
+            logE("it.position:${it.position},it.count:${it.count}")
+        }
     }
+
+    private fun formatTitle(position: Int) {
+        val menuItem = bottomNavigationView.menu.getItem(position)
+        setTitleMiddleText(menuItem.title.toString() + "(${titleItemCountArray[position]})")
+    }
+
 
     private fun initView() {
 //        list_ipz.adapter = adapter
@@ -53,9 +85,9 @@ class IPZActivity : MGBaseActivity(), IPZView {
         })
         optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "下载播放器"))
 
-        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(IPZFragmentA(), IPZFragmentB(),IPZFragmentC(), IPZFragmentD(),IPZFragmentE()))
+        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(IPZFragmentA(), IPZFragmentB(), IPZFragmentC(), IPZFragmentD(), IPZFragmentE()))
         viewpager_main.adapter = fragmentAdapter
-        viewpager_main.addOnPageChangeListener(object: ViewPager.OnPageChangeListener{
+        viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
@@ -63,11 +95,14 @@ class IPZActivity : MGBaseActivity(), IPZView {
             }
 
             override fun onPageSelected(position: Int) {
-                bottomNavigationView.menu.getItem(position).isChecked = true
+                val menuItem = bottomNavigationView.menu.getItem(position)
+//                setTitleMiddleText(menuItem.title.toString())
+                formatTitle(position)
+                menuItem.isChecked = true
             }
         })
         BottomNavigationViewHelper.disableShiftMode(bottomNavigationView)
-        bottomNavigationView.setOnNavigationItemReselectedListener {
+        bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.menu_navigator_ipz_a -> viewpager_main.setCurrentItem(0, false)
                 R.id.menu_navigator_ipz_b -> viewpager_main.setCurrentItem(1, false)
@@ -75,6 +110,7 @@ class IPZActivity : MGBaseActivity(), IPZView {
                 R.id.menu_navigator_ipz_d -> viewpager_main.setCurrentItem(3, false)
                 R.id.menu_navigator_ipz_e -> viewpager_main.setCurrentItem(4, false)
             }
+            false
         }
     }
 
@@ -85,16 +121,17 @@ class IPZActivity : MGBaseActivity(), IPZView {
 //        list_ipz.setOnItemClickListener { parent, view, position, id ->
 //            presenter.toXfPlayer(dataList[position].xf_url)
 //        }
-//        view_empty.setClickListener(View.OnClickListener {
-//            startCrawl()
-//        })
+
 
         optionPop?.listListener = { parent: AdapterView<*>, view: View, position: Int, id: Long ->
             when (position) {
                 0 -> {
-                    startCrawl()
+                    startCrawl(2)
                 }
-                1 -> toast("同步全部")
+                1 -> {
+                    toast("同步10页时间较长，请耐心等待")
+                    startCrawl(10)
+                }
                 2 -> {
                     presenter.downloadPlayer()
                 }
@@ -103,9 +140,9 @@ class IPZActivity : MGBaseActivity(), IPZView {
         }
     }
 
-    private fun startCrawl() {
+    private fun startCrawl(pages: Int) {
         layout_sync_mg.visibility = View.VISIBLE
-        presenter.startCrawl(0)
+        presenter.startCrawlLite(viewpager_main.currentItem, pages)
     }
 
     override fun handleCrawlStatus(total: Int, update: Int, fail: Int, finished: Boolean) {
@@ -125,6 +162,11 @@ class IPZActivity : MGBaseActivity(), IPZView {
         } else {
             toast(errorMsg)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        crawlSubscription?.unsubscribe()
     }
 
 

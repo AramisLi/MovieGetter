@@ -1,23 +1,27 @@
 package com.moviegetter.ui.main.pv
 
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 //import android.widget.Toast
+import android.app.Activity
+import com.aramis.library.aramis.ArBus
 import com.aramis.library.base.BaseView
+import com.aramis.library.extentions.getTimestamp
+import com.aramis.library.extentions.logE
+import com.aramis.library.extentions.now
 import com.kymjs.rxvolley.toolbox.RxVolleyContext.toast
+import com.moviegetter.api.Api
 import com.moviegetter.base.MGBasePresenter
+import com.moviegetter.config.Config
 import com.moviegetter.config.DBConfig
-import com.moviegetter.crawl.base.CrawlerHandler
+import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.ipz.IPZCrawler
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.utils.DYTTDBHelper
 import com.moviegetter.utils.database
-import org.jetbrains.anko.db.RowParser
 import org.jetbrains.anko.db.SqlOrderDirection
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.io.Serializable
 
 /**
  *Created by Aramis
@@ -27,42 +31,31 @@ import org.jetbrains.anko.uiThread
 class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
     private val playDownloadUrl = "http://down.xfplay.com/xfplay.apk"
     private val crawler = IPZCrawler()
-    private val handler = CrawlerHandler().createByCount(l = { total, update, fail, finished ->
-        mView?.handleCrawlStatus(total, update, fail, finished)
-    })
 
     fun downloadPlayer() {
         DYTTDBHelper.toPlayer(activity, playDownloadUrl) {
-
-            toast("还是不行")
+            toast("系统错误")
         }
     }
 
-    fun startCrawl(position: Int) {
-        crawler.startCrawl((mView as? Activity), position, 2, handler)
-    }
 
-
-    fun startCrawlLite(position: Int, onFinished: (() -> Unit)? = null) {
-        crawler.startCrawlLite((mView as? Activity), position, 2, onFinished)
+    fun startCrawlLite(position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
+        crawler.startCrawlLite((mView as? Activity), position, pages, onFinished)
     }
 
 
     fun getData(position: Int, onSuccess: (results: List<IPZItem>) -> Unit, onFail: (errorCode: Int, errorMsg: String) -> Unit) {
         doAsync {
             (mView as? Activity)?.database?.use {
-                if (select(DBConfig.TABLE_NAME_ADY).exec { this.count } > 0) {
-                    val list = select(DBConfig.TABLE_NAME_ADY).whereArgs("position={position}", "position" to position).orderBy("movie_update_timestamp", SqlOrderDirection.DESC).parseList(object : RowParser<IPZItem> {
-                        override fun parseRow(columns: Array<Any?>): IPZItem {
-
-                            return IPZItem((columns[0] as Long).toInt(), columns[1] as String,
-                                    columns[2] as String, columns[3] as String?,
-                                    columns[4] as String?, columns[5] as String?,
-                                    (columns[6] as? Long ?: 0L), columns[7] as String?,
-                                    columns[8] as String?)
-                        }
-
-                    })
+                DYTTDBHelper.addColumn(this, DBConfig.TABLE_NAME_ADY)
+                val count = select(DBConfig.TABLE_NAME_ADY)
+                        .whereArgs("position={position}", "position" to position)
+                        .exec { this.count }
+                if (count > 0) {
+                    val list = select(DBConfig.TABLE_NAME_ADY)
+                            .whereArgs("position={position}", "position" to position)
+                            .orderBy("movie_update_timestamp", SqlOrderDirection.DESC)
+                            .parseList(IPZRowParser())
                     uiThread {
                         mView?.onGetDataSuccess(list)
                         onSuccess.invoke(list)
@@ -78,17 +71,32 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
         }
     }
 
-    fun toXfPlayer(playData: String?) {
-        try {
-//            val intent = this.packageManager.getLaunchIntentForPackage(appPackageName)
-//            val link = "xfplay://QUFodHRwOi8vZGwxNTEuODBzLmltOjkyMC8xNzExL+i/veW/hi/ov73lv4YubXA0Wlo="
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(playData))
-            intent.addCategory("android.intent.category.DEFAULT")
-            (mView as? Activity)?.startActivity(intent)
-        } catch (e: Exception) {
-//            Toast.makeText((mView as? Activity), "没有安装", Toast.LENGTH_LONG).show()
-        }
+    fun postTitleMessage(position: Int, count: Int) {
+        ArBus.getDefault().post(TitleItemBean(Config.TAG_ADY, position, count))
     }
+
+    fun saveDownloaded(movieId: Int, movieName: String, onSuccess: () -> Unit) {
+        doAsync {
+            DYTTDBHelper.saveDownloaded(activity, DBConfig.TABLE_NAME_ADY, movieId,
+                    onSuccess = {
+                        uiThread {
+                            onSuccess.invoke()
+                        }
+                    })
+        }
+        val downloadedTime = now()
+        post(Api.markMovie, mapOf("imei" to MGsp.getImei(), "movieId" to movieId, "movieName" to movieName,
+                "downloaded_time" to downloadedTime, "downloaded_timestamp" to downloadedTime.getTimestamp().toString()), getMGCallback({ t, result ->
+            logE("访问markMovie成功 $t")
+            if (result != null) {
+                logE(result::class.java.name)
+                logE(result)
+            }
+        }, { errorCode, errorMsg ->
+            logE("访问markMovie出错 errorCode:$errorCode,errorMsg:$errorMsg")
+        }))
+    }
+
 }
 
 interface IPZView : BaseView {
@@ -97,3 +105,5 @@ interface IPZView : BaseView {
 
     fun handleCrawlStatus(total: Int, update: Int, fail: Int, finished: Boolean)
 }
+
+data class TitleItemBean(val tag: String, val position: Int, val count: Int) : Serializable

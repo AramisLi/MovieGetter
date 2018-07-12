@@ -38,7 +38,7 @@ abstract class SimpleBaseAdapter<T>(var mEntities: List<T>) : BaseAdapter() {
             holder = initHolder(mView)
             mView.tag = holder
             convertView?.tag = holder
-            logE(holder.toString())
+//            logE(holder.toString())
         } else {
             mView = convertView
             holder = mView?.tag as SimpleBaseAdapterHolder

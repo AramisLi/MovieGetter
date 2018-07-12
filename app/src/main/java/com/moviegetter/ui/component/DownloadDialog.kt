@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.aramis.library.base.SimpleBaseAdapter
 import com.aramis.library.base.SimpleBaseAdapterHolder
 import com.aramis.library.component.dialog.BunnyDialog
+import com.aramis.library.extentions.logE
 import com.moviegetter.R
 
 /**
@@ -18,9 +19,11 @@ import com.moviegetter.R
  */
 class DownloadDialog(context: Context, val names: MutableList<String>, val urls: MutableList<String>) : BunnyDialog {
     private var dialog: Dialog? = null
-    var onLinkClick: ((link: String, position: Int) -> Unit)? = null
-    var onDownloadClick: ((link: String, position: Int) -> Unit)? = null
+    var showAccentButton = true
+    var onLinkClick: ((link: String, linkPosition: Int) -> Unit)? = null
+    var onDownloadClick: ((link: String, linkPosition: Int) -> Unit)? = null
     private var adapter: ListViewAdapter? = null
+    var downloadText = "迅雷下载"
 
     init {
         dialog = Dialog(context, R.style.new_custom_dialog)
@@ -41,7 +44,7 @@ class DownloadDialog(context: Context, val names: MutableList<String>, val urls:
         adapter?.notifyDataSetChanged()
     }
 
-    fun show(names: List<String>, urls: List<String>){
+    fun show(names: List<String>, urls: List<String>) {
         notifyDataSetChanged(names, urls)
         show()
     }
@@ -62,10 +65,17 @@ class DownloadDialog(context: Context, val names: MutableList<String>, val urls:
         override fun initDatas(holder: SimpleBaseAdapterHolder, bean: String, position: Int) {
             (holder as ViewHolder).apply {
                 text_dialog_name.text = names[position]
-                text_dialog_link.setOnClickListener {
-                    onLinkClick?.invoke(urls[position], position)
+                logE("showAccentButton:$showAccentButton")
+                if (showAccentButton) {
+                    text_dialog_link.setOnClickListener {
+                        onLinkClick?.invoke(urls[position], position)
+                    }
+                } else {
+                    text_dialog_link.visibility = View.GONE
                 }
+                text_dialog_xunlei.text = downloadText
                 text_dialog_xunlei.setOnClickListener {
+                    //                    logE("DownloadDialog onDownloadClick position=$position")
                     onDownloadClick?.invoke(urls[position], position)
                 }
 
