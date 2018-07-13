@@ -1,9 +1,12 @@
 package com.moviegetter.ui.main.pv
 
 import android.app.Activity
+import android.os.Environment
 import com.aramis.library.base.BaseView
 import com.aramis.library.extentions.logE
 import com.aramis.library.extentions.now
+import com.kymjs.rxvolley.RxVolley
+import com.kymjs.rxvolley.client.HttpCallback
 import com.moviegetter.api.Api
 import com.moviegetter.base.MGBasePresenter
 import com.moviegetter.bean.User
@@ -21,6 +24,7 @@ import org.jetbrains.anko.db.select
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
+import java.io.File
 
 
 /**
@@ -30,7 +34,6 @@ import org.json.JSONObject
  */
 class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
     private var dyttCrawler = DYTTCrawler()
-    private var test = true
 
     fun getData(position: Int, onSuccess: (results: List<DYTTItem>) -> Unit, onFail: (errorCode: Int, errorMsg: String) -> Unit) {
         doAsync {
@@ -50,29 +53,7 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
                     select(DBConfig.TABLE_NAME_DYTT)
                             .whereArgs("movieId in (%s)".format(linkList.joinToString(",")))
                             .orderBy("movie_update_timestamp", SqlOrderDirection.DESC)
-                            .parseList(object : RowParser<DYTTItem> {
-                                override fun parseRow(columns: Array<Any?>): DYTTItem {
-                                    if (test) {
-                                        logE("columns.size" + columns.size.toString())
-                                        for (i in columns) {
-                                            logE(i.toString())
-                                        }
-                                        logE("downloaded ${(columns[10] as Long).toInt()} ${columns[10]!!::class.java.name}")
-                                        test = false
-                                    }
-
-                                    return DYTTItem((columns[0] as Long).toInt(), columns[1] as String,
-
-                                            columns[2]as? String, columns[3]as? String,
-                                            columns[4]as? String, columns[5]as? String,
-                                            columns[6]as? String, columns[7]as? String,
-                                            columns[8]as? String, (columns[9]as? Long ?: 0L),
-                                            position,
-                                            (columns[10] as Long).toInt(), columns[11] as? String?)
-                                }
-
-                            })
-
+                            .parseList(DYTTRowParser(position))
                 } else {
                     null
                 }
@@ -80,13 +61,13 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
             }
 
             if (resultList != null && resultList.isNotEmpty()) {
-                logE("成功")
+//                logE("成功")
                 logE(resultList[0].toString())
                 uiThread {
                     onSuccess.invoke(resultList)
                 }
             } else {
-                logE("失败")
+//                logE("失败")
                 uiThread {
                     onFail.invoke(1, "暂无数据")
                 }
@@ -136,6 +117,25 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
             }, { errorCode, errorMsg ->
                 logE("访问getRole出错 errorCode:$errorCode,errorMsg:$errorMsg")
             }))
+
+            val dir = File(Environment.getExternalStorageDirectory().absolutePath + File.separator + "MovieGetter" + File.separator + "apk")
+            if (!dir.exists()) {
+                dir.mkdirs()
+            }
+            RxVolley.download(dir.absolutePath, Api.apk, { transferredBytes, totalSize ->
+                logE("transferredBytes:$transferredBytes,totalSize:$totalSize")
+
+            }, object : HttpCallback() {
+                override fun onSuccess(t: String?) {
+                    super.onSuccess(t)
+                    logE("下载文件成功")
+                }
+
+                override fun onFailure(errorNo: Int, strMsg: String?) {
+                    super.onFailure(errorNo, strMsg)
+                    logE("下载文件失败 errorNo:$errorNo,strMsg:$strMsg")
+                }
+            })
         }
 
     }

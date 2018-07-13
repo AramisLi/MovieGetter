@@ -57,12 +57,6 @@ open class MGBasePresenter<T : BaseView>(view: T) : BasePresenter<T>(view) {
         val jsonHttpParams = ArHttpUtils.getJsonHttpParams(data)
         //head
 //        jsonHttpParams.putHeaders("Accept", "application/json")
-//        jsonHttpParams.putHeaders("User-Agent", "WA/1.0.0 iPhone/9.1.1")
-//        jsonHttpParams.putHeaders("Wa-Api-Id", WaApiId)
-//        jsonHttpParams.putHeaders("Wa-Api-Key", WaApiKey)
-//        jsonHttpParams.putHeaders("Wa-Api-Platform", "Android")
-//        jsonHttpParams.putHeaders("Content-Type", "application/json; charset=utf-8")
-//        jsonHttpParams.putHeaders("Wa-Client-ID", BoshSP.getPushObjectId())
         //body
         if (useJson) {
             jsonHttpParams.putJsonParams(Gson().toJson(data))
@@ -94,6 +88,7 @@ open class MGBasePresenter<T : BaseView>(view: T) : BasePresenter<T>(view) {
                 .useServerControl(!useCache)
                 .progressListener(listener)
                 .doTask()
+
     }
 
     protected fun get(baseUrl: String, data: Map<String, Any>?, httpCallback: HttpCallback, userCache: Boolean = false) {

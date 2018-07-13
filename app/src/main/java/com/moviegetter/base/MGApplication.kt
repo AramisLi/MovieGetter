@@ -1,7 +1,17 @@
 package com.moviegetter.base
 
+import android.app.Activity
+import android.app.Application
+import android.os.Bundle
 import android.support.v7.app.AppCompatDelegate
 import com.aramis.library.base.BunnyApplication
+import com.aramis.library.extentions.logE
+import com.aramis.library.extentions.now
+import com.aramis.library.http.ArRxVolley
+import com.kymjs.rxvolley.RxVolley
+import com.kymjs.rxvolley.client.HttpParams
+import com.moviegetter.api.Api
+import com.moviegetter.config.Config
 import com.moviegetter.config.MGsp
 import com.moviegetter.utils.DBHelper
 
@@ -25,5 +35,49 @@ class MGApplication : BunnyApplication() {
             MGsp.getConfigSP(this)?.edit()?.putBoolean("showADYPicture", true)?.apply()
             MGsp.closeFirstOpen()
         }
+
+        registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityPaused(activity: Activity?) {
+            }
+
+            override fun onActivityResumed(activity: Activity?) {
+            }
+
+            override fun onActivityStarted(activity: Activity?) {
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
+            }
+
+            override fun onActivityStopped(activity: Activity?) {
+            }
+
+            override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
+            }
+
+            override fun onActivityDestroyed(activity: Activity?) {
+                if (activity != null) {
+                    logE(activity::class.java.name + " Destroyed")
+                } else {
+                    logE(" Destroyed")
+                }
+
+            }
+
+        })
     }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (!Config.isMainBackClick) {
+            logE("Recent Apps Click: " + Config.markInId)
+            val httpParams = HttpParams()
+            httpParams.put("mark_id", Config.markInId)
+            httpParams.put("logout_time", now())
+            ArRxVolley.Builder().url(Api.markOut).params(httpParams).httpMethod(RxVolley.Method.POST)
+                    .doTask()
+        }
+    }
+
+
 }

@@ -9,5 +9,6 @@ object Config {
     const val TAG_DYTT = DBConfig.TABLE_NAME_DYTT
     const val TAG_ADY = DBConfig.TABLE_NAME_ADY
 
-
+    var markInId = 0
+    var isMainBackClick = false
 }

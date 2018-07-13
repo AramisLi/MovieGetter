@@ -12,6 +12,7 @@ import com.moviegetter.ui.main.pv.IPZRowParser
 import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.update
+import kotlin.coroutines.experimental.coroutineContext
 
 /**
  *Created by Aramis
@@ -70,6 +71,7 @@ object DYTTDBHelper {
         } catch (e: java.lang.Exception) {
             onFail?.invoke(e.message ?: "空")
         }
+
     }
 
     fun addColumn(s: SQLiteDatabase, tableName: String) {

@@ -8,6 +8,7 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.aramis.library.base.BaseActivity
+import com.aramis.library.extentions.logE
 import com.moviegetter.R
 
 /**
@@ -32,5 +33,10 @@ abstract class MGBaseActivity : BaseActivity() {
             layout.findViewById<ImageView>(R.id.image_mg_finished).visibility = if (finished) View.VISIBLE else View.GONE
             layout.findViewById<ProgressBar>(R.id.progress_mg).visibility = if (finished) View.GONE else View.VISIBLE
         }
+    }
+
+    override fun finish() {
+        super.finish()
+        logE("finish finish finish")
     }
 }

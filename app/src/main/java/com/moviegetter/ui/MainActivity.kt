@@ -116,9 +116,11 @@ class MainActivity : MGBaseActivity(), MainView {
     }
 
     fun getImei(): String? {
-        return if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+        logE("文件读取权限:${ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED}")
+        return if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             //            toast("需要动态获取权限");
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), 1001)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 1001)
             null
         } else {
             //            toast("不需要动态获取权限");
@@ -219,8 +221,9 @@ class MainActivity : MGBaseActivity(), MainView {
             MGsp.setNewWorldDialog()
         }
 
-        val list = mutableListOf("同步1页", "同步10页", "新世界")
+        val list = mutableListOf("同步1页", "同步10页")
         if (role == DBConfig.USER_ROLE_VIP || role == DBConfig.USER_ROLE_MANAGER || role == DBConfig.USER_ROLE_ROOT) {
+            list.add("新世界")
             list.add("设置")
         }
         if (role == DBConfig.USER_ROLE_ROOT) {
@@ -231,6 +234,12 @@ class MainActivity : MGBaseActivity(), MainView {
 
     override fun onMarkInSuccess(markId: Int) {
         this.markInId = markId
+        Config.markInId = markId
+    }
+
+    override fun finish() {
+        super.finish()
+        Config.isMainBackClick = true
     }
 
     override fun onDestroy() {

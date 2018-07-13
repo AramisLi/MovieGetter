@@ -6,8 +6,8 @@ package com.moviegetter.api
  *Description:
  */
 object Api {
-//    private const val baseUrl = "http://192.168.40.15:5001/"
-    private const val baseUrl = "http://180.76.190.163:5001/"
+    private const val baseUrl = "http://192.168.40.15:5001/"
+//    private const val baseUrl = "http://180.76.190.163:5001/"
 
     const val index = baseUrl + "index"
     const val createUser = baseUrl + "create_user"
@@ -15,4 +15,5 @@ object Api {
     const val markIn = baseUrl + "mark_in"
     const val markOut = baseUrl + "mark_out"
     const val markMovie = baseUrl + "mark_movie"
+    const val apk = baseUrl + "download/apk"
 }
