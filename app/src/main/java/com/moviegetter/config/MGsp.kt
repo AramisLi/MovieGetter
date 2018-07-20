@@ -61,4 +61,12 @@ object MGsp {
     fun getConfigSP(context: Context): SharedPreferences? {
         return context.getSharedPreferences("mgConfig", Context.MODE_PRIVATE)
     }
+
+    fun getIpzBaseUrl(): String {
+        return sp?.getString("ipzBaseUrl", "http://www.xfa50.com") ?: "http://www.xfa50.com"
+    }
+
+    fun putIpzBaseUrl(url: String) {
+        sp?.edit()?.putString("ipzBaseUrl", url)?.apply()
+    }
 }

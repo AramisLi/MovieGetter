@@ -3,6 +3,7 @@ package com.moviegetter.crawl.ipz
 import android.content.Context
 import com.moviegetter.config.Config
 import com.moviegetter.config.DBConfig
+import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.BaseCrawler
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.utils.database
@@ -16,16 +17,8 @@ import org.jetbrains.anko.db.select
 class IPZCrawler : BaseCrawler() {
     private val parser = IPZParser()
     private var pipeline = IPZPipeline()
-    private var baseUrl = "http://www.54xfw.com"
+    private var baseUrl = MGsp.getIpzBaseUrl()
 
-
-//    fun startCrawl(context: Context?, position: Int, pages: Int, handler: Handler?) {
-////        super.startedAdds(listOf("http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"))
-//        super.startedAdd("$baseUrl/list/index1.html", position, null)
-//        parser.pages = pages
-//
-//        super.startCrawl(context, parser, pipeline, handler)
-//    }
 
     fun startCrawlLite(context: Context?, position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
         fun superAdd(url: String) {

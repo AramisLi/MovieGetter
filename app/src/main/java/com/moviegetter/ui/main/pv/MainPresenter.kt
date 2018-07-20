@@ -25,6 +25,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import java.io.File
+import java.nio.charset.Charset
 
 
 /**
@@ -34,6 +35,22 @@ import java.io.File
  */
 class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
     private var dyttCrawler = DYTTCrawler()
+
+    fun findIpzUrl() {
+        get(MGsp.getIpzBaseUrl() + "/js/ads/caonimei.js", object : HttpCallback() {
+            override fun onSuccess(t: String?) {
+                super.onSuccess(t)
+                t?.apply {
+                    val resJs = String(t.toByteArray(), Charset.forName("GBK"))
+                    val matchResult = """<b>(www.*?)</b>""".toRegex().find(resJs)
+                    matchResult?.value?.apply {
+                        val url = "http://" + this.substring(3, this.length - 4)
+                        MGsp.putIpzBaseUrl(url)
+                    }
+                }
+            }
+        })
+    }
 
     fun getData(position: Int, onSuccess: (results: List<DYTTItem>) -> Unit, onFail: (errorCode: Int, errorMsg: String) -> Unit) {
         doAsync {

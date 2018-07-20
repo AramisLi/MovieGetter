@@ -57,6 +57,7 @@ class MainActivity : MGBaseActivity(), MainView {
         initBus()
         setListener()
 
+        presenter.findIpzUrl()
         mgRequestPermissions()
         requestMarkIn()
     }
