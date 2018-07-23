@@ -16,6 +16,7 @@ import com.aramis.library.component.dialog.DefaultHintDialog
 import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
+import com.moviegetter.bean.MgVersion
 import com.moviegetter.config.Config
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
@@ -49,6 +50,7 @@ class MainActivity : MGBaseActivity(), MainView {
     private var newWorldDialog: DefaultHintDialog? = null
     //markInId
     private var markInId = 0
+    private var versionHintDialog: DefaultHintDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,9 +59,14 @@ class MainActivity : MGBaseActivity(), MainView {
         initBus()
         setListener()
 
-        presenter.findIpzUrl()
+        prepare()
         mgRequestPermissions()
         requestMarkIn()
+    }
+
+    private fun prepare() {
+        presenter.checkVersion()
+        presenter.findIpzUrl()
     }
 
     private fun requestMarkIn() {
@@ -89,7 +96,6 @@ class MainActivity : MGBaseActivity(), MainView {
     }
 
     private fun setListener() {
-//        list_
         optionPop?.listListener = { parent: AdapterView<*>, view: View, position: Int, id: Long ->
             when (position) {
             //同步本页
@@ -100,17 +106,15 @@ class MainActivity : MGBaseActivity(), MainView {
                     toast("同步10页时间较长，请耐心等待")
                     presenter.startCrawlLite(viewpager_main.currentItem, 10)
                 }
-                2 -> {
+                2 -> startActivity<SettingActivity>()
+
+                3 -> {
                     //新世界
                     toNewWorld()
+                }
 
-                }
-                3 -> {
-                    startActivity<SettingActivity>()
-                }
-                4 -> {
-                    startActivity<UserActivity>()
-                }
+                4 -> startActivity<UserActivity>()
+
             }
             optionPop?.dismiss()
         }
@@ -153,7 +157,7 @@ class MainActivity : MGBaseActivity(), MainView {
         })
 //        list_result.adapter = listAdapter
 
-        optionPop = OptionsPop(this, listOf("同步1页", "同步10页"))
+        optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "设置"))
 
         fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(MainFragmentA(), MainFragmentB(), MainFragmentC(), MainFragmentD(), MainFragmentE()))
         viewpager_main.adapter = fragmentAdapter
@@ -190,10 +194,25 @@ class MainActivity : MGBaseActivity(), MainView {
         newWorldDialog?.setNegativeClickListener("取消") {
             newWorldDialog?.dismiss()
         }
+
+        versionHintDialog = DefaultHintDialog(this, "提示", "发现新版版，请联系管理更新", 1)
+        versionHintDialog?.setSingleBtnClickListener("确定") {
+            versionHintDialog?.dismiss()
+        }
     }
+
 
     private fun toNewWorld() {
         startActivity<IPZActivity>()
+    }
+
+    override fun onCheckVersionSuccess(bean: MgVersion) {
+//        toast("检查版本成功 $bean")
+        versionHintDialog?.show()
+    }
+
+    override fun onCheckVersionFail(errorCode: Int, errorMsg: String) {
+        logE("检查版本失败 errorCode:$errorCode,errorMsg:$errorMsg")
     }
 
     @SuppressLint("SetTextI18n")
@@ -222,10 +241,9 @@ class MainActivity : MGBaseActivity(), MainView {
             MGsp.setNewWorldDialog()
         }
 
-        val list = mutableListOf("同步1页", "同步10页")
+        val list = mutableListOf("同步1页", "同步10页", "设置")
         if (role == DBConfig.USER_ROLE_VIP || role == DBConfig.USER_ROLE_MANAGER || role == DBConfig.USER_ROLE_ROOT) {
             list.add("新世界")
-            list.add("设置")
         }
         if (role == DBConfig.USER_ROLE_ROOT) {
             list.add("User")

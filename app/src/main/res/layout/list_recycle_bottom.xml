@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_navigator"
+    android:layout_width="62dp"
+    android:layout_height="@dimen/height_recycle_bottom"
+
+    android:gravity="center_horizontal"
+
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="vertical">
+    <!--android:background="@drawable/ripple_bottom_navigator"-->
+    <TextView
+        android:id="@+id/text_navigator_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="首页"
+        android:textSize="13sp" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_navigator_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:srcCompat="@drawable/ic_navigator_a" />
+</LinearLayout>

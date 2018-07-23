@@ -9,6 +9,7 @@ import com.kymjs.rxvolley.RxVolley
 import com.kymjs.rxvolley.client.HttpCallback
 import com.moviegetter.api.Api
 import com.moviegetter.base.MGBasePresenter
+import com.moviegetter.bean.MgVersion
 import com.moviegetter.bean.User
 import com.moviegetter.config.Config
 import com.moviegetter.config.DBConfig
@@ -50,6 +51,20 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
                 }
             }
         })
+    }
+
+    fun checkVersion() {
+        activity?.apply {
+            val packageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
+            val versionCode = packageInfo.versionCode
+            val versionName = packageInfo.versionName
+
+            post(Api.checkVersion, mapOf("version_code" to versionCode, "version_name" to versionName), getDefaultHttpObject<MgVersion>({
+                mView?.onCheckVersionSuccess(it)
+            }, { errorCode, errorMsg ->
+                mView?.onCheckVersionFail(errorCode, errorMsg)
+            }))
+        }
     }
 
     fun getData(position: Int, onSuccess: (results: List<DYTTItem>) -> Unit, onFail: (errorCode: Int, errorMsg: String) -> Unit) {
@@ -224,6 +239,10 @@ interface MainView : BaseView {
     fun checkNewWorld(role: String)
 
     fun onMarkInSuccess(markId: Int)
+
+    fun onCheckVersionSuccess(bean: MgVersion)
+
+    fun onCheckVersionFail(errorCode: Int, errorMsg: String)
 }
 
 class UserRowParser : RowParser<User> {

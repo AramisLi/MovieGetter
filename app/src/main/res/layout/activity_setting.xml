@@ -6,7 +6,15 @@
     <ListView
         android:id="@+id/list_setting"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:divider="#ddd"
         android:dividerHeight="1px" />
+
+    <TextView
+        android:id="@+id/text_setting_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/list_setting"
+        android:textColor="@color/text_color_gray"
+        android:textSize="13sp" />
 </RelativeLayout>

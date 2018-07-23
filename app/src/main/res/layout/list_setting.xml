@@ -3,37 +3,72 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/text_setting_name"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginLeft="15dp"
-        android:gravity="center"
-        android:text="显示图片" />
-
-    <Switch
-        android:id="@+id/switch_setting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="15dp"
-        android:textColor="@color/text_color_black" />
-
-    <TextView
-        android:id="@+id/text_setting_explain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/text_setting_name"
-        android:layout_marginTop="30dp"
-        android:layout_toLeftOf="@id/switch_setting"
-        android:text="显示图片"
-        android:textColor="@color/text_color_gray"
-        android:textSize="12sp" />
-
-    <View
+    <RelativeLayout
+        android:id="@+id/layout_setting_switch"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_below="@id/text_setting_explain" />
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/text_setting_name"
+            android:layout_width="wrap_content"
+            android:layout_height="39dp"
+            android:layout_marginLeft="15dp"
+            android:gravity="center"
+            android:text="显示图片" />
+
+        <Switch
+            android:id="@+id/switch_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:textColor="@color/text_color_black" />
+
+        <TextView
+            android:id="@+id/text_setting_explain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/text_setting_name"
+            android:layout_marginTop="30dp"
+            android:layout_toLeftOf="@id/switch_setting"
+            android:text="显示图片"
+            android:textColor="@color/text_color_gray"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_below="@id/text_setting_explain" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_setting_text"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/text_setting_text_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/left_default"
+            android:gravity="center"
+            android:text="显示图片"
+            android:textColor="@color/text_color_black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_setting_text_value"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/right_default"
+            android:gravity="center"
+            android:text="显示图片"
+            android:textColor="@color/text_color_gray"
+            android:textSize="13sp" />
+    </RelativeLayout>
+
 </RelativeLayout>

@@ -8,5 +8,7 @@
     <dimen name="corner_audit_worker_pop">4dp</dimen>
     <dimen name="corner_selection_item">4dp</dimen>
 
+    <dimen name="height_recycle_bottom">50dp</dimen>
+
 
 </resources>

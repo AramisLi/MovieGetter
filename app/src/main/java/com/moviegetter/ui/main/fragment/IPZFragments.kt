@@ -19,3 +19,23 @@ class IPZFragmentD : IPZFragment() {
 class IPZFragmentE : IPZFragment() {
     override fun getPosition(): Int = 4
 }
+
+class IPZFragmentF : IPZFragment() {
+    override fun getPosition(): Int = 5
+}
+
+class IPZFragmentG : IPZFragment() {
+    override fun getPosition(): Int = 6
+}
+
+class IPZFragmentH : IPZFragment() {
+    override fun getPosition(): Int = 7
+}
+
+class IPZFragmentI : IPZFragment() {
+    override fun getPosition(): Int = 8
+}
+
+class IPZFragmentJ : IPZFragment() {
+    override fun getPosition(): Int = 9
+}

@@ -2,6 +2,7 @@ package com.moviegetter.ui.main.activity
 
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
 import com.aramis.library.aramis.ArBus
@@ -14,12 +15,12 @@ import com.moviegetter.config.Config
 import com.moviegetter.crawl.base.CrawlLiteSubscription
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.OptionsPop
+import com.moviegetter.ui.component.adapter.RecycleBottomMenuAdapter
 import com.moviegetter.ui.main.adapter.IPZListAdapter
 import com.moviegetter.ui.main.fragment.*
 import com.moviegetter.ui.main.pv.IPZPresenter
 import com.moviegetter.ui.main.pv.IPZView
 import com.moviegetter.ui.main.pv.TitleItemBean
-import com.moviegetter.utils.BottomNavigationViewHelper
 import kotlinx.android.synthetic.main.activity_ipz_list2.*
 import kotlinx.android.synthetic.main.view_toolbar_mg.*
 import org.jetbrains.anko.dip
@@ -40,8 +41,10 @@ class IPZActivity : MGBaseActivity(), IPZView {
     //接受状态的bus
     private var crawlSubscription: Subscription? = null
     //标题，条目数量
-    private val titleItemCountArray = intArrayOf(0, 0, 0, 0, 0)
+    private val titleItemCountArray = intArrayOf(0, 0, 0, 0, 0,0, 0, 0, 0, 0)
     private var titleItemCountSubscription: Subscription? = null
+    private lateinit var navigatorNames: List<String>
+    private lateinit var navigatorAdapter: RecycleBottomMenuAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,19 +76,17 @@ class IPZActivity : MGBaseActivity(), IPZView {
     }
 
     private fun formatTitle(position: Int) {
-        val menuItem = bottomNavigationView.menu.getItem(position)
-        setTitleMiddleText(menuItem.title.toString() + "(${titleItemCountArray[position]})")
+        setTitleMiddleText(navigatorNames[position] + "(${titleItemCountArray[position]})")
     }
 
 
     private fun initView() {
-//        list_ipz.adapter = adapter
         setTitleRightText("选项", View.OnClickListener {
             optionPop?.show(it, -dip(70), dip(2))
         })
         optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "下载播放器"))
 
-        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(IPZFragmentA(), IPZFragmentB(), IPZFragmentC(), IPZFragmentD(), IPZFragmentE()))
+        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(IPZFragmentA(), IPZFragmentB(), IPZFragmentC(), IPZFragmentD(), IPZFragmentE(), IPZFragmentF(), IPZFragmentG(), IPZFragmentH(), IPZFragmentI(), IPZFragmentJ()))
         viewpager_main.adapter = fragmentAdapter
         viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
@@ -95,34 +96,23 @@ class IPZActivity : MGBaseActivity(), IPZView {
             }
 
             override fun onPageSelected(position: Int) {
-                val menuItem = bottomNavigationView.menu.getItem(position)
-//                setTitleMiddleText(menuItem.title.toString())
                 formatTitle(position)
-                menuItem.isChecked = true
+                navigatorAdapter.clickPosition = position
+                navigatorAdapter.notifyDataSetChanged()
             }
         })
-        BottomNavigationViewHelper.disableShiftMode(bottomNavigationView)
-        bottomNavigationView.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.menu_navigator_ipz_a -> viewpager_main.setCurrentItem(0, false)
-                R.id.menu_navigator_ipz_b -> viewpager_main.setCurrentItem(1, false)
-                R.id.menu_navigator_ipz_c -> viewpager_main.setCurrentItem(2, false)
-                R.id.menu_navigator_ipz_d -> viewpager_main.setCurrentItem(3, false)
-                R.id.menu_navigator_ipz_e -> viewpager_main.setCurrentItem(4, false)
-            }
-            false
+        navigatorNames = listOf(getString(R.string.text_navigator_ipz_a), getString(R.string.text_navigator_ipz_b), getString(R.string.text_navigator_ipz_c), getString(R.string.text_navigator_ipz_d), getString(R.string.text_navigator_ipz_e),
+                getString(R.string.text_navigator_ipz_f), getString(R.string.text_navigator_ipz_g), getString(R.string.text_navigator_ipz_h), getString(R.string.text_navigator_ipz_i), getString(R.string.text_navigator_ipz_j))
+        navigatorAdapter = RecycleBottomMenuAdapter(navigatorNames)
+        recycle_navigator.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        navigatorAdapter.onItemClickListener = {
+            viewpager_main.setCurrentItem(it, false)
         }
+        recycle_navigator.adapter = navigatorAdapter
     }
 
+
     private fun setListener() {
-//        text_ipz_start.setOnClickListener {
-//            presenter.startCrawl()
-//        }
-//        list_ipz.setOnItemClickListener { parent, view, position, id ->
-//            presenter.toXfPlayer(dataList[position].xf_url)
-//        }
-
-
         optionPop?.listListener = { parent: AdapterView<*>, view: View, position: Int, id: Long ->
             when (position) {
                 0 -> {

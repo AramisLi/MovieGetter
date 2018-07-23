@@ -29,7 +29,12 @@ class IPZCrawler : BaseCrawler() {
             1 -> superAdd("$baseUrl/list/index2.html")
             2 -> superAdd("$baseUrl/list/index3.html")
             3 -> superAdd("$baseUrl/list/index4.html")
-            4 -> superAdd("$baseUrl/list/index8.html")
+            4 -> superAdd("$baseUrl/list/index5.html")
+            5 -> superAdd("$baseUrl/list/index6.html")
+            6 -> superAdd("$baseUrl/list/index7.html")
+            7 -> superAdd("$baseUrl/list/index8.html")
+            8 -> superAdd("$baseUrl/list/index9.html")
+            9 -> superAdd("$baseUrl/list/index27.html")
         }
         parser.pages = pages
         super.startCrawlLite(context, Config.TAG_ADY, position, parser, pipeline, onFinished)

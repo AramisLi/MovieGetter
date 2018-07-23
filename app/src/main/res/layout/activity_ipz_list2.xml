@@ -8,19 +8,26 @@
         android:id="@+id/layout_title"
         layout="@layout/view_toolbar_mg" />
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
+    <!--<android.support.design.widget.BottomNavigationView-->
+    <!--android:id="@+id/bottomNavigationView"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:background="?android:attr/windowBackground"-->
+    <!--app:menu="@menu/navigation_ipz"-->
+    <!--android:visibility="gone"/>-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycle_navigator"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="?android:attr/windowBackground"
-        android:layout_alignParentBottom="true"
-        app:menu="@menu/navigation_ipz" />
-
+        android:layout_height="@dimen/height_recycle_bottom"
+        android:layout_alignParentBottom="true" />
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavigationView"
+        android:layout_above="@id/recycle_navigator"
         android:layout_below="@id/layout_title" />
+
+
 
 </RelativeLayout>

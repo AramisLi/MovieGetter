@@ -143,22 +143,31 @@ class ExampleUnitTest {
         val re = """index(\d+)""".toRegex()
         val a = re.findAll(url).iterator()
         val b = re.findAll(url_1).iterator()
-        val c=re.containsMatchIn(url)
-        val d=re.matchEntire(url)?.value
+        val c = re.containsMatchIn(url)
+        val d = re.matchEntire(url)?.value
         println("123")
         println(a.next().value)
         println(b.next().value)
         println(c)
         println(d)
 
-        val index2=url.substring(0,url.lastIndexOf("."))+"_2"+url.substring(url.lastIndexOf("."),url.length)
+        val index2 = url.substring(0, url.lastIndexOf(".")) + "_2" + url.substring(url.lastIndexOf("."), url.length)
         println(index2)
 
         val index_child = url2.substring(url2.lastIndexOf("_") + 1, url2.lastIndexOf(".")).toInt()
         println(index_child)
 
-        val next_page=url2.substring(0, url2.lastIndexOf("_") + 1) + (index_child + 1) +
+        val next_page = url2.substring(0, url2.lastIndexOf("_") + 1) + (index_child + 1) +
                 url2.substring(url2.lastIndexOf("."), url2.length)
         println(next_page)
+    }
+
+    @Test
+    fun testChongFu() {
+        val list = listOf(1, 2, 2, 3, 3, 4, 5, 4, 1, 2, 3, 4, 1, 2)
+        val list2 = list.toSet().toList()
+        println(list2)
+
+
     }
 }

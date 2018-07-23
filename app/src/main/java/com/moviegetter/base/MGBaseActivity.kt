@@ -37,6 +37,5 @@ abstract class MGBaseActivity : BaseActivity() {
 
     override fun finish() {
         super.finish()
-        logE("finish finish finish")
     }
 }
