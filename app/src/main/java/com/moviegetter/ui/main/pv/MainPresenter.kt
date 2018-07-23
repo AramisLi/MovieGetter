@@ -9,6 +9,7 @@ import com.kymjs.rxvolley.RxVolley
 import com.kymjs.rxvolley.client.HttpCallback
 import com.moviegetter.api.Api
 import com.moviegetter.base.MGBasePresenter
+import com.moviegetter.bean.IPBean
 import com.moviegetter.bean.MgVersion
 import com.moviegetter.bean.User
 import com.moviegetter.config.Config
@@ -36,6 +37,9 @@ import java.nio.charset.Charset
  */
 class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
     private var dyttCrawler = DYTTCrawler()
+    private var versionCode = 0
+    private var versionName = ""
+    private var ipBean: IPBean? = null
 
     fun findIpzUrl() {
         get(MGsp.getIpzBaseUrl() + "/js/ads/caonimei.js", object : HttpCallback() {
@@ -56,11 +60,23 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
     fun checkVersion() {
         activity?.apply {
             val packageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
-            val versionCode = packageInfo.versionCode
-            val versionName = packageInfo.versionName
+            versionCode = packageInfo.versionCode
+            versionName = packageInfo.versionName
 
-            post(Api.checkVersion, mapOf("version_code" to versionCode, "version_name" to versionName), getDefaultHttpObject<MgVersion>({
-                mView?.onCheckVersionSuccess(it)
+//            post(Api.checkVersion, mapOf("version_code" to versionCode, "version_name" to versionName), getDefaultHttpObject<MgVersion>({
+//                mView?.onCheckVersionSuccess(it)
+//            }, { errorCode, errorMsg ->
+//                mView?.onCheckVersionFail(errorCode, errorMsg)
+//            }))
+
+            post(Api.checkVersion, mapOf("version_code" to versionCode, "version_name" to versionName), getHttpCallBack({
+                val obj = JSONObject(it)
+                if (obj.getInt("code") == 200) {
+                    val obj1 = obj.getJSONObject("result")
+                    mView?.onCheckVersionSuccess(versionCode,MgVersion(obj1.getInt("version_code"),
+                            obj1.getString("version_name"),
+                            obj1.getInt("is_current")))
+                }
             }, { errorCode, errorMsg ->
                 mView?.onCheckVersionFail(errorCode, errorMsg)
             }))
@@ -187,9 +203,10 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
     fun requestMarkIn() {
 
         if (MGsp.getImei().isNotBlank()) {
-            logE("requestMarkIn imei:${MGsp.getImei()}")
-            logE("ip ${MovieGetterHelper.getWiFiIpAddress(activity)}")
-            val dataMap = mutableMapOf("imei" to MGsp.getImei(), "login_time" to now())
+//            logE("requestMarkIn imei:${MGsp.getImei()}")
+//            logE("ip ${MovieGetterHelper.getWiFiIpAddress(activity)}")
+            val dataMap = mutableMapOf("imei" to MGsp.getImei(), "login_time" to now(),
+                    "version_code" to versionCode, "version_name" to versionName)
             val ip = MovieGetterHelper.getLocalIpAddress()
             if (ip != null) {
                 dataMap["ip"] = ip
@@ -202,11 +219,28 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
                     val obj = JSONObject(result)
                     val markId = obj.getDouble("mark_id").toInt()
                     mView?.onMarkInSuccess(markId)
+                    getIP(markId)
                 }
             }, { errorCode, errorMsg ->
                 logE("访问MarkIn出错 errorCode:$errorCode,errorMsg:$errorMsg")
             }))
         }
+    }
+
+    private fun getIP(markId: Int) {
+        get("http://www.httpbin.org/get", getHttpCallBack({
+            val obj = JSONObject(it)
+            val obj1 = obj.getJSONObject("headers")
+            val ipBean = IPBean(obj.getString("origin"), obj1.getString("User-Agent"))
+            MainPresenter@ this.ipBean = ipBean
+            post(Api.markInIp, mapOf("ip" to ipBean.ip, "mark_id" to markId), getHttpCallBack({
+                logE("更新ip成功:$it")
+            }, { errorCode, errorMsg ->
+                logE("更新ip失败:$errorCode,$errorMsg")
+            }))
+        }, { errorCode, errorMsg ->
+            MainPresenter@ this.ipBean = null
+        }))
     }
 
     fun requestMarkOut(markId: Int) {
@@ -240,7 +274,7 @@ interface MainView : BaseView {
 
     fun onMarkInSuccess(markId: Int)
 
-    fun onCheckVersionSuccess(bean: MgVersion)
+    fun onCheckVersionSuccess(versionCode:Int,bean: MgVersion)
 
     fun onCheckVersionFail(errorCode: Int, errorMsg: String)
 }

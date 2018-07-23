@@ -1,7 +1,10 @@
 package com.moviegetter.ui.main.activity
 
+import android.Manifest
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.Switch
@@ -72,6 +75,8 @@ class SettingActivity : MGBaseActivity(), SettingView {
         return """
         ${getTestInfoLine("版本号", versionCode.toString())}
         ${getTestInfoLine("版本名称", versionName)}
+        ${getTestInfoLine("手机状态权限", (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED).toString())}
+        ${getTestInfoLine("文件读取权限", (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED).toString())}
         ${getTestInfoLine("BaseUrl", Api.baseUrl)}
         ${getTestInfoLine("Role", MGsp.getRole())}
         ${getTestInfoLine("IP", ip)}

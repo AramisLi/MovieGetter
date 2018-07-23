@@ -34,6 +34,7 @@ abstract class MainFragment : MGBaseFragment() {
     private var position = 0
     private var presenter: MainPresenter? = null
     private var crawlSubscription: Subscription? = null
+    private var refreshSubscription: Subscription? = null
     //下载dialog
     private var downloadDialog: DownloadDialog? = null
     //当前列表点击的位置
@@ -49,6 +50,11 @@ abstract class MainFragment : MGBaseFragment() {
                 .subscribe {
                     initData()
                 }
+        refreshSubscription=ArBus.getDefault().take(Bundle::class.java).filter {
+            it.getBoolean("refreshMainFragment",false)
+        }.subscribe {
+            adapter.refreshFlags()
+            adapter.notifyDataSetChanged() }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -130,6 +136,12 @@ abstract class MainFragment : MGBaseFragment() {
     private fun initView() {
         mRootView.list_result.adapter = adapter
         downloadDialog = DownloadDialog(activity!!, mutableListOf(), mutableListOf())
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        crawlSubscription?.unsubscribe()
+        refreshSubscription?.unsubscribe()
     }
 
 

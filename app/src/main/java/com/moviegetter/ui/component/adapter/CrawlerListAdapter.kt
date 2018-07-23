@@ -22,6 +22,11 @@ abstract class CrawlerBaseListAdapter(list: List<Item>) : SimpleBaseAdapter<Item
     protected var showPic = true
     protected var showDownloaded = false
 
+    fun refreshFlags(){
+        showPic = configSP?.getBoolean("showADYPicture", false) ?: false
+        showDownloaded = configSP?.getBoolean("signADYDownloaded", false) ?: false
+    }
+
     override fun initDatas(holder: SimpleBaseAdapterHolder, bean: Item, position: Int) {
         if (configSP == null) {
             configSP = MGsp.getConfigSP(mContext!!)

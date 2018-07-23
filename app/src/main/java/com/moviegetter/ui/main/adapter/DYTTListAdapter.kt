@@ -40,7 +40,7 @@ class DYTTListAdapter(list: List<Item>) : CrawlerBaseListAdapter(list) {
             } else {
                 View.GONE
             }
-            logE("刷新 movieId=${item.movieId},position=$position,item.downloaded=${item.downloaded}")
+//            logE("刷新 movieId=${item.movieId},position=$position,item.downloaded=${item.downloaded}")
         }
 
     }

@@ -3,6 +3,7 @@ package com.moviegetter.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewPager
 import android.telephony.TelephonyManager
 import android.view.View
 import android.widget.AdapterView
+import com.aramis.library.aramis.ArBus
 import com.aramis.library.base.BasePresenter
 import com.aramis.library.component.adapter.DefaultFrgPagerAdapter
 import com.aramis.library.component.dialog.DefaultHintDialog
@@ -32,9 +34,7 @@ import com.moviegetter.ui.main.pv.MainView
 import com.moviegetter.utils.BottomNavigationViewHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_toolbar_mg.*
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 import rx.Subscription
 
 
@@ -102,17 +102,16 @@ class MainActivity : MGBaseActivity(), MainView {
                 0 -> {
                     presenter.startCrawlLite(viewpager_main.currentItem, 2)
                 }
+            //同步10页
                 1 -> {
                     toast("同步10页时间较长，请耐心等待")
                     presenter.startCrawlLite(viewpager_main.currentItem, 10)
                 }
-                2 -> startActivity<SettingActivity>()
-
-                3 -> {
-                    //新世界
-                    toNewWorld()
-                }
-
+            //设置
+                2 -> startActivityForResult<SettingActivity>(1001)
+            //新世界
+                3 -> toNewWorld()
+            //用户表（未实现）
                 4 -> startActivity<UserActivity>()
 
             }
@@ -121,7 +120,7 @@ class MainActivity : MGBaseActivity(), MainView {
     }
 
     fun getImei(): String? {
-        logE("文件读取权限:${ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED}")
+//        logE("文件读取权限:${ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED}")
         return if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             //            toast("需要动态获取权限");
@@ -151,11 +150,17 @@ class MainActivity : MGBaseActivity(), MainView {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1001) {
+            ArBus.getDefault().post(bundleOf("refreshMainFragment" to true))
+        }
+    }
+
     private fun initView() {
         setTitleRightText("选项", View.OnClickListener {
             optionPop?.show(it, -dip(90), dip(1))
         })
-//        list_result.adapter = listAdapter
 
         optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "设置"))
 
@@ -206,9 +211,10 @@ class MainActivity : MGBaseActivity(), MainView {
         startActivity<IPZActivity>()
     }
 
-    override fun onCheckVersionSuccess(bean: MgVersion) {
-//        toast("检查版本成功 $bean")
-        versionHintDialog?.show()
+    override fun onCheckVersionSuccess(versionCode: Int, bean: MgVersion) {
+        if (versionCode < bean.version_code) {
+            versionHintDialog?.show()
+        }
     }
 
     override fun onCheckVersionFail(errorCode: Int, errorMsg: String) {
