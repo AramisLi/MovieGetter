@@ -17,6 +17,7 @@ import com.moviegetter.R
 import com.moviegetter.api.Api
 import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.bean.IPBean
+import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.ui.main.pv.SettingPresenter
 import com.moviegetter.ui.main.pv.SettingView
@@ -97,9 +98,13 @@ class SettingActivity : MGBaseActivity(), SettingView {
             return SettingHolderBean(name, type, value)
         }
 
-        return listOf(createTypeBean("当前版本", 1, versionName),
+        val list = mutableListOf(createTypeBean("当前版本", 1, versionName),
                 createTypeBean("显示图片", value = "显示新世界图片的开关"),
                 createTypeBean("标记已下载", value = "打开后，会在点击下载按钮的时候标记并显示在页面上"))
+        if (MGsp.getRole() != DBConfig.USER_ROLE_NORMAL) {
+            list.add(createTypeBean("显示新世界", value = "显示新世界的开关"))
+        }
+        return list
     }
 
     override fun onGetIPSuccess(ipBean: IPBean) {
@@ -135,14 +140,16 @@ class SettingActivity : MGBaseActivity(), SettingView {
                             when (position) {
                                 1 -> configSP?.edit()?.putBoolean("showADYPicture", isChecked)?.apply()
                                 2 -> configSP?.edit()?.putBoolean("signADYDownloaded", isChecked)?.apply()
+                                3 -> configSP?.edit()?.putBoolean("showADY", isChecked)?.apply()
                             }
                         }
 
 //                        logE("init position:$position,isChecked:${switch_setting.isChecked}")
 
                         switch_setting.isChecked = when (position) {
-                            1 -> configSP?.getBoolean("showADYPicture", false) ?: false
-                            2 -> configSP?.getBoolean("signADYDownloaded", false) ?: false
+                            1 -> configSP?.getBoolean("showADYPicture", true) ?: false
+                            2 -> configSP?.getBoolean("signADYDownloaded", true) ?: false
+                            3 -> configSP?.getBoolean("showADY", true) ?: false
                             else -> false
                         }
                     }

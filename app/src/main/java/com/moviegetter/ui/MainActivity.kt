@@ -110,7 +110,13 @@ class MainActivity : MGBaseActivity(), MainView {
             //设置
                 2 -> startActivityForResult<SettingActivity>(1001)
             //新世界
-                3 -> toNewWorld()
+                3 -> {
+                    if (MGsp.getConfigSP(MainActivity@ this)?.getBoolean("showADY", true) == true) {
+                        toNewWorld()
+                    }else{
+                        startActivity<UserActivity>()
+                    }
+                }
             //用户表（未实现）
                 4 -> startActivity<UserActivity>()
 
@@ -154,6 +160,7 @@ class MainActivity : MGBaseActivity(), MainView {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1001) {
             ArBus.getDefault().post(bundleOf("refreshMainFragment" to true))
+            refreshMenu(MGsp.getRole())
         }
     }
 
@@ -247,8 +254,12 @@ class MainActivity : MGBaseActivity(), MainView {
             MGsp.setNewWorldDialog()
         }
 
+        refreshMenu(role)
+    }
+
+    private fun refreshMenu(role: String) {
         val list = mutableListOf("同步1页", "同步10页", "设置")
-        if (role == DBConfig.USER_ROLE_VIP || role == DBConfig.USER_ROLE_MANAGER || role == DBConfig.USER_ROLE_ROOT) {
+        if ((role == DBConfig.USER_ROLE_VIP || role == DBConfig.USER_ROLE_MANAGER || role == DBConfig.USER_ROLE_ROOT) && MGsp.getConfigSP(this)?.getBoolean("showADY", true) == true) {
             list.add("新世界")
         }
         if (role == DBConfig.USER_ROLE_ROOT) {

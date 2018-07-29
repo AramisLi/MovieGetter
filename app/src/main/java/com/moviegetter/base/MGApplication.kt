@@ -33,6 +33,8 @@ class MGApplication : BunnyApplication() {
             DBHelper.getInstance(this@MGApplication).initUser()
             //默认为开启新世界图片
             MGsp.getConfigSP(this)?.edit()?.putBoolean("showADYPicture", true)?.apply()
+            MGsp.getConfigSP(this)?.edit()?.putBoolean("signADYDownloaded", true)?.apply()
+            MGsp.getConfigSP(this)?.edit()?.putBoolean("showADY", true)?.apply()
             MGsp.closeFirstOpen()
         }
 
