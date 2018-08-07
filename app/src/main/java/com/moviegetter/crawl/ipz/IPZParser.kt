@@ -62,7 +62,7 @@ class IPZParser : Parser {
         val resultList = titles.mapIndexed { index, element ->
             val href = element.attr("href")
             val movieId = getMovieId(href)
-            logE("href:$href,movieId:$movieId")
+//            logE("href:$href,movieId:$movieId")
             val item = IPZItem(movieId.toInt(), element.attr("title"), (if (index in movieDates.indices) movieDates[index].text() else null),
                     thumb = baseUrl + element.child(0).attr("src"), position = originNode.position)
             CrawlNode(baseUrl + href, 1, originNode, null, item, false, originNode.tag, originNode.position)
@@ -94,7 +94,34 @@ class IPZParser : Parser {
     }
 
     private fun parsePlayData(playData: String, originNode: CrawlNode): List<CrawlNode>? {
-        val data = playData.substring(playData.indexOf("\$xfplay://") + 1 until playData.lastIndexOf("\$xfplay"))
+
+        var data = playData.substring(playData.indexOf("\$xfplay://") + 1 until playData.lastIndexOf("\$xfplay"))
+        if (data.contains(",")) {
+            val cc = data.split(",")
+            data = ""
+            for (i in cc) {
+                var a = i
+                if ("'" in a) {
+                    a = a.replace("'", "")
+                }
+
+                if (a.endsWith("\$xfplay")) {
+                    a = a.removeRange(i.length - 7, i.length)
+                }
+
+                if (a.contains("\$xfplay://")) {
+                    a = a.substring(a.indexOf("\$xfplay://") + 1, a.length)
+                }
+
+                data += "$a,"
+            }
+            if (data.isNotEmpty()) {
+                data = data.substring(0 until data.length - 1)
+            }
+
+//            logE("mutable data&&:$data")
+
+        }
         originNode.isItem = true
         (originNode.item as? IPZItem)?.xf_url = data
         return listOf(originNode)

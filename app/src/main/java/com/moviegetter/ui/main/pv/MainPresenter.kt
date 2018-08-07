@@ -42,7 +42,9 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
     private var ipBean: IPBean? = null
 
     fun findIpzUrl() {
-        get(MGsp.getIpzBaseUrl() + "/js/ads/caonimei.js", object : HttpCallback() {
+        val baseUrl=MGsp.getIpzBaseUrl()
+        logE("baseUrl:$baseUrl")
+        get("$baseUrl/js/ads/caonimei.js", object : HttpCallback() {
             override fun onSuccess(t: String?) {
                 super.onSuccess(t)
                 t?.apply {
@@ -62,12 +64,6 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
             val packageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
             versionCode = packageInfo.versionCode
             versionName = packageInfo.versionName
-
-//            post(Api.checkVersion, mapOf("version_code" to versionCode, "version_name" to versionName), getDefaultHttpObject<MgVersion>({
-//                mView?.onCheckVersionSuccess(it)
-//            }, { errorCode, errorMsg ->
-//                mView?.onCheckVersionFail(errorCode, errorMsg)
-//            }))
 
             post(Api.checkVersion, mapOf("version_code" to versionCode, "version_name" to versionName), getHttpCallBack({
                 val obj = JSONObject(it)

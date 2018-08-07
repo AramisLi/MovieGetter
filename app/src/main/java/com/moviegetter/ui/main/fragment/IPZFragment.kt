@@ -15,10 +15,12 @@ import com.moviegetter.crawl.base.CrawlerHandlerWhat
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.DownloadDialog
 import com.moviegetter.ui.main.activity.IPZActivity
+import com.moviegetter.ui.main.activity.IPZDetailActivity
 import com.moviegetter.ui.main.adapter.IPZListAdapter
 import com.moviegetter.ui.main.pv.IPZPresenter
 import com.moviegetter.utils.DYTTDBHelper
 import kotlinx.android.synthetic.main.frg_main.view.*
+import org.jetbrains.anko.support.v4.startActivity
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -82,6 +84,9 @@ abstract class IPZFragment : MGBaseFragment() {
     }
 
     private fun setListener() {
+        mRootView.list_result.setOnItemClickListener { parent, view, position, id ->
+            startActivity<IPZDetailActivity>("data" to dataList[position])
+        }
         adapter.onItemClick = { item, position ->
             currentClickPosition = position
             if (item.xf_url == null) {

@@ -12,7 +12,7 @@ import org.jetbrains.anko.db.RowParser
  */
 class IPZRowParser : RowParser<IPZItem> {
     override fun parseRow(columns: Array<Any?>): IPZItem {
-        logE("columns.size:${columns.size}")
+//        logE("columns.size:${columns.size}")
         return IPZItem(
                 //movieId
                 (columns[0] as Long).toInt(),

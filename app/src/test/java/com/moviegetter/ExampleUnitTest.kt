@@ -1,6 +1,7 @@
 package com.moviegetter
 
 import com.aramis.library.extentions.logE
+import com.google.gson.Gson
 import com.kymjs.rxvolley.client.HttpCallback
 import com.moviegetter.crawl.base.Downloader
 import com.moviegetter.test.Detalhtml
@@ -169,5 +170,28 @@ class ExampleUnitTest {
         println(list2)
 
 
+    }
+
+    private fun formatXfurl(playData: String?): String? {
+        return if (playData != null && playData.contains("xfplay://")) {
+            playData.substring(playData.indexOf("xfplay://")  until playData.length)
+        } else {
+            playData
+        }
+    }
+
+    @Test
+    fun testXfurl() {
+//        val s="\\\\u7B2C02\\\\u96C6\$xfplay://dna=DZqgmZbbmwyfDGLWAwm4mZbdAwqeAxi3DZL4mGHYDGyfDHH5DZueAt|dx=348295948|mz=\\\\u66F4\\\\u591A\\\\u5185\\\\u5BB9www.ady69.com@fc2ppv_876621cd2.rmvb|zx=nhE0pdOVlZHWlwpUmGmYlwi5BwxWBdaVrgMSnJ5R|zx=nhE0pdOVlZHWlwpUmGmYlwmWBwxWBdaVrgMSnJ5R"
+//        println(formatXfurl(s))
+
+//        "[['xfplay',['\u7B2C01\u96C6\$xfplay://dna=EdL0Awp0AGDWDZpWAGEdD0i5Adi3BeDXmde0AwH0DGH2BeLWmeIdma|dx=362565945|mz=\u66F4\u591A\u5185\u5BB9www.ady69.com@fc2ppv_876621cd1.rmvb|zx=nhE0pdOVlZHWlwpUmGmYlwi5BwxWBdaVrgMSnJ5R|zx=nhE0pdOVlZHWlwpUmGmYlwmWBwxWBdaVrgMSnJ5R\$xfplay','\u7B2C02\u96C6\$xfplay://dna=DZqgmZbbmwyfDGLWAwm4mZbdAwqeAxi3DZL4mGHYDGyfDHH5DZueAt|dx=348295948|mz=\u66F4\u591A\u5185\u5BB9www.ady69.com@fc2ppv_876621cd2.rmvb|zx=nhE0pdOVlZHWlwpUmGmYlwi5BwxWBdaVrgMSnJ5R|zx=nhE0pdOVlZHWlwpUmGmYlwmWBwxWBdaVrgMSnJ5R\$xfplay']]],urlinfo='http://'+document.domain+'/player/index40872.html?40872-<from>-<pos>"
+//        xfplay://dna=EdL0Awp0AGDWDZpWAGEdD0i5Adi3BeDXmde0AwH0DGH2BeLWmeIdma|dx=362565945|mz=更多内容www.ady69.com@fc2ppv_876621cd1.rmvb|zx=nhE0pdOVlZHWlwpUmGmYlwi5BwxWBdaVrgMSnJ5R|zx=nhE0pdOVlZHWlwpUmGmYlwmWBwxWBdaVrgMSnJ5R$xfplay','第02集$xfplay://dna=DZqgmZbbmwyfDGLWAwm4mZbdAwqeAxi3DZL4mGHYDGyfDHH5DZueAt|dx=348295948|mz=更多内容www.ady69.com@fc2ppv_876621cd2.rmvb|zx=nhE0pdOVlZHWlwpUmGmYlwi5BwxWBdaVrgMSnJ5R|zx=nhE0pdOVlZHWlwpUmGmYlwmWBwxWBdaVrgMSnJ5R
+//        val gson=Gson()
+//        gson.fr
+
+        val a="\\u7B2C02\\u96C6\$xfplay://dna=DZqgmZbbmwyfDGLWAwm4mZbdAwqeAxi3DZL4mGHYDGyfDHH5DZueAt|dx=348295948|mz"
+//        println(a.removeRange(a.length-2,a.length))
+//        val b = a.substring(playData.indexOf("\$xfplay://") + 1, a.length)
     }
 }

@@ -24,7 +24,9 @@ class IPZListAdapter(list: List<IPZItem>) : CrawlerBaseListAdapter(list) {
     @SuppressLint("SetTextI18n")
     override fun formatItems(holder: CrawlerBaseHolder, item: Item, position: Int) {
         if (DBConfig.IsCompany) {
-            holder.text_movie_name.text = "我是大帅哥" + (item as IPZItem).movieId
+            holder.text_movie_name.text = "我是大帅哥" + (item as IPZItem).movieId + (if (item.xf_url?.contains(",") == true) {
+                " -- mutable"+item.xf_url!!.split(",").size
+            } else "")
             holder.text_movie_update.text = "更新时间：" + item.movie_update_time
             holder.text_movie_sync.text = "同步时间：" + item.update_time
         } else {

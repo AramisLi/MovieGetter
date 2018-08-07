@@ -44,6 +44,11 @@
             android:screenOrientation="portrait">
 
         </activity>
+        <activity
+            android:name=".ui.main.activity.IPZDetailActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
     </application>
 
 </manifest>

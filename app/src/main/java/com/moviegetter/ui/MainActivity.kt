@@ -65,7 +65,7 @@ class MainActivity : MGBaseActivity(), MainView {
     }
 
     private fun prepare() {
-        presenter.checkVersion()
+//        presenter.checkVersion()
         presenter.findIpzUrl()
     }
 
