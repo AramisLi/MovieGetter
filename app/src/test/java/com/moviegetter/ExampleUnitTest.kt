@@ -2,12 +2,18 @@ package com.moviegetter
 
 import com.aramis.library.extentions.logE
 import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.kymjs.rxvolley.RxVolley
 import com.kymjs.rxvolley.client.HttpCallback
+import com.kymjs.rxvolley.client.HttpParams
 import com.moviegetter.crawl.base.Downloader
 import com.moviegetter.test.Detalhtml
 import com.moviegetter.utils.OKhttpUtils
+import learn.AesEncryptionUtil
+import org.json.JSONObject
 import org.junit.Test
 import org.seimicrawler.xpath.JXDocument
+import java.lang.Exception
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -174,7 +180,7 @@ class ExampleUnitTest {
 
     private fun formatXfurl(playData: String?): String? {
         return if (playData != null && playData.contains("xfplay://")) {
-            playData.substring(playData.indexOf("xfplay://")  until playData.length)
+            playData.substring(playData.indexOf("xfplay://") until playData.length)
         } else {
             playData
         }
@@ -190,8 +196,50 @@ class ExampleUnitTest {
 //        val gson=Gson()
 //        gson.fr
 
-        val a="\\u7B2C02\\u96C6\$xfplay://dna=DZqgmZbbmwyfDGLWAwm4mZbdAwqeAxi3DZL4mGHYDGyfDHH5DZueAt|dx=348295948|mz"
+        val a = "\\u7B2C02\\u96C6\$xfplay://dna=DZqgmZbbmwyfDGLWAwm4mZbdAwqeAxi3DZL4mGHYDGyfDHH5DZueAt|dx=348295948|mz"
 //        println(a.removeRange(a.length-2,a.length))
 //        val b = a.substring(playData.indexOf("\$xfplay://") + 1, a.length)
+    }
+
+    @Test
+    fun dd() {
+        println("asdf")
+        try {
+            val url = "http://111.230.201.126:8099/api/videos/listAll"
+            val httpParams = HttpParams()
+            val localObject = JSONObject()
+            localObject.put("page", 1)
+            localObject.put("perPage", 15)
+            localObject.put("uId", "")
+
+
+            println("localObject.toString():$localObject")
+            val data = AesEncryptionUtil.encrypt(localObject.toString(), "625202f9149maomi", "5efd3f6060emaomi")
+            localObject.put("data", data)
+            httpParams.putJsonParams(localObject.toString())
+
+            RxVolley.post(url, httpParams, object : HttpCallback() {
+                override fun onSuccess(t: String?) {
+                    super.onSuccess(t)
+                    println("success")
+                    println(t)
+                }
+
+                override fun onFailure(errorNo: Int, strMsg: String?) {
+                    super.onFailure(errorNo, strMsg)
+                    println("fail errorNo:$errorNo,strMsg:$strMsg")
+                }
+            })
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    @Test
+    fun ee() {
+        val o = JSONObject("{\"key\":\"我是大帅哥\"}")
+
+        o.put("a", "我是大帅哥");
+        print(o.getString("a"))
     }
 }
