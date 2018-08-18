@@ -28,9 +28,10 @@ class MGApplication : BunnyApplication() {
     override fun onCreate() {
         super.onCreate()
         MGsp.init(this)
+        val dbHelper = DBHelper.getInstance(this@MGApplication)
         //首次打开
         if (MGsp.firstOpen()) {
-            DBHelper.getInstance(this@MGApplication).initUser()
+            dbHelper.initUser()
             //默认为开启新世界图片
             MGsp.getConfigSP(this)?.edit()?.putBoolean("showADYPicture", true)?.apply()
             MGsp.getConfigSP(this)?.edit()?.putBoolean("signADYDownloaded", true)?.apply()
@@ -67,6 +68,8 @@ class MGApplication : BunnyApplication() {
             }
 
         })
+
+        dbHelper.onVersionUpdate(this)
     }
 
     override fun onTrimMemory(level: Int) {

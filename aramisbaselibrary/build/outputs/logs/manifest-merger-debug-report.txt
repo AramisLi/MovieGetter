@@ -1,37 +1,37 @@
 -- Merging decision tree log ---
 manifest
-ADDED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:1:1-2:36
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:1:1-2:36
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:1:1-2:36
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:1:1-2:36
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:1:1-2:36
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:1:1-2:36
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:1:1-2:36
+ADDED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:1:1-2:36
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:1:1-2:36
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:1:1-2:36
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:1:1-2:36
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:1:1-2:36
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:1:1-2:36
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:1:1-2:36
 	package
-		ADDED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:2:5-33
-		INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
-		INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
+		ADDED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:2:5-33
+		INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
+		INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
 	android:versionName
-		INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
-		ADDED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:1:1-2:36
-		INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
+		INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
+		ADDED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:1:1-2:36
+		INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
 	android:versionCode
-		INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
-		ADDED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:1:1-2:36
-		INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
+		INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
+		ADDED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:1:1-2:36
+		INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
 	xmlns:android
-		ADDED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml:1:11-69
+		ADDED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml:1:11-69
 uses-sdk
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
-INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
+INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
-		ADDED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
-		INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
+		INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
+		ADDED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
+		INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
-		ADDED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
-		INJECTED from G:\Project\AndroidProject\MovieGetter\aramisbaselibrary\src\main\AndroidManifest.xml
+		INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
+		ADDED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml
+		INJECTED from /Users/lizhidan/Documents/Project/AndroidProject/MovieGetter/aramisbaselibrary/src/main/AndroidManifest.xml

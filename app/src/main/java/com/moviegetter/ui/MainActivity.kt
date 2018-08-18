@@ -39,6 +39,11 @@ import rx.Subscription
 
 
 class MainActivity : MGBaseActivity(), MainView {
+    //1.添加ipz详情 --部分
+    //2.修复同一部影片的第二部分无法下载的bug --完成
+    //3.增加同一数据源全部同步1页功能
+    //4.增加隐藏新世界功能 --完成
+    //5.添加播放源
     private val presenter = MainPresenter(this)
     private val statusDataList = mutableListOf<String>()
     private val statusAdapter = MainSimpleAdapter(statusDataList)
@@ -62,6 +67,8 @@ class MainActivity : MGBaseActivity(), MainView {
         prepare()
         mgRequestPermissions()
         requestMarkIn()
+
+
     }
 
     private fun prepare() {
@@ -97,27 +104,28 @@ class MainActivity : MGBaseActivity(), MainView {
 
     private fun setListener() {
         optionPop?.listListener = { parent: AdapterView<*>, view: View, position: Int, id: Long ->
+
             when (position) {
-            //同步本页
+                //同步本页
                 0 -> {
                     presenter.startCrawlLite(viewpager_main.currentItem, 2)
                 }
-            //同步10页
+                //同步10页
                 1 -> {
                     toast("同步10页时间较长，请耐心等待")
                     presenter.startCrawlLite(viewpager_main.currentItem, 10)
                 }
-            //设置
+                //设置
                 2 -> startActivityForResult<SettingActivity>(1001)
-            //新世界
+                //新世界
                 3 -> {
                     if (MGsp.getConfigSP(MainActivity@ this)?.getBoolean("showADY", true) == true) {
                         toNewWorld()
-                    }else{
+                    } else {
                         startActivity<UserActivity>()
                     }
                 }
-            //用户表（未实现）
+                //用户表（未实现）
                 4 -> startActivity<UserActivity>()
 
             }
@@ -144,7 +152,7 @@ class MainActivity : MGBaseActivity(), MainView {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissions.forEachIndexed { index, s ->
             when (s) {
-            //imei
+                //imei
                 Manifest.permission.READ_PHONE_STATE -> {
                     if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
                         mgRequestPermissions()
@@ -163,10 +171,21 @@ class MainActivity : MGBaseActivity(), MainView {
             refreshMenu(MGsp.getRole())
         }
     }
+    companion object {
+        init {
+            System.loadLibrary("ara_file_secret")
+        }
+    }
+
+    external fun getIPZDefaultStr():String
 
     private fun initView() {
         setTitleRightText("选项", View.OnClickListener {
             optionPop?.show(it, -dip(90), dip(1))
+
+            val str = getIPZDefaultStr()
+            logE("=============================str:$str")
+            toast(str)
         })
 
         optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "设置"))

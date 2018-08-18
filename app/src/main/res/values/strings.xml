@@ -20,4 +20,16 @@
     <string name="text_navigator_ipz_h">国产</string>
     <string name="text_navigator_ipz_i">熟女</string>
     <string name="text_navigator_ipz_j">有码</string>
+    <array name="text_navigator_ipz">
+        <item>亚洲</item>
+        <item>欧美</item>
+        <item>动漫</item>
+        <item>自拍</item>
+        <item>乱伦</item>
+        <item>制服</item>
+        <item>三级</item>
+        <item>国产</item>
+        <item>熟女</item>
+        <item>有码</item>
+    </array>
 </resources>

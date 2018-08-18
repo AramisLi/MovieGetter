@@ -3,6 +3,7 @@ package com.moviegetter.ui.main.activity
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Gravity
 import android.view.View
 import android.widget.AdapterView
 import com.aramis.library.aramis.ArBus
@@ -16,11 +17,13 @@ import com.moviegetter.crawl.base.CrawlLiteSubscription
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.OptionsPop
 import com.moviegetter.ui.component.adapter.RecycleBottomMenuAdapter
+import com.moviegetter.ui.main.adapter.IPZLeftMenuAdapter
 import com.moviegetter.ui.main.adapter.IPZListAdapter
 import com.moviegetter.ui.main.fragment.*
 import com.moviegetter.ui.main.pv.IPZPresenter
 import com.moviegetter.ui.main.pv.IPZView
 import com.moviegetter.ui.main.pv.TitleItemBean
+import com.moviegetter.utils.database
 import kotlinx.android.synthetic.main.activity_ipz_list2.*
 import kotlinx.android.synthetic.main.view_toolbar_mg.*
 import org.jetbrains.anko.dip
@@ -41,10 +44,12 @@ class IPZActivity : MGBaseActivity(), IPZView {
     //接受状态的bus
     private var crawlSubscription: Subscription? = null
     //标题，条目数量
-    private val titleItemCountArray = intArrayOf(0, 0, 0, 0, 0,0, 0, 0, 0, 0)
+    private val titleItemCountArray = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     private var titleItemCountSubscription: Subscription? = null
-    private lateinit var navigatorNames: List<String>
+    private val navigatorNames = mutableListOf<String>()
     private lateinit var navigatorAdapter: RecycleBottomMenuAdapter
+    //当前menu
+    private var currentMenuPosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,18 +106,42 @@ class IPZActivity : MGBaseActivity(), IPZView {
                 navigatorAdapter.notifyDataSetChanged()
             }
         })
-        navigatorNames = listOf(getString(R.string.text_navigator_ipz_a), getString(R.string.text_navigator_ipz_b), getString(R.string.text_navigator_ipz_c), getString(R.string.text_navigator_ipz_d), getString(R.string.text_navigator_ipz_e),
-                getString(R.string.text_navigator_ipz_f), getString(R.string.text_navigator_ipz_g), getString(R.string.text_navigator_ipz_h), getString(R.string.text_navigator_ipz_i), getString(R.string.text_navigator_ipz_j))
+        navigatorNames.addAll(listOf(getString(R.string.text_navigator_ipz_a), getString(R.string.text_navigator_ipz_b), getString(R.string.text_navigator_ipz_c), getString(R.string.text_navigator_ipz_d), getString(R.string.text_navigator_ipz_e),
+                getString(R.string.text_navigator_ipz_f), getString(R.string.text_navigator_ipz_g), getString(R.string.text_navigator_ipz_h), getString(R.string.text_navigator_ipz_i), getString(R.string.text_navigator_ipz_j)))
         navigatorAdapter = RecycleBottomMenuAdapter(navigatorNames)
         recycle_navigator.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         navigatorAdapter.onItemClickListener = {
             viewpager_main.setCurrentItem(it, false)
         }
         recycle_navigator.adapter = navigatorAdapter
+
+        //menu
+        list_menu_download.adapter = IPZLeftMenuAdapter(listOf("下载源1", "下载源2"))
+        list_menu_online.adapter = IPZLeftMenuAdapter(listOf("在线源1"))
+    }
+
+    private fun onChangeMenu(position: Int) {
+        if (position != currentMenuPosition) {
+            navigatorNames.clear()
+            when (position) {
+                0 -> navigatorNames.addAll(resources.getStringArray(R.array.text_navigator_ipz))
+                1 -> navigatorNames.addAll(listOf("帅哥", "美女"))
+            }
+            navigatorAdapter.notifyDataSetChanged()
+            currentMenuPosition = position
+        }
+        main_drawer_layout.closeDrawer(Gravity.LEFT)
     }
 
 
     private fun setListener() {
+        //menu
+        list_menu_download.setOnItemClickListener { parent, view, position, id ->
+            onChangeMenu(position)
+        }
+        list_menu_online.setOnItemClickListener { parent, view, position, id ->
+            onChangeMenu(position - 2)
+        }
         optionPop?.listListener = { parent: AdapterView<*>, view: View, position: Int, id: Long ->
             when (position) {
                 0 -> {
@@ -127,6 +156,10 @@ class IPZActivity : MGBaseActivity(), IPZView {
                 }
             }
             optionPop?.dismiss()
+        }
+
+        text_menu_open.setOnClickListener {
+            main_drawer_layout.openDrawer(Gravity.LEFT)
         }
     }
 
@@ -161,4 +194,7 @@ class IPZActivity : MGBaseActivity(), IPZView {
 
 
     override fun getPresenter(): BasePresenter<*>? = presenter
+
+
+
 }

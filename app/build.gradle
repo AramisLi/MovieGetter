@@ -15,6 +15,11 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
+        externalNativeBuild {
+            cmake {
+                cppFlags "-frtti -fexceptions"
+            }
+        }
     }
     buildTypes {
         release {
@@ -25,6 +30,23 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+
+//    sourceSets {
+//        main {
+//            // let gradle pack the shared library into apk
+//            //jniLibs.srcDirs = ['../distribution/plus/lib']
+//            //jniLibs.srcDirs =[]
+//            jniLibs.srcDirs = ['./src/main/jni']
+//        }
+//    }
+
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+
+        }
     }
 }
 ext.anko_version = '0.10.5'

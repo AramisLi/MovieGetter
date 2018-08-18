@@ -15,6 +15,7 @@ import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.ipz.IPZCrawler
 import com.moviegetter.crawl.ipz.IPZItem
+import com.moviegetter.crawl.xfyy.XfyyCrawler
 import com.moviegetter.utils.DYTTDBHelper
 import com.moviegetter.utils.database
 import org.jetbrains.anko.db.SqlOrderDirection
@@ -31,11 +32,25 @@ import java.io.Serializable
 class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
     private val playDownloadUrl = "http://down.xfplay.com/xfplay.apk"
     private val crawler = IPZCrawler()
+    private val xfyyCrawler = XfyyCrawler()
+
 
     fun downloadPlayer() {
         DYTTDBHelper.toPlayer(activity, playDownloadUrl) {
             toast("系统错误")
         }
+    }
+
+    fun startCrawl(tag: String, position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
+        when (tag) {
+            Config.TAG_ADY -> {
+                crawler.startCrawlLite((mView as? Activity), position, pages, onFinished)
+            }
+            Config.TAG_XFYY -> {
+            }
+        }
+//        868139035284733
+
     }
 
 

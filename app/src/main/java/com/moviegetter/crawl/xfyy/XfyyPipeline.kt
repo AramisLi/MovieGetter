@@ -1,4 +1,4 @@
-package com.moviegetter.crawl.ipz
+package com.moviegetter.crawl.xfyy
 
 import android.content.Context
 import com.aramis.library.extentions.getTimestamp
@@ -7,6 +7,7 @@ import com.aramis.library.extentions.now
 import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.base.BasePipeline
 import com.moviegetter.crawl.base.Item
+import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.utils.database
 import org.jetbrains.anko.db.RowParser
 import org.jetbrains.anko.db.insert
@@ -19,7 +20,7 @@ import kotlin.math.log
  *Date:2018/6/26
  *Description:
  */
-class IPZPipeline : BasePipeline() {
+class XfyyPipeline : BasePipeline() {
     override fun pipeHook(context: Context?, items: List<Item>) {
         logE("保存item:$items")
         context?.database?.use {

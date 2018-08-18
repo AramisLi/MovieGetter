@@ -9,7 +9,13 @@ import android.content.SharedPreferences
  *Description:
  */
 object MGsp {
+    init {
+        System.loadLibrary("ara_file_secret")
+    }
+    external fun getIPZDefaultStr():String
+
     private var sp: SharedPreferences? = null
+
     fun init(context: Context) {
         sp = context.getSharedPreferences("moviegetter", Context.MODE_PRIVATE)
     }
