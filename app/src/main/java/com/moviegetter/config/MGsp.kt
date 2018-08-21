@@ -12,7 +12,9 @@ object MGsp {
     init {
         System.loadLibrary("ara_file_secret")
     }
-    external fun getIPZDefaultStr():String
+    private external fun getIPZDefaultStr():String
+    private external fun getIPZPicDefaultStr():String
+    private external fun getXfyyDefaultStr():String
 
     private var sp: SharedPreferences? = null
 
@@ -69,10 +71,21 @@ object MGsp {
     }
 
     fun getIpzBaseUrl(): String {
-        return sp?.getString("ipzBaseUrl", "http://www.xfa50.com") ?: "http://www.xfa50.com"
+        return sp?.getString("ipzBaseUrl", getIPZDefaultStr()) ?: getIPZDefaultStr()
     }
 
     fun putIpzBaseUrl(url: String) {
         sp?.edit()?.putString("ipzBaseUrl", url)?.apply()
+    }
+
+    fun getIpzPicBaseUrl(): String {
+        return sp?.getString("ipzPicBaseUrl", getIPZPicDefaultStr()) ?: getIPZPicDefaultStr()
+    }
+
+    fun getSsbBaseUrl():String{
+        return sp?.getString("ssbBaseUrl", getIPZPicDefaultStr()) ?: getIPZPicDefaultStr()
+    }
+    fun getXfyyBaseUrl():String{
+        return sp?.getString("xfyyBaseUrl", getXfyyDefaultStr()) ?: getXfyyDefaultStr()
     }
 }

@@ -1,5 +1,6 @@
 package com.moviegetter.crawl.xfyy
 
+import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.base.Parser
 import com.moviegetter.crawl.base.Pipeline
@@ -14,7 +15,7 @@ import java.nio.charset.Charset
  */
 class XfyyParser : Parser {
     var pages = 1
-    private var baseUrl = ""
+    private var baseUrl = MGsp.getXfyyBaseUrl()
     override fun startParse(node: CrawlNode, response: ByteArray, pipeline: Pipeline?): List<CrawlNode>? {
         val html = String(response, Charset.forName("GBK"))
         return when (node.level) {
@@ -26,50 +27,36 @@ class XfyyParser : Parser {
         }
     }
 
-    private fun nextPage(url: String): String? {
-        if (url.contains("_")) {
-            //index1_2
-            val indexChild = url.substring(url.lastIndexOf("_") + 1, url.lastIndexOf(".")).toInt()
-            if (indexChild < pages) {
-                return url.substring(0, url.lastIndexOf("_") + 1) + (indexChild + 1).toString() +
-                        url.substring(url.lastIndexOf("."), url.length)
+    private fun nextPage(originNode: CrawlNode): CrawlNode? {
+        val originUrl = originNode.url
+        val currentPage = if ("index" in originUrl) {
+            originUrl.substring(originUrl.indexOf("index") + 5, originUrl.lastIndexOf(".")).toInt()
+        } else 1
+        return if (currentPage < pages) {
+            val url = if ("index" in originUrl) {
+                originUrl.substring(0, originUrl.indexOf("index") + 5) + (currentPage + 1) + ".html"
+            } else {
+                originUrl + "index2.html"
             }
-        } else {
-            //index1
-            if (pages != 1) {
-                return url.substring(0, url.lastIndexOf(".")) + "_2" + url.substring(url.lastIndexOf("."), url.length)
-            }
-        }
-        return null
-    }
-
-    private fun getBaseUrl(originUrl: String) {
-        if (baseUrl.isBlank()) {
-            val indexOf = originUrl.indexOf("com")
-            baseUrl = originUrl.substring(0, indexOf + 3)
-        }
-    }
-
-    private fun getMovieId(href: String): String {
-        return href.substring(href.indexOf("index") + 5, href.indexOf("."))
+            CrawlNode(url, 0, originNode, null, null, false, originNode.tag, originNode.position)
+        } else null
     }
 
     private fun parseList(html: String, originNode: CrawlNode): List<CrawlNode>? {
-        getBaseUrl(originNode.url)
         val document = Jsoup.parse(html)
-        val titles = document.select("div.list-pianyuan-box-l > a")
-        val movieDates = document.select("div.list-pianyuan-box-r > div > span").filter { """\d+-\d+-\d+""".toRegex().matches(it.text()) }
-        val resultList = titles.mapIndexed { index, element ->
-            val href = element.attr("href")
-            val movieId = getMovieId(href)
-//            logE("href:$href,movieId:$movieId")
-            val item = IPZItem(movieId.toInt(), element.attr("title"), (if (index in movieDates.indices) movieDates[index].text() else null),
-                    thumb = baseUrl + element.child(0).attr("src"), position = originNode.position)
+        val elements = document.select("div.list > ul > li")
+        val resultList = elements.map {
+            val element = Jsoup.parse(it.toString())
+            val href = element.select("a").attr("href")
+            val movieName = element.select("p.c").text()
+            val thumb = element.select("img").attr("src")
+            val movieId = href.substring(href.lastIndexOf("/") + 1, href.lastIndexOf(".")).toInt()
+            val item = IPZItem(movieId, movieName, null, position = originNode.position, thumb = thumb)
             CrawlNode(baseUrl + href, 1, originNode, null, item, false, originNode.tag, originNode.position)
         }.toMutableList()
-        //下一页
-        nextPage(originNode.url)?.apply {
-            resultList.add(CrawlNode(this, 0, null, mutableListOf(), null, false, originNode.tag, originNode.position))
+
+        nextPage(originNode)?.apply {
+            resultList.add(this)
         }
 
         return resultList
@@ -77,17 +64,21 @@ class XfyyParser : Parser {
 
     private fun parseDetail(html: String, originNode: CrawlNode): List<CrawlNode>? {
         val document = Jsoup.parse(html)
-        val a = document.select("div.vpl a")
-        val images = document.select("div.vpl > img").eachAttr("src").joinToString { "," }
-        return a.map { element ->
-            (originNode.item as? IPZItem)?.images = images
-            CrawlNode(baseUrl + element.attr("href"), 2, originNode, null, originNode.item, false, originNode.tag, originNode.position)
+        val movieUpdateTimes = document.select("div.pinfo span")
+        val movieUpdateTime = if (movieUpdateTimes.size >= 4) {
+            val text = movieUpdateTimes[3].text()
+            text.substring(text.indexOf("时间：") + 3, text.length - 1).replace("/", "-")
+        } else ""
+        val a = document.select("div.vlist > ul > li")
+        return a.map {
+            (originNode.item as IPZItem).movie_update_time = movieUpdateTime
+            CrawlNode(baseUrl + it.select("a").attr("href"), 2, originNode, null, originNode.item, false, originNode.tag, originNode.position)
         }
     }
 
     private fun parsePlayerPage(html: String, originNode: CrawlNode): List<CrawlNode>? {
         val document = Jsoup.parse(html)
-        val scripts = document.select("div.playbox2-c script")
+        val scripts = document.select("div.play script")
         return scripts.filter { it.attr("src").isNotBlank() }.mapIndexed { index, element ->
             CrawlNode(baseUrl + element.attr("src"), 3, originNode, null, originNode.item, false, originNode.tag, originNode.position)
         }

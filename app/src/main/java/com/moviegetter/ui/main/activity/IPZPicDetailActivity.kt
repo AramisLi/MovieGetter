@@ -5,6 +5,8 @@ import com.aramis.library.base.BasePresenter
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.crawl.ipz.IPZItem
+import com.moviegetter.crawl.pic.PicItem
+import com.moviegetter.ui.main.adapter.IPZPicDetailAdapter
 import kotlinx.android.synthetic.main.activity_ipz_detail.*
 
 /**
@@ -12,9 +14,8 @@ import kotlinx.android.synthetic.main.activity_ipz_detail.*
  *Date:2018/8/4
  *Description:
  */
-class IPZDetailActivity : MGBaseActivity() {
-    private var ipzItem: IPZItem? = null
-    private var flag = 0
+class IPZPicDetailActivity : MGBaseActivity() {
+    private var picItem: PicItem? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ipz_detail)
@@ -23,16 +24,24 @@ class IPZDetailActivity : MGBaseActivity() {
     }
 
     private fun initView() {
-        if (ipzItem != null) {
+        if (picItem == null) {
             text_ipz_name.text = "获取数据失败"
         } else {
-            text_ipz_name.text = ipzItem!!.movieName
+            text_ipz_name.text = picItem!!.picName
+            picItem!!.pics?.apply {
+                val list= mutableListOf<String>()
+                if ("," in this){
+                    list.addAll(this.split(","))
+                }else{
+                    list.add(this)
+                }
+                list_ipz_detail.adapter=IPZPicDetailAdapter(list)
+            }
         }
     }
 
     private fun getDataFromIntent() {
-        flag=intent.getIntExtra("flag",0)
-        ipzItem = intent.getSerializableExtra("data") as? IPZItem?
+        picItem = intent.getSerializableExtra("data") as? PicItem?
     }
 
     override fun getPresenter(): BasePresenter<*>? = null

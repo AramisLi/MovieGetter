@@ -36,6 +36,8 @@ abstract class IPZFragment : MGBaseFragment() {
     private var position = 0
     private var presenter: IPZPresenter? = null
     private var crawlSubscription: Subscription? = null
+    //刷新数据
+    private var refreshSubscription: Subscription? = null
     //下载dialog
     private var downloadDialog: DownloadDialog? = null
     //下载播放器dialog
@@ -50,6 +52,11 @@ abstract class IPZFragment : MGBaseFragment() {
         crawlSubscription = ArBus.getDefault().take(CrawlLiteMessage::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter { it.tag == Config.TAG_ADY && it.position == position && it.what == CrawlerHandlerWhat.CRAWLER_FINISHED }
+                .subscribe {
+                    initData()
+                }
+        refreshSubscription = ArBus.getDefault().take(Bundle::class.java)
+                .filter { it.getBoolean("refreshFragment", false) }
                 .subscribe {
                     initData()
                 }
@@ -75,6 +82,8 @@ abstract class IPZFragment : MGBaseFragment() {
             presenter?.postTitleMessage(position, dataList.size)
 
         }, onFail = { errorCode, errorMsg ->
+            dataList.clear()
+            adapter.notifyDataSetChanged()
             if (errorCode == 1) {
                 mRootView.view_empty.visibility = View.VISIBLE
             } else {
@@ -141,6 +150,7 @@ abstract class IPZFragment : MGBaseFragment() {
     override fun onDestroy() {
         super.onDestroy()
         crawlSubscription?.unsubscribe()
+        refreshSubscription?.unsubscribe()
     }
 
     abstract fun getPosition(): Int

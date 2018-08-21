@@ -34,7 +34,8 @@
             android:background="@drawable/bg_btn_normal"
             android:gravity="center"
             android:text="open"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <LinearLayout
@@ -47,7 +48,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="@dimen/left_default"
+            android:paddingLeft="@dimen/left_default"
+            android:background="#f0f0f0"
             android:gravity="center_vertical"
             android:text="下载播放"
             android:textColor="@color/text_color_black" />
@@ -62,7 +64,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="@dimen/left_default"
+            android:paddingLeft="@dimen/left_default"
+            android:background="#f0f0f0"
             android:gravity="center_vertical"
             android:text="在线播放"
             android:textColor="@color/text_color_black" />
@@ -74,6 +77,21 @@
             android:divider="#0000"
             android:dividerHeight="0dp" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingLeft="@dimen/left_default"
+            android:background="#f0f0f0"
+            android:gravity="center_vertical"
+            android:text="图片区"
+            android:textColor="@color/text_color_black" />
+
+        <com.aramis.library.widget.NoScrollListView
+            android:id="@+id/list_menu_pic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="#0000"
+            android:dividerHeight="0dp" />
 
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

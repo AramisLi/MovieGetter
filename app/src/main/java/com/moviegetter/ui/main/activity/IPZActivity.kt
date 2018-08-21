@@ -1,6 +1,7 @@
 package com.moviegetter.ui.main.activity
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Gravity
@@ -23,10 +24,11 @@ import com.moviegetter.ui.main.fragment.*
 import com.moviegetter.ui.main.pv.IPZPresenter
 import com.moviegetter.ui.main.pv.IPZView
 import com.moviegetter.ui.main.pv.TitleItemBean
-import com.moviegetter.utils.database
 import kotlinx.android.synthetic.main.activity_ipz_list2.*
 import kotlinx.android.synthetic.main.view_toolbar_mg.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.dip
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import rx.Subscription
 
@@ -38,6 +40,7 @@ import rx.Subscription
 class IPZActivity : MGBaseActivity(), IPZView {
     private val presenter = IPZPresenter(this)
     private val dataList = mutableListOf<IPZItem>()
+    private val fragmentsList = mutableListOf<Fragment>()
     private val adapter = IPZListAdapter(dataList)
     private var optionPop: OptionsPop? = null
     private var fragmentAdapter: DefaultFrgPagerAdapter? = null
@@ -50,6 +53,8 @@ class IPZActivity : MGBaseActivity(), IPZView {
     private lateinit var navigatorAdapter: RecycleBottomMenuAdapter
     //当前menu
     private var currentMenuPosition = 0
+
+    fun getCurrentMenuPosition(): Int = currentMenuPosition
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +96,9 @@ class IPZActivity : MGBaseActivity(), IPZView {
         })
         optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "下载播放器"))
 
-        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(IPZFragmentA(), IPZFragmentB(), IPZFragmentC(), IPZFragmentD(), IPZFragmentE(), IPZFragmentF(), IPZFragmentG(), IPZFragmentH(), IPZFragmentI(), IPZFragmentJ()))
+//        fragmentsList.addAll(presenter.getFragments(0))
+        fragmentsList.addAll(listOf(IPZFragmentA(), IPZFragmentB(), IPZFragmentC(), IPZFragmentD(), IPZFragmentE(), IPZFragmentF(), IPZFragmentG(), IPZFragmentH(), IPZFragmentI(), IPZFragmentJ()))
+        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, fragmentsList)
         viewpager_main.adapter = fragmentAdapter
         viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
@@ -106,8 +113,7 @@ class IPZActivity : MGBaseActivity(), IPZView {
                 navigatorAdapter.notifyDataSetChanged()
             }
         })
-        navigatorNames.addAll(listOf(getString(R.string.text_navigator_ipz_a), getString(R.string.text_navigator_ipz_b), getString(R.string.text_navigator_ipz_c), getString(R.string.text_navigator_ipz_d), getString(R.string.text_navigator_ipz_e),
-                getString(R.string.text_navigator_ipz_f), getString(R.string.text_navigator_ipz_g), getString(R.string.text_navigator_ipz_h), getString(R.string.text_navigator_ipz_i), getString(R.string.text_navigator_ipz_j)))
+        navigatorNames.addAll(resources.getStringArray(R.array.text_navigator_ipz))
         navigatorAdapter = RecycleBottomMenuAdapter(navigatorNames)
         recycle_navigator.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         navigatorAdapter.onItemClickListener = {
@@ -116,26 +122,41 @@ class IPZActivity : MGBaseActivity(), IPZView {
         recycle_navigator.adapter = navigatorAdapter
 
         //menu
-        list_menu_download.adapter = IPZLeftMenuAdapter(listOf("下载源1", "下载源2"))
+        list_menu_download.adapter = IPZLeftMenuAdapter(listOf("下载源1", "下载源2", "下载源3"), true)
         list_menu_online.adapter = IPZLeftMenuAdapter(listOf("在线源1"))
+        list_menu_pic.adapter = IPZLeftMenuAdapter(listOf("图片 1"))
     }
 
     private fun onChangeMenu(position: Int) {
         if (position != currentMenuPosition) {
             navigatorNames.clear()
-            when (position) {
-                0 -> navigatorNames.addAll(resources.getStringArray(R.array.text_navigator_ipz))
-                1 -> navigatorNames.addAll(listOf("帅哥", "美女"))
-            }
+            navigatorNames.addAll(presenter.getBottomTextArray(this, position))
             navigatorAdapter.notifyDataSetChanged()
+
             currentMenuPosition = position
+            (list_menu_download.adapter as IPZLeftMenuAdapter).checkPosition = currentMenuPosition
+            (list_menu_download.adapter as IPZLeftMenuAdapter).notifyDataSetChanged()
+            postRefreshEvent()
         }
         main_drawer_layout.closeDrawer(Gravity.LEFT)
     }
 
+    private fun postRefreshEvent() {
+        val bundle = bundleOf("refreshFragment" to true)
+        ArBus.getDefault().post(bundle)
+    }
+
 
     private fun setListener() {
-        //menu
+        //在线
+        list_menu_online.setOnItemClickListener { parent, view, position, id ->
+            toast("暂未开放，敬请期待")
+        }
+        //图片区
+        list_menu_pic.setOnItemClickListener { _, _, position, _ ->
+            startActivity<IPZPicActivity>("position" to position)
+        }
+        //下载
         list_menu_download.setOnItemClickListener { parent, view, position, id ->
             onChangeMenu(position)
         }
@@ -194,7 +215,6 @@ class IPZActivity : MGBaseActivity(), IPZView {
 
 
     override fun getPresenter(): BasePresenter<*>? = presenter
-
 
 
 }

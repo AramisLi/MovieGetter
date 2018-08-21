@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@+id/text_result_simple"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
         android:gravity="center_vertical"
         android:layout_marginLeft="40dp" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_menu_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="15dp"
+        app:srcCompat="@drawable/ic_check_black"/>
 
     <View
         android:layout_width="match_parent"

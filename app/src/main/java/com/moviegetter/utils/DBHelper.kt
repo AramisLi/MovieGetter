@@ -99,6 +99,29 @@ class DBHelper(context: Context) : ManagedSQLiteOpenHelper(context, "araSpider")
                     "thumb" to TEXT,
                     "images" to TEXT,
                     "position" to INTEGER)
+            createTable(DBConfig.TABLE_NAME_PIC, true,
+                    "picId" to INTEGER + PRIMARY_KEY + UNIQUE,
+                    "picName" to TEXT,
+                    "pic_update_time" to TEXT,
+                    "pics" to TEXT,
+                    "update_time" to TEXT,
+                    "create_time" to TEXT,
+                    "pic_update_timestamp" to INTEGER + DEFAULT("0"),
+                    "thumb" to TEXT,
+                    "position" to INTEGER,
+                    "watched" to INTEGER + DEFAULT("0"),
+                    "watched_time" to TEXT)
+            createTable(DBConfig.TABLE_NAME_SSB, true,
+                    "movieId" to INTEGER + PRIMARY_KEY + UNIQUE,
+                    "movieName" to TEXT,
+                    "movie_update_time" to TEXT,
+                    "xf_url" to TEXT,
+                    "update_time" to TEXT,
+                    "create_time" to TEXT,
+                    "movie_update_timestamp" to INTEGER + DEFAULT("0"),
+                    "thumb" to TEXT,
+                    "images" to TEXT,
+                    "position" to INTEGER)
         }
     }
 

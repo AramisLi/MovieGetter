@@ -183,9 +183,9 @@ class MainActivity : MGBaseActivity(), MainView {
         setTitleRightText("选项", View.OnClickListener {
             optionPop?.show(it, -dip(90), dip(1))
 
-            val str = getIPZDefaultStr()
-            logE("=============================str:$str")
-            toast(str)
+//            val str = getIPZDefaultStr()
+//            logE("=============================str:$str")
+//            toast(str)
         })
 
         optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "设置"))

@@ -21,8 +21,8 @@ import org.jetbrains.anko.db.update
 class DYTTPipeline : BasePipeline() {
 
     override fun pipeHook(context: Context?, items: List<Item>) {
-        logE("收到保存==========================================" + items.size)
-        logE(items[0].toString())
+//        logE("收到保存==========================================" + items.size)
+//        logE(items[0].toString())
         context?.database?.use {
             items.filter { it is DYTTItem }.map { it as DYTTItem }.forEach {
                 val i = select(DBConfig.TABLE_NAME_DYTT).whereArgs("movieId = \"${it.movieId}\"").exec {
