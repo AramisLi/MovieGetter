@@ -6,15 +6,19 @@ import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
+import com.aramis.library.aramis.ArBus
 import com.aramis.library.component.adapter.DefaultFrgPagerAdapter
+import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
+import com.moviegetter.config.Config
+import com.moviegetter.crawl.base.CrawlLiteSubscription
 import com.moviegetter.ui.component.OptionsPop
 import com.moviegetter.ui.component.adapter.RecycleBottomMenuAdapter
-import com.moviegetter.ui.main.fragment.*
+import com.moviegetter.ui.main.pv.TitleItemBean
 import kotlinx.android.synthetic.main.activity_ipz_list2.*
 import org.jetbrains.anko.dip
-import org.jetbrains.anko.toast
+import rx.Subscription
 
 /**
  *Created by Aramis
@@ -30,6 +34,9 @@ abstract class IPZBaseActivity : MGBaseActivity() {
     //选项
     private var optionPop: OptionsPop? = null
 
+    private var crawlSubscription:Subscription?=null
+    private var titleItemCountSubscription:Subscription?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ipz_list2)
@@ -42,7 +49,24 @@ abstract class IPZBaseActivity : MGBaseActivity() {
     private fun initControl() {
         navigatorNames.addAll(getNavigatorNames())
         navigatorNames.forEach { titleItemCountArray.add(0) }
+
+        crawlSubscription = CrawlLiteSubscription().getCrawlCountSubscription({
+            it.tag == getTag()
+        }, { total, update, fail, finished ->
+            formatCrawlStatusView(total, update, fail, finished)
+        })
+
+        titleItemCountSubscription = ArBus.getDefault().take(TitleItemBean::class.java).filter {
+            it.tag == getTag()
+        }.subscribe {
+            titleItemCountArray[it.position] = it.count
+            if (viewpager_main.currentItem == it.position) {
+                formatTitle(viewpager_main.currentItem)
+            }
+            logE("it.position:${it.position},it.count:${it.count}")
+        }
     }
+
 
     private fun initView() {
         recycle_navigator.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -71,7 +95,7 @@ abstract class IPZBaseActivity : MGBaseActivity() {
         setTitleRightText("选项", View.OnClickListener {
             optionPop?.show(it, -dip(70), dip(2))
         })
-        optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "下载播放器"))
+        optionPop = OptionsPop(this, getOptionPopDataList())
         optionPop?.listListener = { parent: AdapterView<*>, view: View, position: Int, id: Long ->
             setOptionPopListener(optionPop!!, position)
             optionPop?.dismiss()
@@ -88,12 +112,22 @@ abstract class IPZBaseActivity : MGBaseActivity() {
         setTitleMiddleText(navigatorNames[position] + "(${titleItemCountArray[position]})")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        crawlSubscription?.unsubscribe()
+        titleItemCountSubscription?.unsubscribe()
+    }
+
     protected fun getCurrentPagePosition(): Int = viewpager_main.currentItem
 
     abstract fun getNavigatorNames(): MutableList<String>
 
     abstract fun getFragments(): List<Fragment>
 
+    abstract fun getTag():String
+
     abstract fun setOptionPopListener(optionPop: OptionsPop, position: Int)
+
+    abstract fun getOptionPopDataList():List<String>
 
 }

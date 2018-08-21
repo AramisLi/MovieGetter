@@ -39,6 +39,7 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
     private val crawler = IPZCrawler()
     private val xfyyCrawler = XfyyCrawler()
     private val ssbCrawler = SsbCrawler()
+    var currentMenuPosition: Int = 0
 
 
     fun downloadPlayer() {
@@ -104,9 +105,6 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
         }
     }
 
-    fun postTitleMessage(position: Int, count: Int) {
-        ArBus.getDefault().post(TitleItemBean(Config.TAG_ADY, position, count))
-    }
 
     fun saveDownloaded(movieId: Int, movieName: String, onSuccess: () -> Unit) {
         doAsync {
@@ -130,14 +128,6 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
         }))
     }
 
-//    fun getFragments(flag: Int): List<Fragment> {
-//        return when (flag) {
-//            0 -> listOf(IPZFragmentA(), IPZFragmentB(), IPZFragmentC(), IPZFragmentD(), IPZFragmentE(), IPZFragmentF(), IPZFragmentG(), IPZFragmentH(), IPZFragmentI(), IPZFragmentJ())
-//            1 -> listOf(XfyyFragmentA(), XfyyFragmentB(), XfyyFragmentC(), XfyyFragmentD(), XfyyFragmentE(), XfyyFragmentF(), XfyyFragmentG(), XfyyFragmentH(), XfyyFragmentI(), XfyyFragmentJ())
-//            else -> listOf()
-//        }
-//    }
-
     fun getBottomTextArray(activity: Activity, flag: Int): Array<String> {
         return when (flag) {
             0 -> activity.resources.getStringArray(R.array.text_navigator_ipz)
@@ -145,6 +135,20 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
             2 -> activity.resources.getStringArray(R.array.text_navigator_ssb)
             else -> arrayOf()
         }
+    }
+
+    fun getCurrentTag(currentPosition: Int): String {
+        return when (currentPosition) {
+            1 -> Config.TAG_XFYY
+            2 -> Config.TAG_SSB
+            else -> Config.TAG_ADY
+        }
+    }
+
+    fun initTitleItemCountArray(): Array<IntArray> {
+        return arrayOf(intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0),
+                intArrayOf(0, 0, 0, 0, 0, 0, 0))
     }
 
 
@@ -155,6 +159,21 @@ interface IPZView : BaseView {
     fun onGetDataFail(errorCode: Int, errorMsg: String)
 
     fun handleCrawlStatus(total: Int, update: Int, fail: Int, finished: Boolean)
+}
+
+interface IPZDetailView:IPZView{
+    override fun onGetDataFail(errorCode: Int, errorMsg: String) {
+
+    }
+
+    override fun onGetDataSuccess(result: List<IPZItem>) {
+
+
+    }
+
+    override fun handleCrawlStatus(total: Int, update: Int, fail: Int, finished: Boolean) {
+
+    }
 }
 
 data class TitleItemBean(val tag: String, val position: Int, val count: Int) : Serializable

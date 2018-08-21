@@ -1,5 +1,6 @@
 package com.moviegetter.ui.main.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -7,9 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.aramis.library.aramis.ArBus
 import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseFragment
+import com.moviegetter.config.Config
+import com.moviegetter.crawl.base.CrawlLiteMessage
+import com.moviegetter.crawl.base.CrawlerHandlerWhat
 import com.moviegetter.crawl.pic.PicItem
 import com.moviegetter.ui.main.activity.IPZPicActivity
 import com.moviegetter.ui.main.activity.IPZPicDetailActivity
@@ -19,7 +24,10 @@ import kotlinx.android.synthetic.main.frg_main.view.*
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.support.v4.dip
 import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.startActivityForResult
 import org.jetbrains.anko.support.v4.toast
+import rx.Subscription
+import rx.android.schedulers.AndroidSchedulers
 
 /**
  *Created by Aramis
@@ -31,10 +39,17 @@ abstract class PicFragment : MGBaseFragment() {
     private val adapter = IPZPicListAdapter(dataList)
     private var presenter: IPZPicPresenter? = null
     private val position = getPosition()
+    private var crawlSubscription: Subscription? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter = (activity as IPZPicActivity).getPresenter() as IPZPicPresenter
+        crawlSubscription = ArBus.getDefault().take(CrawlLiteMessage::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter { it.tag == Config.TAG_PIC && it.position == position && it.what == CrawlerHandlerWhat.CRAWLER_FINISHED }
+                .subscribe {
+                    initData()
+                }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,21 +61,38 @@ abstract class PicFragment : MGBaseFragment() {
         return mRootView
     }
 
-    private fun setListener() {
-        mRootView.list_result.setOnItemClickListener { parent, view, position, id ->
-            startActivity<IPZPicDetailActivity>("data" to dataList[position])
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode==101){
+            initData()
         }
+    }
+
+    private fun setListener() {
+        //去图片详情
+        mRootView.list_result.setOnItemClickListener { parent, view, position, id ->
+            startActivityForResult<IPZPicDetailActivity>(101,
+                    "data" to dataList[position],
+                    "dataPosition" to getPosition(),
+                    "listPosition" to position,
+                    "dataName" to (activity as IPZPicActivity).getNavigatorNames()[getPosition()])
+        }
+
+        //立即同步
+        mRootView.view_empty.setClickListener(View.OnClickListener {
+            presenter?.startCrawlLite(position, 1)
+        })
     }
 
     private fun initData() {
         presenter?.getData(position, onSuccess = {
-            logE("===PicFragment===获取到数据${it.size},position:$position")
-            logE(it[0].toString())
+//            logE("===PicFragment===获取到数据${it.size},position:$position")
+//            logE(it[0].toString())
             mRootView.view_empty.visibility = View.GONE
             dataList.clear()
             dataList.addAll(it)
             adapter.notifyDataSetChanged()
-//            presenter?.postTitleMessage(position, dataList.size)
+            presenter?.postTitleMessage(Config.TAG_PIC, position, dataList.size)
 
         }, onFail = { errorCode, errorMsg ->
             if (errorCode == 1) {
@@ -75,9 +107,7 @@ abstract class PicFragment : MGBaseFragment() {
         mRootView.list_result.adapter = adapter
 
 
-
-
-        testUI()
+//        testUI()
     }
 
     private fun testUI() {
@@ -89,6 +119,11 @@ abstract class PicFragment : MGBaseFragment() {
         textView.gravity = Gravity.CENTER
         textView.backgroundResource = R.drawable.bg_btn_normal
         (mRootView as ViewGroup).addView(textView)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        crawlSubscription?.unsubscribe()
     }
 
     abstract fun getPosition(): Int

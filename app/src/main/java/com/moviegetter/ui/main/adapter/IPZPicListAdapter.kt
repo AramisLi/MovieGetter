@@ -1,40 +1,42 @@
 package com.moviegetter.ui.main.adapter
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
+import android.support.v7.widget.AppCompatImageView
 import android.view.View
-import android.widget.RelativeLayout
+import android.widget.TextView
+import com.aramis.library.base.SimpleBaseAdapter
+import com.aramis.library.base.SimpleBaseAdapterHolder
+import com.aramis.library.extentions.logE
+import com.aramis.library.extentions.now
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.moviegetter.R
 import com.moviegetter.config.DBConfig
+import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.Item
-import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.crawl.pic.PicItem
-import com.moviegetter.ui.component.adapter.CrawlerBaseListAdapter
-import org.jetbrains.anko.dip
 
 /**
  *Created by Aramis
  *Date:2018/6/27
  *Description:
  */
-class IPZPicListAdapter(list: List<PicItem>) : CrawlerBaseListAdapter(list) {
-    init {
-        showPic=true
-    }
-    var onItemClick: ((item: PicItem, position: Int) -> Unit)? = null
-
-    private val requestOptions = RequestOptions.centerCropTransform()
-            .placeholder(R.mipmap.pic_holder).error(R.mipmap.pic_holder)
-
+class IPZPicListAdapter(list: List<PicItem>) : SimpleBaseAdapter<Item>(list) {
+    private var configSP: SharedPreferences? = null
+    private val dateToday = now("yyyy-MM-dd")
     @SuppressLint("SetTextI18n")
-    override fun formatItems(holder: CrawlerBaseHolder, item: Item, position: Int) {
+    override fun initDatas(holder: SimpleBaseAdapterHolder, item: Item, position: Int) {
+        if (configSP == null) {
+            configSP = MGsp.getConfigSP(mContext!!)
+        }
+        val showDownloaded = configSP?.getBoolean("signADYDownloaded", false) ?: false
         if (DBConfig.IsCompany) {
-            holder.text_movie_name.text = "我是大帅哥" + (item as PicItem).picId + (if (item.pics?.contains(",") == true) {
-                " -- mutable"+item.pics!!.split(",").size
+            (holder as CrawlerBaseHolder).text_movie_name.text = "我是大帅哥" + (item as PicItem).picId + (if (item.pics?.contains(",") == true) {
+                " -- mutable" + item.pics!!.split(",").size
             } else "")
         } else {
-            holder.text_movie_name.text = (item as PicItem).picName
+            (holder as CrawlerBaseHolder).text_movie_name.text = (item as PicItem).picName
             if (showPic) {
                 holder.image_movie_thumb.visibility = View.VISIBLE
                 Glide.with(mContext!!).load(item.thumb).apply(requestOptions)
@@ -46,16 +48,12 @@ class IPZPicListAdapter(list: List<PicItem>) : CrawlerBaseListAdapter(list) {
         }
         holder.text_movie_update.text = "更新时间：" + item.pic_update_time
         holder.text_movie_sync.text = "同步时间：" + item.update_time
-        holder.text_movie_update.textSize=11f
-        holder.text_movie_sync.textSize=11f
+        holder.text_movie_update.textSize = 11f
+        holder.text_movie_sync.textSize = 11f
 
-        holder.text_movie_download.visibility=View.GONE
-//        holder.text_movie_download.setOnClickListener {
-//            onItemClick?.invoke(item, position)
-//        }
+//        logE("adapter item.picName:${item.picName},item.watched:${item.watched}")
         //已下载
         holder.text_sync_downloaded.visibility = if (showDownloaded && item.watched == 1) {
-            holder.text_sync_downloaded.text="已读"
             View.VISIBLE
         } else {
             View.GONE
@@ -66,25 +64,30 @@ class IPZPicListAdapter(list: List<PicItem>) : CrawlerBaseListAdapter(list) {
         } else {
             View.INVISIBLE
         }
-        //换位置
-        if (showPic) {
-            val syncLayoutParams = RelativeLayout.LayoutParams(mContext!!.dip(48),
-                    mContext!!.dip(15))
-            syncLayoutParams.addRule(RelativeLayout.BELOW, holder.text_movie_sync.id)
-            syncLayoutParams.addRule(RelativeLayout.ALIGN_LEFT, holder.text_movie_sync.id)
-            syncLayoutParams.setMargins(0, 20, 0, 0)
-            holder.text_sync_today.layoutParams = syncLayoutParams
-
-            if (holder.text_sync_downloaded.visibility == View.VISIBLE) {
-                val downloadedLayoutParams = RelativeLayout.LayoutParams(mContext!!.dip(48),
-                        mContext!!.dip(15))
-                downloadedLayoutParams.addRule(RelativeLayout.BELOW, holder.text_movie_sync.id)
-                downloadedLayoutParams.addRule(RelativeLayout.ALIGN_BASELINE, holder.text_sync_today.id)
-                downloadedLayoutParams.addRule(RelativeLayout.RIGHT_OF, holder.text_sync_today.id)
-                downloadedLayoutParams.setMargins(10, 20, 0, 0)
-                holder.text_sync_downloaded.layoutParams = downloadedLayoutParams
-            }
-
-        }
     }
+
+    override fun itemLayout(): Int = R.layout.adapter_crawler_pic
+
+    override fun initHolder(convertView: View): SimpleBaseAdapterHolder {
+        return CrawlerBaseHolder(convertView.findViewById(R.id.image_movie_thumb),
+                convertView.findViewById(R.id.text_movie_name),
+                convertView.findViewById(R.id.text_movie_update),
+                convertView.findViewById(R.id.text_movie_sync),
+                convertView.findViewById(R.id.text_sync_today),
+                convertView.findViewById(R.id.text_sync_downloaded)
+        )
+    }
+
+    private var showPic = true
+
+    private val requestOptions = RequestOptions.centerCropTransform()
+            .placeholder(R.mipmap.pic_holder).error(R.mipmap.pic_holder)
+
+
+    private inner class CrawlerBaseHolder(val image_movie_thumb: AppCompatImageView,
+                                          val text_movie_name: TextView,
+                                          val text_movie_update: TextView,
+                                          val text_movie_sync: TextView,
+                                          val text_sync_today: TextView,
+                                          val text_sync_downloaded: TextView) : SimpleBaseAdapterHolder()
 }

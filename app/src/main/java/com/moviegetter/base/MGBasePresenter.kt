@@ -1,6 +1,7 @@
 package com.moviegetter.base
 
 import android.app.Activity
+import com.aramis.library.aramis.ArBus
 import com.aramis.library.base.BasePresenter
 import com.aramis.library.base.BaseView
 import com.aramis.library.extentions.logE
@@ -13,6 +14,7 @@ import com.kymjs.rxvolley.client.HttpParams
 import com.kymjs.rxvolley.client.ProgressListener
 import com.moviegetter.bean.BaseBean
 import com.moviegetter.crawl.base.Item
+import com.moviegetter.ui.main.pv.TitleItemBean
 import com.moviegetter.utils.database
 import org.jetbrains.anko.db.RowParser
 import org.jetbrains.anko.db.SqlOrderDirection
@@ -27,6 +29,11 @@ import java.io.File
  *Description:
  */
 open class MGBasePresenter<T : BaseView>(view: T) : BasePresenter<T>(view) {
+
+    fun postTitleMessage(tag: String, position: Int, count: Int) {
+        ArBus.getDefault().post(TitleItemBean(tag, position, count))
+    }
+
     protected fun getMGCallback(onSuccess: (t: String, result: String?) -> Unit, onFail: ((errorCode: Int, errorMsg: String) -> Unit)): HttpCallback {
         return object : HttpCallback() {
             override fun onSuccess(t: String?) {

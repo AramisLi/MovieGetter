@@ -19,7 +19,7 @@
             android:layout_height="@dimen/height_recycle_bottom"
             android:layout_alignParentBottom="true" />
 
-        <android.support.v4.view.ViewPager
+        <com.aramis.library.widget.NoTouchViewPager
             android:id="@+id/viewpager_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

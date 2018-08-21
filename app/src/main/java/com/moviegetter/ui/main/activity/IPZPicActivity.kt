@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.aramis.library.base.BasePresenter
 import com.moviegetter.R
+import com.moviegetter.config.Config
 import com.moviegetter.ui.component.OptionsPop
 import com.moviegetter.ui.main.fragment.*
 import com.moviegetter.ui.main.pv.IPZPicPresenter
@@ -16,19 +17,12 @@ import org.jetbrains.anko.toast
  *Description:
  */
 class IPZPicActivity : IPZBaseActivity(), IPZPicView {
-
     private val presenter = IPZPicPresenter(this)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun setOptionPopListener(optionPop: OptionsPop, position: Int) {
         when (position) {
-            0 -> presenter.startCrawlLite(getCurrentPagePosition(),1)
-            1 -> toast("2")
-            2 -> toast("3")
+            0 -> presenter.startCrawlLite(getCurrentPagePosition(), 1)
+            1 -> presenter.startCrawlLite(getCurrentPagePosition(), 10)
         }
     }
 
@@ -42,5 +36,7 @@ class IPZPicActivity : IPZBaseActivity(), IPZPicView {
 
     override fun getPresenter(): BasePresenter<*>? = presenter
 
+    override fun getOptionPopDataList(): List<String> = listOf("同步1页", "同步10页")
 
+    override fun getTag(): String = Config.TAG_PIC
 }

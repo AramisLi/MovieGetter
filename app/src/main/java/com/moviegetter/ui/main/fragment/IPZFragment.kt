@@ -51,7 +51,7 @@ abstract class IPZFragment : MGBaseFragment() {
         presenter = if (activity is IPZActivity) (activity as IPZActivity).getPresenter() as? IPZPresenter else null
         crawlSubscription = ArBus.getDefault().take(CrawlLiteMessage::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .filter { it.tag == Config.TAG_ADY && it.position == position && it.what == CrawlerHandlerWhat.CRAWLER_FINISHED }
+                .filter { it.tag == presenter!!.getCurrentTag(position) && it.position == position && it.what == CrawlerHandlerWhat.CRAWLER_FINISHED }
                 .subscribe {
                     initData()
                 }
@@ -69,6 +69,7 @@ abstract class IPZFragment : MGBaseFragment() {
 
         initData()
         return mRootView
+
     }
 
     private fun initData() {
@@ -79,7 +80,12 @@ abstract class IPZFragment : MGBaseFragment() {
             dataList.clear()
             dataList.addAll(it)
             adapter.notifyDataSetChanged()
-            presenter?.postTitleMessage(position, dataList.size)
+            val tag = when (presenter?.currentMenuPosition) {
+                1 -> Config.TAG_XFYY
+                2 -> Config.TAG_SSB
+                else -> Config.TAG_ADY
+            }
+            presenter?.postTitleMessage(tag, position, dataList.size)
 
         }, onFail = { errorCode, errorMsg ->
             dataList.clear()
@@ -93,6 +99,7 @@ abstract class IPZFragment : MGBaseFragment() {
     }
 
     private fun setListener() {
+        //去详情
         mRootView.list_result.setOnItemClickListener { parent, view, position, id ->
             startActivity<IPZDetailActivity>("data" to dataList[position])
         }
@@ -119,6 +126,7 @@ abstract class IPZFragment : MGBaseFragment() {
             }
         })
     }
+
 
     private fun initView() {
         mRootView.list_result.adapter = adapter

@@ -47,7 +47,7 @@ class IPZActivity : MGBaseActivity(), IPZView {
     //接受状态的bus
     private var crawlSubscription: Subscription? = null
     //标题，条目数量
-    private val titleItemCountArray = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    private val titleItemCountArray = presenter.initTitleItemCountArray()
     private var titleItemCountSubscription: Subscription? = null
     private val navigatorNames = mutableListOf<String>()
     private lateinit var navigatorAdapter: RecycleBottomMenuAdapter
@@ -67,17 +67,18 @@ class IPZActivity : MGBaseActivity(), IPZView {
 
     private fun initBus() {
         crawlSubscription = CrawlLiteSubscription().getCrawlCountSubscription({
-            it.tag == Config.TAG_ADY
+            (currentMenuPosition == 0 && it.tag == Config.TAG_ADY)
+                    || currentMenuPosition == 1 && it.tag == Config.TAG_XFYY
+                    || currentMenuPosition == 2 && it.tag == Config.TAG_SSB
         }, { total, update, fail, finished ->
             formatCrawlStatusView(total, update, fail, finished)
-//            if (finished) {
-//                formatTitle(viewpager_main.currentItem)
-//            }
         })
         titleItemCountSubscription = ArBus.getDefault().take(TitleItemBean::class.java).filter {
-            it.tag == Config.TAG_ADY
+            (currentMenuPosition == 0 && it.tag == Config.TAG_ADY)
+                    || currentMenuPosition == 1 && it.tag == Config.TAG_XFYY
+                    || currentMenuPosition == 2 && it.tag == Config.TAG_SSB
         }.subscribe {
-            titleItemCountArray[it.position] = it.count
+            titleItemCountArray[currentMenuPosition][it.position] = it.count
             if (viewpager_main.currentItem == it.position) {
                 formatTitle(viewpager_main.currentItem)
             }
@@ -86,7 +87,7 @@ class IPZActivity : MGBaseActivity(), IPZView {
     }
 
     private fun formatTitle(position: Int) {
-        setTitleMiddleText(navigatorNames[position] + "(${titleItemCountArray[position]})")
+        setTitleMiddleText(navigatorNames[position] + "(${titleItemCountArray[currentMenuPosition][position]})")
     }
 
 
@@ -125,6 +126,8 @@ class IPZActivity : MGBaseActivity(), IPZView {
         list_menu_download.adapter = IPZLeftMenuAdapter(listOf("下载源1", "下载源2", "下载源3"), true)
         list_menu_online.adapter = IPZLeftMenuAdapter(listOf("在线源1"))
         list_menu_pic.adapter = IPZLeftMenuAdapter(listOf("图片 1"))
+
+        image_caidan.visibility = View.VISIBLE
     }
 
     private fun onChangeMenu(position: Int) {
@@ -134,11 +137,14 @@ class IPZActivity : MGBaseActivity(), IPZView {
             navigatorAdapter.notifyDataSetChanged()
 
             currentMenuPosition = position
+            presenter.currentMenuPosition = currentMenuPosition
             (list_menu_download.adapter as IPZLeftMenuAdapter).checkPosition = currentMenuPosition
             (list_menu_download.adapter as IPZLeftMenuAdapter).notifyDataSetChanged()
             postRefreshEvent()
         }
-        main_drawer_layout.closeDrawer(Gravity.LEFT)
+        main_drawer_layout.closeDrawer(Gravity.START)
+        viewpager_main.setCurrentItem(0, false)
+        formatTitle(viewpager_main.currentItem)
     }
 
     private fun postRefreshEvent() {
@@ -148,9 +154,14 @@ class IPZActivity : MGBaseActivity(), IPZView {
 
 
     private fun setListener() {
+        //菜单
+        image_caidan.setOnClickListener {
+            main_drawer_layout.openDrawer(Gravity.START)
+        }
         //在线
         list_menu_online.setOnItemClickListener { parent, view, position, id ->
             toast("暂未开放，敬请期待")
+
         }
         //图片区
         list_menu_pic.setOnItemClickListener { _, _, position, _ ->

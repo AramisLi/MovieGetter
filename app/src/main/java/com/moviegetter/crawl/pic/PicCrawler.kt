@@ -40,9 +40,9 @@ class PicCrawler : BaseCrawler() {
     }
 
     override fun preDownloadCondition(context: Context?, node: CrawlNode): Boolean {
-        return if (node.level == 1 && node.item != null && node.item is IPZItem) {
+        return if (node.level == 1 && node.item != null && node.item is PicItem) {
             val count = context?.database?.use {
-                select(DBConfig.TABLE_NAME_ADY).whereSimple("(movieId=?)", (node.item as IPZItem).movieId.toString()).exec { this.count }
+                select(DBConfig.TABLE_NAME_PIC).whereSimple("(picId=?)", (node.item as PicItem).picId.toString()).exec { this.count }
             }
 //            logE("======================跳过:" + (count == 0))
             count == 0
