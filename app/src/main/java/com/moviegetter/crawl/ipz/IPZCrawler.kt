@@ -1,6 +1,7 @@
 package com.moviegetter.crawl.ipz
 
 import android.content.Context
+import com.aramis.library.extentions.logE
 import com.moviegetter.config.Config
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
@@ -21,6 +22,7 @@ class IPZCrawler : BaseCrawler() {
 
 
     fun startCrawlLite(context: Context?, position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
+        logE("baseUrl:$baseUrl")
         fun superAdd(url: String) {
             super.startedAdd(url, position, Config.TAG_ADY)
         }

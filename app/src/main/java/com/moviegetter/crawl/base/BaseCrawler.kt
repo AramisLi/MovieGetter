@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Handler
 import com.aramis.library.aramis.ArBus
 import com.aramis.library.extentions.logE
+import com.moviegetter.config.Config
+import com.moviegetter.config.MGsp
 import com.moviegetter.utils.OKhttpUtils
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -88,6 +90,10 @@ open class BaseCrawler : Crawler {
                             }
                         } else {
                             logE("获取html失败 code:${response?.code()}")
+                            if (node.tag == Config.TAG_ADY && node.level == 0) {
+                                logE("重置ADY baseUrl")
+                                MGsp.resetIpzBaseUrl()
+                            }
                             postMessage(tag, position, CrawlerHandlerWhat.CRAWLER_HTML_FAIL, response?.code().toString() + " " + doUrl)
                         }
                     } else {
@@ -105,6 +111,10 @@ open class BaseCrawler : Crawler {
             }
         }
     }
+
+//    private fun retry(node:CrawlNode){
+//
+//    }
 
     private fun postMessage(tag: String, position: Int, what: Int, obj: Any? = null) {
         ArBus.getDefault().post(CrawlLiteMessage(what, obj, tag, position))

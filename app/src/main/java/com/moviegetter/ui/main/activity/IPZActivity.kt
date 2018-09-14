@@ -14,6 +14,7 @@ import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.config.Config
+import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.CrawlLiteSubscription
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.OptionsPop
@@ -63,6 +64,8 @@ class IPZActivity : MGBaseActivity(), IPZView {
         initBus()
         setListener()
 
+        val key = "ipzDoubleScript"
+        logE(MGsp.get(key)?:"没有")
     }
 
     private fun initBus() {
@@ -172,7 +175,8 @@ class IPZActivity : MGBaseActivity(), IPZView {
             onChangeMenu(position)
         }
         list_menu_online.setOnItemClickListener { parent, view, position, id ->
-            onChangeMenu(position - 2)
+//            onChangeMenu(position - 2)
+            toast("敬请期待")
         }
         optionPop?.listListener = { parent: AdapterView<*>, view: View, position: Int, id: Long ->
             when (position) {

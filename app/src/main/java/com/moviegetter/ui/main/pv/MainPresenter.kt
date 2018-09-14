@@ -41,24 +41,6 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
     private var versionName = ""
     private var ipBean: IPBean? = null
 
-    fun findIpzUrl() {
-        val baseUrl=MGsp.getIpzBaseUrl()
-        logE("baseUrl:$baseUrl")
-        get("$baseUrl/js/ads/caonimei.js", object : HttpCallback() {
-            override fun onSuccess(t: String?) {
-                super.onSuccess(t)
-                t?.apply {
-                    val resJs = String(t.toByteArray(), Charset.forName("GBK"))
-                    val matchResult = """<b>(www.*?)</b>""".toRegex().find(resJs)
-                    matchResult?.value?.apply {
-                        val url = "http://" + this.substring(3, this.length - 4)
-                        MGsp.putIpzBaseUrl(url)
-                    }
-                }
-            }
-        })
-    }
-
     fun checkVersion() {
         activity?.apply {
             val packageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
@@ -69,7 +51,7 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
                 val obj = JSONObject(it)
                 if (obj.getInt("code") == 200) {
                     val obj1 = obj.getJSONObject("result")
-                    mView?.onCheckVersionSuccess(versionCode,MgVersion(obj1.getInt("version_code"),
+                    mView?.onCheckVersionSuccess(versionCode, MgVersion(obj1.getInt("version_code"),
                             obj1.getString("version_name"),
                             obj1.getInt("is_current")))
                 }
@@ -133,18 +115,6 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
      */
     fun checkNewWorld(imei: String?) {
         imei?.apply {
-            //            doAsync {
-//                activity?.database?.use {
-//                    val userList = select(DBConfig.TABLE_NAME_USER).whereArgs("imei=${this@apply}").parseList(UserRowParser())
-//                    if (userList.isNotEmpty() && (userList[0].role == DBConfig.USER_ROLE_VIP
-//                                    || userList[0].role == DBConfig.USER_ROLE_MANAGER
-//                                    || userList[0].role == DBConfig.USER_ROLE_ROOT)) {
-//                        uiThread {
-//                            mView?.checkNewWorld(userList[0])
-//                        }
-//                    }
-//                }
-//            }
             //由本地检查改为服务器检查
             post(Api.getRole, mapOf("imei" to this), getMGCallback({ t, result ->
                 logE("访问getRole成功")
@@ -198,8 +168,8 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
 
     fun requestMarkIn() {
 
-        if (MGsp.getImei().isNotBlank()) {
-//            logE("requestMarkIn imei:${MGsp.getImei()}")
+        if (MGsp.getImei().isNotBlank() && MGsp.getImei() != "868897020889812") {
+            logE("requestMarkIn imei:${MGsp.getImei()}")
 //            logE("ip ${MovieGetterHelper.getWiFiIpAddress(activity)}")
             val dataMap = mutableMapOf("imei" to MGsp.getImei(), "login_time" to now(),
                     "version_code" to versionCode, "version_name" to versionName)
@@ -270,7 +240,7 @@ interface MainView : BaseView {
 
     fun onMarkInSuccess(markId: Int)
 
-    fun onCheckVersionSuccess(versionCode:Int,bean: MgVersion)
+    fun onCheckVersionSuccess(versionCode: Int, bean: MgVersion)
 
     fun onCheckVersionFail(errorCode: Int, errorMsg: String)
 }

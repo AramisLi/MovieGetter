@@ -22,7 +22,7 @@ abstract class CrawlerBaseListAdapter(list: List<Item>) : SimpleBaseAdapter<Item
     protected var showPic = true
     protected var showDownloaded = false
 
-    fun refreshFlags(){
+    fun refreshFlags() {
         showPic = configSP?.getBoolean("showADYPicture", false) ?: false
         showDownloaded = configSP?.getBoolean("signADYDownloaded", false) ?: false
     }
@@ -47,7 +47,8 @@ abstract class CrawlerBaseListAdapter(list: List<Item>) : SimpleBaseAdapter<Item
                 convertView.findViewById(R.id.text_movie_sync),
                 convertView.findViewById(R.id.text_movie_download),
                 convertView.findViewById(R.id.text_sync_today),
-                convertView.findViewById(R.id.text_sync_downloaded)
+                convertView.findViewById(R.id.text_sync_downloaded),
+                convertView.findViewById(R.id.text_sync_multi)
         )
     }
 
@@ -57,5 +58,7 @@ abstract class CrawlerBaseListAdapter(list: List<Item>) : SimpleBaseAdapter<Item
                                   val text_movie_sync: TextView,
                                   val text_movie_download: TextView,
                                   val text_sync_today: TextView,
-                                  val text_sync_downloaded: TextView) : SimpleBaseAdapterHolder()
+                                  val text_sync_downloaded: TextView,
+                                  val text_sync_multi: TextView
+    ) : SimpleBaseAdapterHolder()
 }

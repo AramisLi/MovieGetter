@@ -1,10 +1,12 @@
 package com.moviegetter.crawl.ipz
 
 import com.aramis.library.extentions.logE
+import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.base.Parser
 import com.moviegetter.crawl.base.Pipeline
 import org.jsoup.Jsoup
+import org.jsoup.select.Elements
 import java.nio.charset.Charset
 
 /**
@@ -67,6 +69,9 @@ class IPZParser : Parser {
                     thumb = baseUrl + element.child(0).attr("src"), position = originNode.position)
             CrawlNode(baseUrl + href, 1, originNode, null, item, false, originNode.tag, originNode.position)
         }.toMutableList()
+
+        //更新baseUrl
+        nextBaseUrl(document.select("div.top-banner > b"))
         //下一页
         nextPage(originNode.url)?.apply {
             resultList.add(CrawlNode(this, 0, null, mutableListOf(), null, false, originNode.tag, originNode.position))
@@ -75,14 +80,42 @@ class IPZParser : Parser {
         return resultList
     }
 
+    //更新baseUrl
+    private fun nextBaseUrl(elements: Elements?) {
+        if (elements != null && elements.isNotEmpty()) {
+            val s = elements.first().text()
+            val z = """([a-z0-9A-Z.]+?)""".toRegex().findAll(s)
+            val nextBaseUrl = "http://" + z.toList().joinToString("") { it.value }.toLowerCase()
+            logE("nextBaseUrl:$nextBaseUrl")
+            MGsp.putIpzBaseUrl(nextBaseUrl)
+        }
+    }
+
     private fun parseDetail(html: String, originNode: CrawlNode): List<CrawlNode>? {
         val document = Jsoup.parse(html)
         val a = document.select("div.vpl a")
-        val images = document.select("div.vpl > img").eachAttr("src").joinToString { "," }
-        return a.map { element ->
+        val images = document.select("div.vpl > img").eachAttr("src").joinToString(",")
+//        logE("detail images $images")
+//        <div class="vpl">
+//        <ul><li><a title='第01集' href='/player/index42592.html?42592-0-0' target="_blank">第01集</a></li></ul>
+//        </div>
+
+//        if (a.size > 1) {
+//            logE("==================put put put put put put put put ")
+//            val key = "ipzDoubleScript"
+//            val value = (if (MGsp.get(key)?.isNotBlank() == true) MGsp.get(key) + "+" else "") + (originNode.item as IPZItem).movieId.toString()
+//            MGsp.put(key, value)
+//        }
+        val result = a.map { element ->
             (originNode.item as? IPZItem)?.images = images
             CrawlNode(baseUrl + element.attr("href"), 2, originNode, null, originNode.item, false, originNode.tag, originNode.position)
         }
+
+//        if ((originNode.item as? IPZItem)?.movieId==39919){
+//            logE("result $result")
+//        }
+
+        return result
     }
 
     private fun parsePlayerPage(html: String, originNode: CrawlNode): List<CrawlNode>? {
@@ -94,34 +127,16 @@ class IPZParser : Parser {
     }
 
     private fun parsePlayData(playData: String, originNode: CrawlNode): List<CrawlNode>? {
+//        if ((originNode.item as? IPZItem)?.movieId==39919){
+//            logE("playDataq $playData")
+//        }
 
-        var data = playData.substring(playData.indexOf("\$xfplay://") + 1 until playData.lastIndexOf("\$xfplay"))
-        if (data.contains(",")) {
-            val cc = data.split(",")
-            data = ""
-            for (i in cc) {
-                var a = i
-                if ("'" in a) {
-                    a = a.replace("'", "")
-                }
-
-                if (a.endsWith("\$xfplay")) {
-                    a = a.removeRange(i.length - 7, i.length)
-                }
-
-                if (a.contains("\$xfplay://")) {
-                    a = a.substring(a.indexOf("\$xfplay://") + 1, a.length)
-                }
-
-                data += "$a,"
-            }
-            if (data.isNotEmpty()) {
-                data = data.substring(0 until data.length - 1)
-            }
-
-//            logE("mutable data&&:$data")
-
-        }
+        val fa = """'(.*?)'""".toRegex().findAll(playData)
+        val data = fa.filter { it.value.contains("xfplay://") }.map { it.value }.toList().map {
+            var d = it.substring(it.indexOf("xfplay://"), it.lastIndexOf("xfplay") + 6)
+            d = d.replace(",", "")
+            d
+        }.joinToString(",")
         originNode.isItem = true
         (originNode.item as? IPZItem)?.xf_url = data
         return listOf(originNode)

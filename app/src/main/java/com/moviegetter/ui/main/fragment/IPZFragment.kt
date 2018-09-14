@@ -51,7 +51,10 @@ abstract class IPZFragment : MGBaseFragment() {
         presenter = if (activity is IPZActivity) (activity as IPZActivity).getPresenter() as? IPZPresenter else null
         crawlSubscription = ArBus.getDefault().take(CrawlLiteMessage::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .filter { it.tag == presenter!!.getCurrentTag(position) && it.position == position && it.what == CrawlerHandlerWhat.CRAWLER_FINISHED }
+                .filter {
+//                    logE("爬取完成 $it")
+//                    logE("it.tag:${it.tag} presenter!!.getCurrentTag(position):${presenter!!.getCurrentTag(position)}")
+                    it.tag == presenter!!.getCurrentTag((activity as IPZActivity).getCurrentMenuPosition()) && it.position == position && it.what == CrawlerHandlerWhat.CRAWLER_FINISHED }
                 .subscribe {
                     initData()
                 }
@@ -75,7 +78,7 @@ abstract class IPZFragment : MGBaseFragment() {
     private fun initData() {
         presenter?.getData(position, onSuccess = {
             logE("===IPZFragment===获取到数据${it.size},position:$position")
-            logE(it[0].toString())
+//            logE(it[0].toString())
             mRootView.view_empty.visibility = View.GONE
             dataList.clear()
             dataList.addAll(it)

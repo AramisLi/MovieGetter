@@ -39,11 +39,12 @@ import rx.Subscription
 
 
 class MainActivity : MGBaseActivity(), MainView {
+    //1.3版本
     //1.添加ipz详情 --部分
     //2.修复同一部影片的第二部分无法下载的bug --完成
     //3.增加同一数据源全部同步1页功能
     //4.增加隐藏新世界功能 --完成
-    //5.添加播放源
+    //5.添加播放源 --完成
     private val presenter = MainPresenter(this)
     private val statusDataList = mutableListOf<String>()
     private val statusAdapter = MainSimpleAdapter(statusDataList)
@@ -72,8 +73,8 @@ class MainActivity : MGBaseActivity(), MainView {
     }
 
     private fun prepare() {
-//        presenter.checkVersion()
-        presenter.findIpzUrl()
+        presenter.checkVersion()
+//        presenter.findIpzUrl()
     }
 
     private fun requestMarkIn() {

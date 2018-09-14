@@ -1,10 +1,12 @@
 package com.moviegetter.ui.main.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import com.aramis.library.base.BasePresenter
 import com.aramis.library.component.dialog.DefaultHintDialog
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
+import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.DownloadDialog
 import com.moviegetter.ui.main.adapter.IPZPicDetailAdapter
@@ -57,11 +59,15 @@ class IPZDetailActivity : MGBaseActivity(), IPZDetailView {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initView() {
         list_ipz_detail.adapter = picAdapter
+        text_ipz_name.text = if (DBConfig.IsCompany) "${ipzItem?.xf_url}" else ipzItem!!.movieName
         if (ipzItem != null) {
-            text_ipz_name.text = ipzItem!!.movieName
             if (ipzItem?.images?.isNotBlank() == true) {
+                if (DBConfig.IsCompany) {
+                    text_ipz_name.text = text_ipz_name.text.toString() + "\n" + ipzItem?.images
+                }
                 picDataList.clear()
                 val images = ipzItem!!.images!!
                 if ("," in images) {
@@ -72,7 +78,6 @@ class IPZDetailActivity : MGBaseActivity(), IPZDetailView {
                 }
                 picAdapter.notifyDataSetChanged()
             }
-
         } else {
             text_ipz_name.text = "获取数据失败"
         }

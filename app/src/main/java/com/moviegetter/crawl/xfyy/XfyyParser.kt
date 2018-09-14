@@ -86,33 +86,41 @@ class XfyyParser : Parser {
 
     private fun parsePlayData(playData: String, originNode: CrawlNode): List<CrawlNode>? {
 
-        var data = playData.substring(playData.indexOf("\$xfplay://") + 1 until playData.lastIndexOf("\$xfplay"))
-        if (data.contains(",")) {
-            val cc = data.split(",")
-            data = ""
-            for (i in cc) {
-                var a = i
-                if ("'" in a) {
-                    a = a.replace("'", "")
-                }
+//        var data = playData.substring(playData.indexOf("\$xfplay://") + 1 until playData.lastIndexOf("\$xfplay"))
+//        if (data.contains(",")) {
+//            val cc = data.split(",")
+//            data = ""
+//            for (i in cc) {
+//                var a = i
+//                if ("'" in a) {
+//                    a = a.replace("'", "")
+//                }
+//
+//                if (a.endsWith("\$xfplay")) {
+//                    a = a.removeRange(i.length - 7, i.length)
+//                }
+//
+//                if (a.contains("\$xfplay://")) {
+//                    a = a.substring(a.indexOf("\$xfplay://") + 1, a.length)
+//                }
+//
+//                data += "$a,"
+//            }
+//            if (data.isNotEmpty()) {
+//                data = data.substring(0 until data.length - 1)
+//            }
+//
+////            logE("mutable data&&:$data")
+//
+//        }
 
-                if (a.endsWith("\$xfplay")) {
-                    a = a.removeRange(i.length - 7, i.length)
-                }
+        val fa = """'(.*?)'""".toRegex().findAll(playData)
+        val data = fa.filter { it.value.contains("xfplay://") }.map { it.value }.toList().map {
+            var d = it.substring(it.indexOf("xfplay://"), it.lastIndexOf("xfplay") + 6)
+            d = d.replace(",", "")
+            d
+        }.joinToString(",")
 
-                if (a.contains("\$xfplay://")) {
-                    a = a.substring(a.indexOf("\$xfplay://") + 1, a.length)
-                }
-
-                data += "$a,"
-            }
-            if (data.isNotEmpty()) {
-                data = data.substring(0 until data.length - 1)
-            }
-
-//            logE("mutable data&&:$data")
-
-        }
         originNode.isItem = true
         (originNode.item as? IPZItem)?.xf_url = data
         return listOf(originNode)

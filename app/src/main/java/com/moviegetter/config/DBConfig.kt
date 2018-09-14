@@ -20,5 +20,5 @@ object DBConfig {
     const val USER_ROLE_VIP = "vip"
     const val USER_ROLE_NORMAL = "normal"
 
-    var IsCompany = false
+    var IsCompany = true
 }
