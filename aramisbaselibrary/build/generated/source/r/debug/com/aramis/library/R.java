@@ -1199,6 +1199,7 @@ public final class R {
         public static int rxvolley_app_name = 0x7f15002d;
         public static int search_menu_title = 0x7f15002e;
         public static int status_bar_notification_info_overflow = 0x7f15002f;
+        public static int str_doubleclick_quit = 0x7f150030;
     }
     public static final class style {
         public static int ActionSheetDialogStyle = 0x7f160001;

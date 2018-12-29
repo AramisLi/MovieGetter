@@ -17,11 +17,15 @@ import com.moviegetter.R
 import com.moviegetter.api.Api
 import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.bean.IPBean
+import com.moviegetter.bean.MgVersion
+import com.moviegetter.config.Config
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
+import com.moviegetter.ui.component.VersionHintDialog
 import com.moviegetter.ui.main.pv.SettingPresenter
 import com.moviegetter.ui.main.pv.SettingView
 import kotlinx.android.synthetic.main.activity_setting.*
+import org.jetbrains.anko.toast
 import java.io.Serializable
 
 /**
@@ -30,6 +34,18 @@ import java.io.Serializable
  *Description:
  */
 class SettingActivity : MGBaseActivity(), SettingView {
+    override fun onCheckVersionSuccess(versionCode: Int, bean: MgVersion) {
+        if (versionCode >= bean.version_code) {
+            toast("已经是最新版本啦！")
+        } else {
+            formatVersionDialog(versionHintDialog, bean)
+            versionHintDialog?.show()
+        }
+    }
+
+    override fun onCheckVersionFail(errorCode: Int, errorMsg: String) {
+    }
+
     private val presenter = SettingPresenter(this)
     private var configSP: SharedPreferences? = null
     private var versionCode: Int = 0
@@ -37,6 +53,7 @@ class SettingActivity : MGBaseActivity(), SettingView {
     private var testCount = 0
     private var ip = ""
     private var testIndexStr = "running"
+    private var versionHintDialog: VersionHintDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,12 +70,15 @@ class SettingActivity : MGBaseActivity(), SettingView {
 
     private fun setListener() {
         list_setting.setOnItemClickListener { parent, view, position, id ->
-            if (position == 0) {
-                testCount++
-                if (testCount == 5) {
-                    testCount = 0
-                    text_setting_info.visibility = View.VISIBLE
-                    text_setting_info.text = getTestInfo()
+            when (position) {
+                0 -> presenter.checkVersion()
+                1 -> {
+                    testCount++
+                    if (testCount == 5) {
+                        testCount = 0
+                        text_setting_info.visibility = View.VISIBLE
+                        text_setting_info.text = getTestInfo()
+                    }
                 }
             }
         }
@@ -91,6 +111,8 @@ class SettingActivity : MGBaseActivity(), SettingView {
         versionCode = packageInfo.versionCode
         versionName = packageInfo.versionName
         list_setting.adapter = ListViewAdapter(createTypeBeanList())
+
+        versionHintDialog = VersionHintDialog(this, Config.apkPath)
     }
 
     private fun createTypeBeanList(): List<SettingHolderBean> {

@@ -13,8 +13,7 @@ import java.nio.charset.Charset
  *Date:2018/6/26
  *Description:
  */
-class XfyyParser : Parser {
-    var pages = 1
+class XfyyParser(override var pages: Int) : Parser {
     private var baseUrl = MGsp.getXfyyBaseUrl()
     override fun startParse(node: CrawlNode, response: ByteArray, pipeline: Pipeline?): List<CrawlNode>? {
         val html = String(response, Charset.forName("GBK"))

@@ -1,7 +1,16 @@
 package com.moviegetter.ui.main.pv
 
+import android.Manifest
 import android.app.Activity
+import android.content.ComponentName
+import android.content.Context
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Environment
+import android.os.Handler
+import android.os.IBinder
+import android.support.v4.app.ActivityCompat
+import android.telephony.TelephonyManager
 import com.aramis.library.base.BaseView
 import com.aramis.library.extentions.logE
 import com.aramis.library.extentions.now
@@ -15,8 +24,11 @@ import com.moviegetter.bean.User
 import com.moviegetter.config.Config
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
+import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.dytt.DYTTCrawler
 import com.moviegetter.crawl.dytt.DYTTItem
+import com.moviegetter.service.IOnNewNodeGetListener
+import com.moviegetter.service.ITaskManager
 import com.moviegetter.utils.DYTTDBHelper
 import com.moviegetter.utils.MovieGetterHelper
 import com.moviegetter.utils.database
@@ -27,7 +39,6 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import java.io.File
-import java.nio.charset.Charset
 
 
 /**
@@ -41,20 +52,63 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
     private var versionName = ""
     private var ipBean: IPBean? = null
 
+    private var listenerHandler = Handler(Handler.Callback {
+        mView?.onNewNodeGet(it.obj as CrawlNode)
+        false
+    })
+
+    val iOnNewNodeGetListener = object : IOnNewNodeGetListener.Stub() {
+        override fun onError(errorCode: Int, errorMsg: String?) {
+        }
+
+        override fun onFinished() {
+        }
+
+        override fun onNewNodeGet(crawlNode: CrawlNode?) {
+            crawlNode?.apply {
+                val message = listenerHandler.obtainMessage()
+                message.obj = this
+                listenerHandler.sendMessage(message)
+            }
+        }
+    }
+
+
+
     fun checkVersion() {
         activity?.apply {
             val packageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
             versionCode = packageInfo.versionCode
             versionName = packageInfo.versionName
 
-            post(Api.checkVersion, mapOf("version_code" to versionCode, "version_name" to versionName), getHttpCallBack({
-                val obj = JSONObject(it)
-                if (obj.getInt("code") == 200) {
-                    val obj1 = obj.getJSONObject("result")
-                    mView?.onCheckVersionSuccess(versionCode, MgVersion(obj1.getInt("version_code"),
-                            obj1.getString("version_name"),
-                            obj1.getInt("is_current")))
-                }
+//            fun getValue(obj: JSONObject, key: String): String? {
+//                return if (obj.has(key)) obj.getString(key) else null
+//            }
+//            mapOf("version_code" to versionCode, "version_name" to versionName),
+//            get(Api.checkVersion, getHttpCallBack({
+//                logE("version $it")
+////                val obj = JSONObject(it)
+////                if (obj.getInt("code") == 200) {
+////                    val obj1 = obj.getJSONObject("result")
+////                    mView?.onCheckVersionSuccess(versionCode, MgVersion(obj1.getInt("version_code"),
+////                            obj1.getString("version_name"),
+////                            obj1.getInt("is_current"), getValue(obj1, "message"), getValue(obj1, "url"),
+////                            if (obj1.has("is_force")) obj1.getInt("is_force") else 0))
+////                }
+//            }, { errorCode, errorMsg ->
+//                mView?.onCheckVersionFail(errorCode, errorMsg)
+//            }))
+
+//            get(Api.checkVersion,getMGCallback({t, result ->
+//                logE("result $result")
+//
+//                logE("${result?.javaClass?.name}")
+//            },{errorCode, errorMsg ->
+//                mView?.onCheckVersionFail(errorCode, errorMsg)
+//            }))
+            get(Api.checkVersion, getMGTypeCallback<MgVersion>({
+                //                logE("MgVersion $it")
+                mView?.onCheckVersionSuccess(versionCode, it)
             }, { errorCode, errorMsg ->
                 mView?.onCheckVersionFail(errorCode, errorMsg)
             }))
@@ -243,6 +297,8 @@ interface MainView : BaseView {
     fun onCheckVersionSuccess(versionCode: Int, bean: MgVersion)
 
     fun onCheckVersionFail(errorCode: Int, errorMsg: String)
+
+    fun onNewNodeGet(crawlNode: CrawlNode)
 }
 
 class UserRowParser : RowParser<User> {

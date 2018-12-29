@@ -1,4 +1,4 @@
-package com.moviegetter.ui.main.adapter
+package com.moviegetter.ui.ipz.adapter
 
 import android.annotation.SuppressLint
 import android.view.View

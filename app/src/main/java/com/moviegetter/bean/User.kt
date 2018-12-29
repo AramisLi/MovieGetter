@@ -1,5 +1,6 @@
 package com.moviegetter.bean
 
+import com.google.gson.JsonElement
 import java.io.Serializable
 
 /**
@@ -17,8 +18,9 @@ data class User(val id: Int, val name: String, val imei: String, val auth_code: 
                 val role: String, val create_time: String?) : Serializable
 
 data class BaseBean(val code: Int, val msg: String, val extra: String?,
-                    val result: Any? = null) : Serializable
+                    val result: JsonElement? = null) : Serializable
 
-data class MgVersion(val version_code: Int, val version_name: String, val is_current: Int) : Serializable
+data class MgVersion(val version_code: Int, val version_name: String, val is_current: Int, val message: String?, val url: String?,
+                     val is_force: Int) : Serializable
 
 data class IPBean(val ip: String, val userAgent: String) : Serializable

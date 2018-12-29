@@ -1,4 +1,4 @@
-package com.moviegetter.ui.main.fragment
+package com.moviegetter.ui.ipz.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,9 +14,9 @@ import com.moviegetter.crawl.base.CrawlLiteMessage
 import com.moviegetter.crawl.base.CrawlerHandlerWhat
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.DownloadDialog
-import com.moviegetter.ui.main.activity.IPZActivity
-import com.moviegetter.ui.main.activity.IPZDetailActivity
-import com.moviegetter.ui.main.adapter.IPZListAdapter
+import com.moviegetter.ui.ipz.activity.IPZActivity
+import com.moviegetter.ui.ipz.activity.IPZDetailActivity
+import com.moviegetter.ui.ipz.adapter.IPZListAdapter
 import com.moviegetter.ui.main.pv.IPZPresenter
 import com.moviegetter.utils.DYTTDBHelper
 import kotlinx.android.synthetic.main.frg_main.view.*

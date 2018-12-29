@@ -1,4 +1,4 @@
-package com.moviegetter.ui.main.activity
+package com.moviegetter.ui.ipz.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,7 +9,7 @@ import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.DownloadDialog
-import com.moviegetter.ui.main.adapter.IPZPicDetailAdapter
+import com.moviegetter.ui.ipz.adapter.IPZPicDetailAdapter
 import com.moviegetter.ui.main.pv.IPZDetailView
 import com.moviegetter.ui.main.pv.IPZPresenter
 import com.moviegetter.utils.DYTTDBHelper

@@ -1,4 +1,4 @@
-package com.moviegetter.ui.main.fragment
+package com.moviegetter.ui.ipz.fragment
 
 class IPZFragmentA : IPZFragment() {
     override fun getPosition(): Int = 0

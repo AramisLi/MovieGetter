@@ -17,16 +17,15 @@ import java.nio.charset.Charset
  *Date:2018/6/22
  *Description:电影天堂解析
  */
-class DYTTParser : Parser {
-    private var pages = 10
-    private val baseUrl = "http://www.dytt8.net"
+class DYTTParser(override var pages: Int) : Parser {
+    private val baseUrl = "https://www.dytt8.net/"
     //    "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
 //    "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
     private val thunderUtils = ThunderSiteConverUtil()
 
-    fun setPages(pages: Int) {
-        this.pages = pages
-    }
+//    fun setPages(pages: Int) {
+//        this.pages = pages
+//    }
 
     override fun startParse(node: CrawlNode, response: ByteArray, pipeline: Pipeline?): List<CrawlNode>? {
         val html = String(response, Charset.forName("GB2312"))

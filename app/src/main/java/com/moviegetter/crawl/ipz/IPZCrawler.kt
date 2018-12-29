@@ -16,7 +16,7 @@ import org.jetbrains.anko.db.select
  *Description:
  */
 class IPZCrawler : BaseCrawler() {
-    private val parser = IPZParser()
+    private val parser = IPZParser(1)
     private var pipeline = IPZPipeline()
     private var baseUrl = MGsp.getIpzBaseUrl()
 

@@ -17,7 +17,7 @@ import org.jetbrains.anko.db.select
  *Description:
  */
 class DYTTCrawler : BaseCrawler() {
-    private val parser = DYTTParser()
+    private val parser = DYTTParser(1)
     private var pipeline = DYTTPipeline()
 
     private val urls = arrayOf("http://www.dytt8.net/html/gndy/dyzz/index.html",
@@ -35,7 +35,7 @@ class DYTTCrawler : BaseCrawler() {
 
     fun startCrawlLite(context: Context?, tag: String, position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
         super.startedAdd(urls[position], position, null)
-        parser.setPages(pages)
+        parser.pages = pages
         super.startCrawlLite(context, tag, position, parser, pipeline, onFinished)
     }
 

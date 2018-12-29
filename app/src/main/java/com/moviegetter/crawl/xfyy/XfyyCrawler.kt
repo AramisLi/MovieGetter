@@ -17,7 +17,7 @@ import org.jetbrains.anko.db.select
  *Description:
  */
 class XfyyCrawler : BaseCrawler() {
-    private val parser = XfyyParser()
+    private val parser = XfyyParser(1)
     private var pipeline = IPZPipeline(DBConfig.TABLE_NAME_XFYY)
     private var baseUrl = MGsp.getXfyyBaseUrl()
 

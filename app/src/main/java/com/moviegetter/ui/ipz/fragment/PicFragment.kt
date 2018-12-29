@@ -1,4 +1,4 @@
-package com.moviegetter.ui.main.fragment
+package com.moviegetter.ui.ipz.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,21 +9,19 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.aramis.library.aramis.ArBus
-import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseFragment
 import com.moviegetter.config.Config
 import com.moviegetter.crawl.base.CrawlLiteMessage
 import com.moviegetter.crawl.base.CrawlerHandlerWhat
 import com.moviegetter.crawl.pic.PicItem
-import com.moviegetter.ui.main.activity.IPZPicActivity
-import com.moviegetter.ui.main.activity.IPZPicDetailActivity
-import com.moviegetter.ui.main.adapter.IPZPicListAdapter
+import com.moviegetter.ui.ipz.activity.IPZPicActivity
+import com.moviegetter.ui.ipz.activity.IPZPicDetailActivity
+import com.moviegetter.ui.ipz.adapter.IPZPicListAdapter
 import com.moviegetter.ui.main.pv.IPZPicPresenter
 import kotlinx.android.synthetic.main.frg_main.view.*
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.support.v4.dip
-import org.jetbrains.anko.support.v4.startActivity
 import org.jetbrains.anko.support.v4.startActivityForResult
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription

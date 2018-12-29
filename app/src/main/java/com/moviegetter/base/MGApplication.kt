@@ -21,6 +21,7 @@ import com.moviegetter.utils.DBHelper
  *Description:
  */
 class MGApplication : BunnyApplication() {
+
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
     }

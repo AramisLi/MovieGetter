@@ -1,4 +1,4 @@
-package com.moviegetter.ui.main.adapter
+package com.moviegetter.ui.ipz.adapter
 
 import android.view.View
 import android.widget.ImageView

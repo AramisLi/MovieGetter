@@ -1,4 +1,4 @@
-package com.moviegetter.ui.main.activity
+package com.moviegetter.ui.ipz.activity
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,7 +11,6 @@ import com.aramis.library.component.adapter.DefaultFrgPagerAdapter
 import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
-import com.moviegetter.config.Config
 import com.moviegetter.crawl.base.CrawlLiteSubscription
 import com.moviegetter.ui.component.OptionsPop
 import com.moviegetter.ui.component.adapter.RecycleBottomMenuAdapter

@@ -1,4 +1,4 @@
-package com.moviegetter.ui.main.activity
+package com.moviegetter.ui.ipz.activity
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -19,9 +19,9 @@ import com.moviegetter.crawl.base.CrawlLiteSubscription
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.OptionsPop
 import com.moviegetter.ui.component.adapter.RecycleBottomMenuAdapter
-import com.moviegetter.ui.main.adapter.IPZLeftMenuAdapter
-import com.moviegetter.ui.main.adapter.IPZListAdapter
-import com.moviegetter.ui.main.fragment.*
+import com.moviegetter.ui.ipz.adapter.IPZLeftMenuAdapter
+import com.moviegetter.ui.ipz.adapter.IPZListAdapter
+import com.moviegetter.ui.ipz.fragment.*
 import com.moviegetter.ui.main.pv.IPZPresenter
 import com.moviegetter.ui.main.pv.IPZView
 import com.moviegetter.ui.main.pv.TitleItemBean

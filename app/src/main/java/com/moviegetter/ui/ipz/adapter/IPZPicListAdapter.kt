@@ -1,4 +1,4 @@
-package com.moviegetter.ui.main.adapter
+package com.moviegetter.ui.ipz.adapter
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.TextView
 import com.aramis.library.base.SimpleBaseAdapter
 import com.aramis.library.base.SimpleBaseAdapterHolder
-import com.aramis.library.extentions.logE
 import com.aramis.library.extentions.now
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions

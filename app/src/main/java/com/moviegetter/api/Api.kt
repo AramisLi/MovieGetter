@@ -6,7 +6,7 @@ package com.moviegetter.api
  *Description:
  */
 object Api {
-//    const val baseUrl = "http://192.168.40.15:5001/"
+//    const val baseUrl = "http://192.168.40.6:5001/"
     const val baseUrl = "http://180.76.190.163:5001/"
 
     const val index = baseUrl + "index"

@@ -1,15 +1,13 @@
-package com.moviegetter.ui.main.adapter
+package com.moviegetter.ui.ipz.adapter
 
 import android.annotation.SuppressLint
 import android.view.View
-import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.base.Item
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.ui.component.adapter.CrawlerBaseListAdapter
-import org.jetbrains.anko.dip
 import org.jetbrains.anko.textColor
 
 /**

@@ -2,10 +2,13 @@ package com.moviegetter.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.IBinder
 import android.support.v4.app.ActivityCompat
 import android.support.v4.view.ViewPager
 import android.telephony.TelephonyManager
@@ -23,12 +26,19 @@ import com.moviegetter.config.Config
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.CrawlLiteSubscription
+import com.moviegetter.crawl.base.CrawlNode
+import com.moviegetter.service.ITaskManager
+import com.moviegetter.service.SpiderService
 import com.moviegetter.ui.component.OptionsPop
-import com.moviegetter.ui.main.activity.IPZActivity
+import com.moviegetter.ui.component.VersionHintDialog
+import com.moviegetter.ui.ipz.activity.IPZActivity
 import com.moviegetter.ui.main.activity.SettingActivity
 import com.moviegetter.ui.main.activity.UserActivity
 import com.moviegetter.ui.main.adapter.MainSimpleAdapter
-import com.moviegetter.ui.main.fragment.*
+import com.moviegetter.ui.main.fragment.MovieFragment
+import com.moviegetter.ui.main.fragment.TVFragment
+import com.moviegetter.ui.main.fragment.UserFragment
+import com.moviegetter.ui.main.fragment.VideoFragment
 import com.moviegetter.ui.main.pv.MainPresenter
 import com.moviegetter.ui.main.pv.MainView
 import com.moviegetter.utils.BottomNavigationViewHelper
@@ -36,15 +46,15 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_toolbar_mg.*
 import org.jetbrains.anko.*
 import rx.Subscription
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : MGBaseActivity(), MainView {
-    //1.3版本
-    //1.添加ipz详情 --部分
-    //2.修复同一部影片的第二部分无法下载的bug --完成
-    //3.增加同一数据源全部同步1页功能
-    //4.增加隐藏新世界功能 --完成
-    //5.添加播放源 --完成
+    override fun onNewNodeGet(crawlNode: CrawlNode) {
+        logE("获取到了新节点 $crawlNode")
+    }
+
     private val presenter = MainPresenter(this)
     private val statusDataList = mutableListOf<String>()
     private val statusAdapter = MainSimpleAdapter(statusDataList)
@@ -52,11 +62,17 @@ class MainActivity : MGBaseActivity(), MainView {
     private var fragmentAdapter: DefaultFrgPagerAdapter? = null
     //接受状态的bus
     private var crawlSubscription: Subscription? = null
+    private var versionSubscription: Subscription? = null
     //新世界dialog
     private var newWorldDialog: DefaultHintDialog? = null
     //markInId
     private var markInId = 0
-    private var versionHintDialog: DefaultHintDialog? = null
+    private var versionHintDialog: VersionHintDialog? = null
+
+    private var iTaskManager: ITaskManager? = null
+
+    private var beginTime = 0L
+    private val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,12 +85,32 @@ class MainActivity : MGBaseActivity(), MainView {
         mgRequestPermissions()
         requestMarkIn()
 
+        bindService()
+    }
 
+    private fun bindService() {
+        val serviceConnection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                logE("链接服务成功")
+                iTaskManager = ITaskManager.Stub.asInterface(service)
+                if (iTaskManager != null) {
+                    logE("添加")
+                    // http://www.zhiboo.net/
+                    iTaskManager?.registerListener(presenter.iOnNewNodeGetListener)
+//                    iTaskManager?.add(SpiderTask("http://www.dytt8.net/html/gndy/dyzz/index.html", Config.TAG_DYTT, 1, 0))
+                }
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+                logE("链接服务失败")
+            }
+
+        }
+        bindService(Intent(this, SpiderService::class.java), serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     private fun prepare() {
         presenter.checkVersion()
-//        presenter.findIpzUrl()
     }
 
     private fun requestMarkIn() {
@@ -100,7 +136,19 @@ class MainActivity : MGBaseActivity(), MainView {
             it.tag == Config.TAG_DYTT
         }, { total, update, fail, finished ->
             formatCrawlStatusView(total, update, fail, finished)
+            if (finished) {
+                val endTime = System.currentTimeMillis()
+                logE("执行完毕 开始时间:${timeFormat.format(Date(beginTime))},结束时间:${timeFormat.format(Date(endTime))},耗时:${(endTime - beginTime) / 1000}秒")
+            }
         })
+        versionSubscription = ArBus.getDefault().take(Bundle::class.java).filter {
+            it.getBoolean("isUpdateSuccess", false) or it.getBoolean("isUpdateFail", false)
+        }.subscribe {
+            if (it.getBoolean("isUpdateFail", false)) {
+                toast("更新失败")
+            }
+        }
+
     }
 
     private fun setListener() {
@@ -109,10 +157,12 @@ class MainActivity : MGBaseActivity(), MainView {
             when (position) {
                 //同步本页
                 0 -> {
+                    beginTime = System.currentTimeMillis()
                     presenter.startCrawlLite(viewpager_main.currentItem, 2)
                 }
                 //同步10页
                 1 -> {
+                    beginTime = System.currentTimeMillis()
                     toast("同步10页时间较长，请耐心等待")
                     presenter.startCrawlLite(viewpager_main.currentItem, 10)
                 }
@@ -120,7 +170,7 @@ class MainActivity : MGBaseActivity(), MainView {
                 2 -> startActivityForResult<SettingActivity>(1001)
                 //新世界
                 3 -> {
-                    if (MGsp.getConfigSP(MainActivity@ this)?.getBoolean("showADY", true) == true) {
+                    if (MGsp.getConfigSP(this@MainActivity)?.getBoolean("showADY", true) == true) {
                         toNewWorld()
                     } else {
                         startActivity<UserActivity>()
@@ -134,7 +184,7 @@ class MainActivity : MGBaseActivity(), MainView {
         }
     }
 
-    fun getImei(): String? {
+    private fun getImei(): String? {
 //        logE("文件读取权限:${ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED}")
         return if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -172,26 +222,24 @@ class MainActivity : MGBaseActivity(), MainView {
             refreshMenu(MGsp.getRole())
         }
     }
+
     companion object {
         init {
             System.loadLibrary("ara_file_secret")
         }
     }
 
-    external fun getIPZDefaultStr():String
+    external fun getIPZDefaultStr(): String
 
     private fun initView() {
         setTitleRightText("选项", View.OnClickListener {
             optionPop?.show(it, -dip(90), dip(1))
-
-//            val str = getIPZDefaultStr()
-//            logE("=============================str:$str")
-//            toast(str)
         })
+
 
         optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "设置"))
 
-        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(MainFragmentA(), MainFragmentB(), MainFragmentC(), MainFragmentD(), MainFragmentE()))
+        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(MovieFragment(), TVFragment(), VideoFragment(), UserFragment()))
         viewpager_main.adapter = fragmentAdapter
         viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
@@ -213,7 +261,6 @@ class MainActivity : MGBaseActivity(), MainView {
                 R.id.text_navigator_main_b -> viewpager_main.setCurrentItem(1, false)
                 R.id.text_navigator_main_c -> viewpager_main.setCurrentItem(2, false)
                 R.id.text_navigator_main_d -> viewpager_main.setCurrentItem(3, false)
-                R.id.text_navigator_main_e -> viewpager_main.setCurrentItem(4, false)
             }
             false
         }
@@ -227,10 +274,14 @@ class MainActivity : MGBaseActivity(), MainView {
             newWorldDialog?.dismiss()
         }
 
-        versionHintDialog = DefaultHintDialog(this, "提示", "发现新版版，请联系管理更新", 1)
-        versionHintDialog?.setSingleBtnClickListener("确定") {
-            versionHintDialog?.dismiss()
-        }
+//        versionHintDialog = DefaultHintDialog(this, "提示", "发现新版版，请联系管理更新", 1)
+//        versionHintDialog?.setSingleBtnClickListener("确定") {
+//            versionHintDialog?.dismiss()
+//        }
+
+
+        versionHintDialog = VersionHintDialog(this, Config.apkPath)
+        versionHintDialog?.onFinishClickListener = { finish() }
     }
 
 
@@ -239,10 +290,13 @@ class MainActivity : MGBaseActivity(), MainView {
     }
 
     override fun onCheckVersionSuccess(versionCode: Int, bean: MgVersion) {
+        logE("本地版本号:$versionCode,服务器版本号:${bean.version_code}")
         if (versionCode < bean.version_code) {
+            formatVersionDialog(versionHintDialog, bean)
             versionHintDialog?.show()
         }
     }
+
 
     override fun onCheckVersionFail(errorCode: Int, errorMsg: String) {
         logE("检查版本失败 errorCode:$errorCode,errorMsg:$errorMsg")
@@ -300,9 +354,22 @@ class MainActivity : MGBaseActivity(), MainView {
 
     override fun onDestroy() {
         requestMarkOut(markInId)
-        super.onDestroy()
+        iTaskManager?.unregisterListener(presenter.iOnNewNodeGetListener)
         crawlSubscription?.unsubscribe()
+        versionSubscription?.unsubscribe()
+        super.onDestroy()
     }
 
     override fun getPresenter(): BasePresenter<*>? = presenter
+
+    private var backLong: Long = 0
+    override fun onBackPressed() {
+        val l = System.currentTimeMillis()
+        if (backLong == 0L || l - backLong > 1500) {
+            backLong = l
+            toast(getString(R.string.str_doubleclick_quit))
+        } else if (l - backLong <= 1500) {
+            finish()
+        }
+    }
 }

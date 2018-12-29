@@ -12,7 +12,6 @@ import com.moviegetter.ui.main.pv.IPZRowParser
 import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.update
-import kotlin.coroutines.experimental.coroutineContext
 
 /**
  *Created by Aramis

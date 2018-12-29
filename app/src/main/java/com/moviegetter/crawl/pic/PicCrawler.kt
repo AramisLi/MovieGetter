@@ -16,7 +16,7 @@ import org.jetbrains.anko.db.select
  *Description:
  */
 class PicCrawler : BaseCrawler() {
-    private val parser = PicParser()
+    private val parser = PicParser(1)
     private var pipeline = PicPipeline()
     private var baseUrl = MGsp.getIpzPicBaseUrl()
 

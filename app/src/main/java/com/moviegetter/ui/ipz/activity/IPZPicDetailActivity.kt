@@ -1,11 +1,11 @@
-package com.moviegetter.ui.main.activity
+package com.moviegetter.ui.ipz.activity
 
 import android.os.Bundle
 import com.aramis.library.base.BasePresenter
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.crawl.pic.PicItem
-import com.moviegetter.ui.main.adapter.IPZPicDetailAdapter
+import com.moviegetter.ui.ipz.adapter.IPZPicDetailAdapter
 import com.moviegetter.ui.main.pv.IPZPicPresenter
 import com.moviegetter.ui.main.pv.IPZPicView
 import kotlinx.android.synthetic.main.activity_ipz_detail_pic.*

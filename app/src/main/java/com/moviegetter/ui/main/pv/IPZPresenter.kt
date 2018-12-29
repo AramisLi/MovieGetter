@@ -2,8 +2,6 @@ package com.moviegetter.ui.main.pv
 
 //import android.widget.Toast
 import android.app.Activity
-import android.support.v4.app.Fragment
-import com.aramis.library.aramis.ArBus
 import com.aramis.library.base.BaseView
 import com.aramis.library.extentions.getTimestamp
 import com.aramis.library.extentions.logE
@@ -19,8 +17,7 @@ import com.moviegetter.crawl.ipz.IPZCrawler
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.crawl.ssb.SsbCrawler
 import com.moviegetter.crawl.xfyy.XfyyCrawler
-import com.moviegetter.ui.main.activity.IPZActivity
-import com.moviegetter.ui.main.fragment.*
+import com.moviegetter.ui.ipz.activity.IPZActivity
 import com.moviegetter.utils.DYTTDBHelper
 import com.moviegetter.utils.database
 import org.jetbrains.anko.db.SqlOrderDirection

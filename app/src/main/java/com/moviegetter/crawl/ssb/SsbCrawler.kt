@@ -17,7 +17,7 @@ import org.jetbrains.anko.db.select
  *Description:
  */
 class SsbCrawler : BaseCrawler() {
-    private val parser = SsbParser()
+    private val parser = SsbParser(1)
     private var pipeline = IPZPipeline(DBConfig.TABLE_NAME_SSB)
     private var baseUrl = MGsp.getSsbBaseUrl()
 

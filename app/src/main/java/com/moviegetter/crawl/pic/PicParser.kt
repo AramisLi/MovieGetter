@@ -13,8 +13,7 @@ import java.nio.charset.Charset
  *Date:2018/6/26
  *Description:
  */
-class PicParser : Parser {
-    var pages = 1
+class PicParser(override var pages: Int) : Parser {
     private var baseUrl = MGsp.getIpzPicBaseUrl()
     override fun startParse(node: CrawlNode, response: ByteArray, pipeline: Pipeline?): List<CrawlNode>? {
         val html = String(response, Charset.forName("UTF-8"))

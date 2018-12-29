@@ -1,15 +1,13 @@
-package com.moviegetter.ui.main.activity
+package com.moviegetter.ui.ipz.activity
 
-import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.aramis.library.base.BasePresenter
 import com.moviegetter.R
 import com.moviegetter.config.Config
 import com.moviegetter.ui.component.OptionsPop
-import com.moviegetter.ui.main.fragment.*
+import com.moviegetter.ui.ipz.fragment.*
 import com.moviegetter.ui.main.pv.IPZPicPresenter
 import com.moviegetter.ui.main.pv.IPZPicView
-import org.jetbrains.anko.toast
 
 /**
  *Created by Aramis

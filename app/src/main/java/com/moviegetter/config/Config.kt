@@ -1,5 +1,8 @@
 package com.moviegetter.config
 
+import android.os.Environment
+import java.io.File
+
 /**
  *Created by Aramis
  *Date:2018/6/28
@@ -14,4 +17,8 @@ object Config {
 
     var markInId = 0
     var isMainBackClick = false
+
+    private val basePath = Environment.getExternalStorageDirectory().absolutePath + File.separator + "MovieGetter" + File.separator
+    var apkPath = basePath + "apk"
+
 }

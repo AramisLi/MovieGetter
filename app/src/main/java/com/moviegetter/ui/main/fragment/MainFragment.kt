@@ -50,11 +50,12 @@ abstract class MainFragment : MGBaseFragment() {
                 .subscribe {
                     initData()
                 }
-        refreshSubscription=ArBus.getDefault().take(Bundle::class.java).filter {
-            it.getBoolean("refreshMainFragment",false)
+        refreshSubscription = ArBus.getDefault().take(Bundle::class.java).filter {
+            it.getBoolean("refreshMainFragment", false)
         }.subscribe {
             adapter.refreshFlags()
-            adapter.notifyDataSetChanged() }
+            adapter.notifyDataSetChanged()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -1,4 +1,4 @@
-package com.moviegetter.ui.main.fragment
+package com.moviegetter.ui.ipz.fragment
 
 import android.os.Bundle
 import android.view.Gravity
@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseFragment
 import com.moviegetter.crawl.ipz.IPZItem
-import com.moviegetter.ui.main.adapter.IPZListAdapter
+import com.moviegetter.ui.ipz.adapter.IPZListAdapter
 import kotlinx.android.synthetic.main.frg_main.view.*
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.support.v4.dip
