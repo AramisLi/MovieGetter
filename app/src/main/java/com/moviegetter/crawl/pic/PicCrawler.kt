@@ -1,12 +1,11 @@
 package com.moviegetter.crawl.pic
 
 import android.content.Context
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.BaseCrawler
 import com.moviegetter.crawl.base.CrawlNode
-import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.utils.database
 import org.jetbrains.anko.db.select
 
@@ -23,7 +22,7 @@ class PicCrawler : BaseCrawler() {
 
     fun startCrawlLite(context: Context?, position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
         fun superAdd(url: String) {
-            super.startedAdd(url, position, Config.TAG_PIC)
+            super.startedAdd(url, position, MovieConfig.TAG_PIC)
         }
         when (position) {
             0 -> superAdd("$baseUrl/html/part/index15.html")
@@ -36,7 +35,7 @@ class PicCrawler : BaseCrawler() {
             7 -> superAdd("$baseUrl/html/part/index31.html")
         }
         parser.pages = pages
-        super.startCrawlLite(context, Config.TAG_PIC, position, parser, pipeline, onFinished)
+        super.startCrawlLite(context, MovieConfig.TAG_PIC, position, parser, pipeline, onFinished)
     }
 
     override fun preDownloadCondition(context: Context?, node: CrawlNode): Boolean {

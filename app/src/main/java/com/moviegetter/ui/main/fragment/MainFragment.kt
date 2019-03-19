@@ -1,6 +1,8 @@
 package com.moviegetter.ui.main.fragment
 
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +10,7 @@ import com.aramis.library.aramis.ArBus
 import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseFragment
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlLiteMessage
 import com.moviegetter.crawl.base.CrawlerHandlerWhat
 import com.moviegetter.crawl.dytt.DYTTItem
@@ -19,6 +21,7 @@ import com.moviegetter.ui.main.pv.MainPresenter
 import com.moviegetter.utils.DYTTDBHelper
 import com.moviegetter.utils.MovieGetterHelper
 import kotlinx.android.synthetic.main.frg_main.view.*
+import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -46,7 +49,7 @@ abstract class MainFragment : MGBaseFragment() {
         presenter = if (activity is MainActivity) (activity as MainActivity).getPresenter() as? MainPresenter else null
         crawlSubscription = ArBus.getDefault().take(CrawlLiteMessage::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .filter { it.tag == Config.TAG_DYTT && it.position == position && it.what == CrawlerHandlerWhat.CRAWLER_FINISHED }
+                .filter { it.tag == MovieConfig.TAG_DYTT && it.position == position && it.what == CrawlerHandlerWhat.CRAWLER_FINISHED }
                 .subscribe {
                     initData()
                 }
@@ -126,7 +129,10 @@ abstract class MainFragment : MGBaseFragment() {
                 adapter.notifyDataSetChanged()
             }
         }
+
     }
+
+
 
     private fun startCrawl() {
         presenter?.startCrawlLite(position, 2) {

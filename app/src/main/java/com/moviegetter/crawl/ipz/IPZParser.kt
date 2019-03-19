@@ -2,9 +2,12 @@ package com.moviegetter.crawl.ipz
 
 import com.aramis.library.extentions.logE
 import com.moviegetter.config.MGsp
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.base.Parser
 import com.moviegetter.crawl.base.Pipeline
+import com.moviegetter.crawl.dytt.DYTTItem
+import com.moviegetter.db.MovieDatabase
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import java.nio.charset.Charset
@@ -15,7 +18,23 @@ import java.nio.charset.Charset
  *Description:
  */
 class IPZParser(override var pages: Int) : Parser {
+
+    override val tag:String
+        get() = MovieConfig.TAG_ADY
+
     private var baseUrl = ""
+
+    override fun skipCondition(database: MovieDatabase, node: CrawlNode): Boolean {
+        if (node.item != null && node.item is IPZItem) {
+            val movieId = (node.item as IPZItem).movieId
+            if (database.getIpzDao().count(movieId,tag) > 0) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     override fun startParse(node: CrawlNode, response: ByteArray, pipeline: Pipeline?): List<CrawlNode>? {
         val html = String(response, Charset.forName("GBK"))
         return when (node.level) {
@@ -64,7 +83,7 @@ class IPZParser(override var pages: Int) : Parser {
             val href = element.attr("href")
             val movieId = getMovieId(href)
 //            logE("href:$href,movieId:$movieId")
-            val item = IPZItem(movieId.toInt(), element.attr("title"), (if (index in movieDates.indices) movieDates[index].text() else null),
+            val item = IPZItem(movieId.toInt(),tag, element.attr("title"), (if (index in movieDates.indices) movieDates[index].text() else null),
                     thumb = baseUrl + element.child(0).attr("src"), position = originNode.position)
             CrawlNode(baseUrl + href, 1, originNode, null, item, false, originNode.tag, originNode.position)
         }.toMutableList()
@@ -102,8 +121,8 @@ class IPZParser(override var pages: Int) : Parser {
 //        if (a.size > 1) {
 //            logE("==================put put put put put put put put ")
 //            val key = "ipzDoubleScript"
-//            val value = (if (MGsp.get(key)?.isNotBlank() == true) MGsp.get(key) + "+" else "") + (originNode.item as IPZItem).movieId.toString()
-//            MGsp.put(key, value)
+//            val description = (if (MGsp.get(key)?.isNotBlank() == true) MGsp.get(key) + "+" else "") + (originNode.item as IPZItem).movieId.toString()
+//            MGsp.put(key, description)
 //        }
         val result = a.map { element ->
             (originNode.item as? IPZItem)?.images = images

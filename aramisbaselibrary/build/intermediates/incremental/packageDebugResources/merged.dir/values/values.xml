@@ -8,10 +8,6 @@
     <color name="color_user_line">#e4e4e4</color>
     <color name="transparent">#00000000</color>
     <color name="white">#ffffff</color>
-    <declare-styleable name="PickerView"><attr format="boolean" name="isLoop"/></declare-styleable>
-    <declare-styleable name="TitleDropView">
-        <attr format="integer|reference" name="resViewId"/>
-    </declare-styleable>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="height_dialog">253dp</dimen>
@@ -84,4 +80,8 @@
             <item name="android:windowContentOverlay">@null</item>
             <item name="android:windowBackground">@color/white</item>
         </style>
+    <declare-styleable name="PickerView"><attr format="boolean" name="isLoop"/></declare-styleable>
+    <declare-styleable name="TitleDropView">
+        <attr format="integer|reference" name="resViewId"/>
+    </declare-styleable>
 </resources>

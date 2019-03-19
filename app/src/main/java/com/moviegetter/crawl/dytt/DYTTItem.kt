@@ -1,5 +1,7 @@
 package com.moviegetter.crawl.dytt
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 import com.moviegetter.crawl.base.Item
@@ -10,12 +12,16 @@ import com.moviegetter.crawl.base.Item
  *Date:2018/6/23
  *Description:
  */
-data class DYTTItem(val movieId: Int, val movieName: String, val movie_update_time: String?,
-                    var richText: String? = null, var downloadName: String? = null,
-                    var downloadUrls: String? = null, var downloadThunder: String? = null,
-                    var update_time: String? = null, var create_time: String? = null,
-                    var movie_update_timestamp: Long = 0, var position: Int,
-                    var downloaded: Int = 0, var downloaded_time: String? = null
+@Entity(tableName = "movie_table")
+data class DYTTItem(
+        @PrimaryKey
+        val movieId: Int,
+        val movieName: String, val movie_update_time: String?,
+        var richText: String? = null, var downloadName: String? = null,
+        var downloadUrls: String? = null, var downloadThunder: String? = null,
+        var update_time: String? = null, var create_time: String? = null,
+        var movie_update_timestamp: Long = 0, var position: Int,
+        var downloaded: Int = 0, var downloaded_time: String? = null
 ) : Item {
     constructor(parcel: Parcel) : this(
             parcel.readInt(),

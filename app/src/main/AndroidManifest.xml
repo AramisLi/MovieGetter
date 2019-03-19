@@ -16,6 +16,7 @@
     <application
         android:name=".base.MGApplication"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -24,10 +25,17 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.MainActivity"
-            android:launchMode="singleTask"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
 
+
+        </activity>
+        <activity
+            android:name=".ui.MainActivity2"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,6 +75,7 @@
         <service
             android:name=".service.SpiderService"
             android:process=":spider" />
+        <service android:name=".service.SpiderServiceLocal" />
 
         <activity
             android:name=".test.TestActivity"
@@ -78,6 +87,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.main.activity.MovieListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".aac.RedditActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ipz.activity.IPZActivity2"
             android:screenOrientation="portrait" />
     </application>
 

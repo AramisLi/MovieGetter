@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.aramis.library.aramis.ArBus
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseFragment
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlLiteMessage
 import com.moviegetter.crawl.base.CrawlerHandlerWhat
 import com.moviegetter.crawl.pic.PicItem
@@ -44,7 +44,7 @@ abstract class PicFragment : MGBaseFragment() {
         presenter = (activity as IPZPicActivity).getPresenter() as IPZPicPresenter
         crawlSubscription = ArBus.getDefault().take(CrawlLiteMessage::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .filter { it.tag == Config.TAG_PIC && it.position == position && it.what == CrawlerHandlerWhat.CRAWLER_FINISHED }
+                .filter { it.tag == MovieConfig.TAG_PIC && it.position == position && it.what == CrawlerHandlerWhat.CRAWLER_FINISHED }
                 .subscribe {
                     initData()
                 }
@@ -90,7 +90,7 @@ abstract class PicFragment : MGBaseFragment() {
             dataList.clear()
             dataList.addAll(it)
             adapter.notifyDataSetChanged()
-            presenter?.postTitleMessage(Config.TAG_PIC, position, dataList.size)
+            presenter?.postTitleMessage(MovieConfig.TAG_PIC, position, dataList.size)
 
         }, onFail = { errorCode, errorMsg ->
             if (errorCode == 1) {

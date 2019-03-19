@@ -1,16 +1,8 @@
 package com.moviegetter.ui.main.pv
 
-import android.Manifest
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
-import android.content.ServiceConnection
-import android.content.pm.PackageManager
 import android.os.Environment
 import android.os.Handler
-import android.os.IBinder
-import android.support.v4.app.ActivityCompat
-import android.telephony.TelephonyManager
 import com.aramis.library.base.BaseView
 import com.aramis.library.extentions.logE
 import com.aramis.library.extentions.now
@@ -21,14 +13,13 @@ import com.moviegetter.base.MGBasePresenter
 import com.moviegetter.bean.IPBean
 import com.moviegetter.bean.MgVersion
 import com.moviegetter.bean.User
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.dytt.DYTTCrawler
 import com.moviegetter.crawl.dytt.DYTTItem
 import com.moviegetter.service.IOnNewNodeGetListener
-import com.moviegetter.service.ITaskManager
 import com.moviegetter.utils.DYTTDBHelper
 import com.moviegetter.utils.MovieGetterHelper
 import com.moviegetter.utils.database
@@ -81,7 +72,7 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
             versionCode = packageInfo.versionCode
             versionName = packageInfo.versionName
 
-//            fun getValue(obj: JSONObject, key: String): String? {
+//            fun getDescription(obj: JSONObject, key: String): String? {
 //                return if (obj.has(key)) obj.getString(key) else null
 //            }
 //            mapOf("version_code" to versionCode, "version_name" to versionName),
@@ -92,7 +83,7 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
 ////                    val obj1 = obj.getJSONObject("result")
 ////                    mView?.onCheckVersionSuccess(versionCode, MgVersion(obj1.getInt("version_code"),
 ////                            obj1.getString("version_name"),
-////                            obj1.getInt("is_current"), getValue(obj1, "message"), getValue(obj1, "url"),
+////                            obj1.getInt("is_current"), getDescription(obj1, "message"), getDescription(obj1, "url"),
 ////                            if (obj1.has("is_force")) obj1.getInt("is_force") else 0))
 ////                }
 //            }, { errorCode, errorMsg ->
@@ -160,7 +151,7 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
         if (dyttCrawler.isRunning()) {
             mView?.onCrawlFail(0, "正在同步中，请稍后")
         } else {
-            dyttCrawler.startCrawlLite((mView as? Activity), Config.TAG_DYTT, position, pages, onFinished)
+            dyttCrawler.startCrawlLite((mView as? Activity), MovieConfig.TAG_DYTT, position, pages, onFinished)
         }
     }
 
@@ -224,7 +215,7 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
 
         if (MGsp.getImei().isNotBlank() && MGsp.getImei() != "868897020889812") {
             logE("requestMarkIn imei:${MGsp.getImei()}")
-//            logE("ip ${MovieGetterHelper.getWiFiIpAddress(activity)}")
+//            logE("ip ${MovieGetterHelper.getWiFiIpAddress(application)}")
             val dataMap = mutableMapOf("imei" to MGsp.getImei(), "login_time" to now(),
                     "version_code" to versionCode, "version_name" to versionName)
             val ip = MovieGetterHelper.getLocalIpAddress()

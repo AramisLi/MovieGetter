@@ -13,7 +13,7 @@ import com.aramis.library.component.adapter.DefaultFrgPagerAdapter
 import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.CrawlLiteSubscription
 import com.moviegetter.crawl.ipz.IPZItem
@@ -70,16 +70,16 @@ class IPZActivity : MGBaseActivity(), IPZView {
 
     private fun initBus() {
         crawlSubscription = CrawlLiteSubscription().getCrawlCountSubscription({
-            (currentMenuPosition == 0 && it.tag == Config.TAG_ADY)
-                    || currentMenuPosition == 1 && it.tag == Config.TAG_XFYY
-                    || currentMenuPosition == 2 && it.tag == Config.TAG_SSB
+            (currentMenuPosition == 0 && it.tag == MovieConfig.TAG_ADY)
+                    || currentMenuPosition == 1 && it.tag == MovieConfig.TAG_XFYY
+                    || currentMenuPosition == 2 && it.tag == MovieConfig.TAG_SSB
         }, { total, update, fail, finished ->
             formatCrawlStatusView(total, update, fail, finished)
         })
         titleItemCountSubscription = ArBus.getDefault().take(TitleItemBean::class.java).filter {
-            (currentMenuPosition == 0 && it.tag == Config.TAG_ADY)
-                    || currentMenuPosition == 1 && it.tag == Config.TAG_XFYY
-                    || currentMenuPosition == 2 && it.tag == Config.TAG_SSB
+            (currentMenuPosition == 0 && it.tag == MovieConfig.TAG_ADY)
+                    || currentMenuPosition == 1 && it.tag == MovieConfig.TAG_XFYY
+                    || currentMenuPosition == 2 && it.tag == MovieConfig.TAG_SSB
         }.subscribe {
             titleItemCountArray[currentMenuPosition][it.position] = it.count
             if (viewpager_main.currentItem == it.position) {

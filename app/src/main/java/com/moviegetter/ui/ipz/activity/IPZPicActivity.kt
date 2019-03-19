@@ -3,7 +3,7 @@ package com.moviegetter.ui.ipz.activity
 import android.support.v4.app.Fragment
 import com.aramis.library.base.BasePresenter
 import com.moviegetter.R
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.ui.component.OptionsPop
 import com.moviegetter.ui.ipz.fragment.*
 import com.moviegetter.ui.main.pv.IPZPicPresenter
@@ -36,5 +36,5 @@ class IPZPicActivity : IPZBaseActivity(), IPZPicView {
 
     override fun getOptionPopDataList(): List<String> = listOf("同步1页", "同步10页")
 
-    override fun getTag(): String = Config.TAG_PIC
+    override fun getTag(): String = MovieConfig.TAG_PIC
 }

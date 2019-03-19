@@ -6,15 +6,16 @@ import android.widget.TextView
 import com.aramis.library.base.SimpleBaseAdapter
 import com.aramis.library.base.SimpleBaseAdapterHolder
 import com.moviegetter.R
+import com.moviegetter.bean.UserCenterOption
 
 /**
  *Created by Aramis
  *Date:2018/12/21
  *Description:
  */
-class UserFragmentAdapter(list: List<String>, private val dividerPosition: Int) : SimpleBaseAdapter<String>(list) {
-    override fun initDatas(holder: SimpleBaseAdapterHolder, bean: String, position: Int) {
-        (holder as ViewHolder).text_user_name.text = bean
+class UserFragmentAdapter(list: List<UserCenterOption>, private val dividerPosition: Int) : SimpleBaseAdapter<UserCenterOption>(list) {
+    override fun initDatas(holder: SimpleBaseAdapterHolder, bean: UserCenterOption, position: Int) {
+        (holder as ViewHolder).text_user_name.text = bean.name
         holder.image_user_arrow.visibility = if (position == dividerPosition) View.GONE else View.VISIBLE
     }
 

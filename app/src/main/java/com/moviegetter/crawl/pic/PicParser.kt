@@ -2,9 +2,12 @@ package com.moviegetter.crawl.pic
 
 import com.aramis.library.extentions.logE
 import com.moviegetter.config.MGsp
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.base.Parser
 import com.moviegetter.crawl.base.Pipeline
+import com.moviegetter.crawl.ipz.IPZItem
+import com.moviegetter.db.MovieDatabase
 import org.jsoup.Jsoup
 import java.nio.charset.Charset
 
@@ -14,7 +17,23 @@ import java.nio.charset.Charset
  *Description:
  */
 class PicParser(override var pages: Int) : Parser {
+    override val tag: String
+        get() = MovieConfig.TAG_PIC
+
     private var baseUrl = MGsp.getIpzPicBaseUrl()
+
+
+    override fun skipCondition(database: MovieDatabase, node: CrawlNode): Boolean {
+        if (node.item != null && node.item is PicItem) {
+            val picId = (node.item as PicItem).picId
+            if (database.getPicDao().count(picId) > 0) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     override fun startParse(node: CrawlNode, response: ByteArray, pipeline: Pipeline?): List<CrawlNode>? {
         val html = String(response, Charset.forName("UTF-8"))
         return when (node.level) {
@@ -29,7 +48,7 @@ class PicParser(override var pages: Int) : Parser {
         val currentPage = if ("-" in originUrl) {
             originUrl.substring(originUrl.indexOf("-") + 1, originUrl.lastIndexOf(".")).toInt()
         } else {
-           1
+            1
         }
         return if (currentPage <= pages) {
             val url = if ("-" in originUrl) {

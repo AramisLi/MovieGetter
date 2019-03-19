@@ -1,5 +1,7 @@
 package com.moviegetter.bean
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import com.google.gson.JsonElement
 import java.io.Serializable
 
@@ -14,7 +16,8 @@ import java.io.Serializable
 //        "auth_code" to TEXT,
 //        "role" to TEXT,
 //        "create_time" to TEXT
-data class User(val id: Int, val name: String, val imei: String, val auth_code: String?,
+@Entity(tableName = "user")
+data class User(@PrimaryKey val id: Int, val name: String, val imei: String, val auth_code: String?,
                 val role: String, val create_time: String?) : Serializable
 
 data class BaseBean(val code: Int, val msg: String, val extra: String?,
@@ -24,3 +27,5 @@ data class MgVersion(val version_code: Int, val version_name: String, val is_cur
                      val is_force: Int) : Serializable
 
 data class IPBean(val ip: String, val userAgent: String) : Serializable
+
+

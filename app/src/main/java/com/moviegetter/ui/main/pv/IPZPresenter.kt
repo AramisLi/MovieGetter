@@ -10,7 +10,7 @@ import com.kymjs.rxvolley.toolbox.RxVolleyContext.toast
 import com.moviegetter.R
 import com.moviegetter.api.Api
 import com.moviegetter.base.MGBasePresenter
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.ipz.IPZCrawler
@@ -50,16 +50,16 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
         val currentMenuPosition = (activity as? IPZActivity)?.getCurrentMenuPosition() ?: -1
         when (currentMenuPosition) {
             0 -> {
-//                 Config.TAG_ADY
+//                 MovieConfig.TAG_ADY
                 crawler.startCrawlLite((mView as? Activity), position, pages, onFinished)
             }
             1 -> {
-//                 Config.TAG_XFYY
+//                 MovieConfig.TAG_XFYY
                 xfyyCrawler.startCrawlLite((mView as? Activity), position, pages, onFinished)
             }
 
             2 -> {
-//                Config.TAG_SSB
+//                MovieConfig.TAG_SSB
                 ssbCrawler.startCrawlLite((mView as? Activity), position, pages, onFinished)
             }
         }
@@ -136,9 +136,9 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
 
     fun getCurrentTag(currentPosition: Int): String {
         return when (currentPosition) {
-            1 -> Config.TAG_XFYY
-            2 -> Config.TAG_SSB
-            else -> Config.TAG_ADY
+            1 -> MovieConfig.TAG_XFYY
+            2 -> MovieConfig.TAG_SSB
+            else -> MovieConfig.TAG_ADY
         }
     }
 

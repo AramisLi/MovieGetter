@@ -8,10 +8,9 @@
     <net.lucode.hackware.magicindicator.MagicIndicator
         android:id="@+id/magic_indicator"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_below="@id/bottomNavigationView" />
+        android:layout_height="45dp" />
 
-    <com.aramis.library.widget.NoTouchViewPager
+    <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_movie"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

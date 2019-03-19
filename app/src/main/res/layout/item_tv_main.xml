@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/layout_cy"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:background="#adc">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/image_cy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/text_cy_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="123123"
+                android:textColor="#333"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <com.aramis.library.widget.NoScrollGridView
+        android:id="@+id/grid_cy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/layout_cy"
+        android:numColumns="3" />
+
+    <!--<GridView-->
+    <!--android:id="@+id/grid_cy"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_toRightOf="@id/layout_cy"-->
+    <!--android:numColumns="3"-->
+    <!--android:visibility="gone"/>-->
+
+
+</RelativeLayout>

@@ -11,6 +11,7 @@
         android:layout_height="40dp"
         android:layout_marginStart="15dp"
         android:layout_marginLeft="15dp"
+        android:gravity="center_vertical"
         android:textColor="#555" />
 
     <android.support.v7.widget.AppCompatImageView

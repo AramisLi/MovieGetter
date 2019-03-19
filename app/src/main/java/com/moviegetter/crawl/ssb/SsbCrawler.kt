@@ -1,7 +1,7 @@
 package com.moviegetter.crawl.ssb
 
 import android.content.Context
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.BaseCrawler
@@ -24,7 +24,7 @@ class SsbCrawler : BaseCrawler() {
 
     fun startCrawlLite(context: Context?, position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
         fun superAdd(url: String) {
-            super.startedAdd(url, position, Config.TAG_SSB)
+            super.startedAdd(url, position, MovieConfig.TAG_SSB)
         }
         when (position) {
             0 -> superAdd("$baseUrl/yyxf/index1.html")
@@ -37,7 +37,7 @@ class SsbCrawler : BaseCrawler() {
             7 -> superAdd("$baseUrl/yyxf/index8.html")
         }
         parser.pages = pages
-        super.startCrawlLite(context, Config.TAG_SSB, position, parser, pipeline, onFinished)
+        super.startCrawlLite(context, MovieConfig.TAG_SSB, position, parser, pipeline, onFinished)
     }
 
     override fun preDownloadCondition(context: Context?, node: CrawlNode): Boolean {

@@ -3,9 +3,11 @@ package com.moviegetter.crawl.dytt
 import com.aramis.library.extentions.logE
 import com.aramis.library.extentions.now
 import com.aramis.library.extentions.tryBlock
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.base.Parser
 import com.moviegetter.crawl.base.Pipeline
+import com.moviegetter.db.MovieDatabase
 import com.moviegetter.utils.ThunderSiteConverUtil
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -18,14 +20,26 @@ import java.nio.charset.Charset
  *Description:电影天堂解析
  */
 class DYTTParser(override var pages: Int) : Parser {
+
+    override fun skipCondition(database: MovieDatabase, node: CrawlNode): Boolean {
+        if (node.item != null && node.item is DYTTItem) {
+            val movieId = (node.item as DYTTItem).movieId
+            if (database.getMovieDao().count(movieId) > 0) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    override val tag: String
+        get() = MovieConfig.TAG_DYTT
+
     private val baseUrl = "https://www.dytt8.net/"
     //    "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
 //    "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
     private val thunderUtils = ThunderSiteConverUtil()
 
-//    fun setPages(pages: Int) {
-//        this.pages = pages
-//    }
 
     override fun startParse(node: CrawlNode, response: ByteArray, pipeline: Pipeline?): List<CrawlNode>? {
         val html = String(response, Charset.forName("GB2312"))
@@ -40,7 +54,7 @@ class DYTTParser(override var pages: Int) : Parser {
         val resultList = mutableListOf<CrawlNode>()
         try {
 //            val jxDocument = JXDocument.create(html)
-            logE("干啥呢 干啥呢 干啥呢 干啥呢")
+//            logE("干啥呢 干啥呢 干啥呢 干啥呢")
             val doc = Jsoup.parse(html)
 
             doc.select("div.co_content8 tbody").forEach {
@@ -93,7 +107,7 @@ class DYTTParser(override var pages: Int) : Parser {
     }
 
     private fun parseDetail(html: String, originNode: CrawlNode): MutableList<CrawlNode> {
-        logE("parseDetail parseDetail parseDetail")
+//        logE("parseDetail parseDetail parseDetail")
         val resultList = mutableListOf<CrawlNode>()
         try {
 //            logE("解析========" + originNode.url)
@@ -139,7 +153,7 @@ class DYTTParser(override var pages: Int) : Parser {
             } catch (e: NoClassDefFoundError) {
                 logE("NoClassDefFoundError")
             } catch (e: java.lang.Exception) {
-                logE("什么玩意儿${e::javaClass.name}")
+//                logE("什么玩意儿${e::javaClass.name}")
             }
 //            logE("解析========downloadUrls")
             //更新时间

@@ -1,14 +1,10 @@
 package com.aramis.library.component.adapter;
 
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.List;
-
-import static android.support.v4.view.PagerAdapter.POSITION_NONE;
 
 /**
  * DefaultFrgPagerAdapter 默认的fragment viewpager adapter

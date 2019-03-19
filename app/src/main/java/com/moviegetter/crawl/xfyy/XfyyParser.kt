@@ -1,10 +1,12 @@
 package com.moviegetter.crawl.xfyy
 
 import com.moviegetter.config.MGsp
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.base.Parser
 import com.moviegetter.crawl.base.Pipeline
 import com.moviegetter.crawl.ipz.IPZItem
+import com.moviegetter.db.MovieDatabase
 import org.jsoup.Jsoup
 import java.nio.charset.Charset
 
@@ -14,7 +16,22 @@ import java.nio.charset.Charset
  *Description:
  */
 class XfyyParser(override var pages: Int) : Parser {
+    override val tag:String
+        get() = MovieConfig.TAG_XFYY
+
     private var baseUrl = MGsp.getXfyyBaseUrl()
+
+    override fun skipCondition(database: MovieDatabase, node: CrawlNode): Boolean {
+        if (node.item != null && node.item is IPZItem) {
+            val movieId = (node.item as IPZItem).movieId
+            if (database.getIpzDao().count(movieId,tag) > 0) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     override fun startParse(node: CrawlNode, response: ByteArray, pipeline: Pipeline?): List<CrawlNode>? {
         val html = String(response, Charset.forName("GBK"))
         return when (node.level) {
@@ -50,7 +67,7 @@ class XfyyParser(override var pages: Int) : Parser {
             val movieName = element.select("p.c").text()
             val thumb = element.select("img").attr("src")
             val movieId = href.substring(href.lastIndexOf("/") + 1, href.lastIndexOf(".")).toInt()
-            val item = IPZItem(movieId, movieName, null, position = originNode.position, thumb = thumb)
+            val item = IPZItem(movieId,tag, movieName, null, position = originNode.position, thumb = thumb)
             CrawlNode(baseUrl + href, 1, originNode, null, item, false, originNode.tag, originNode.position)
         }.toMutableList()
 
@@ -84,34 +101,6 @@ class XfyyParser(override var pages: Int) : Parser {
     }
 
     private fun parsePlayData(playData: String, originNode: CrawlNode): List<CrawlNode>? {
-
-//        var data = playData.substring(playData.indexOf("\$xfplay://") + 1 until playData.lastIndexOf("\$xfplay"))
-//        if (data.contains(",")) {
-//            val cc = data.split(",")
-//            data = ""
-//            for (i in cc) {
-//                var a = i
-//                if ("'" in a) {
-//                    a = a.replace("'", "")
-//                }
-//
-//                if (a.endsWith("\$xfplay")) {
-//                    a = a.removeRange(i.length - 7, i.length)
-//                }
-//
-//                if (a.contains("\$xfplay://")) {
-//                    a = a.substring(a.indexOf("\$xfplay://") + 1, a.length)
-//                }
-//
-//                data += "$a,"
-//            }
-//            if (data.isNotEmpty()) {
-//                data = data.substring(0 until data.length - 1)
-//            }
-//
-////            logE("mutable data&&:$data")
-//
-//        }
 
         val fa = """'(.*?)'""".toRegex().findAll(playData)
         val data = fa.filter { it.value.contains("xfplay://") }.map { it.value }.toList().map {

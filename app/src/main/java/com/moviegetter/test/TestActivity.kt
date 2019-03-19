@@ -11,7 +11,7 @@ import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.bean.MgVersion
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.dytt.DYTTItem
 import com.moviegetter.service.ITaskManager
@@ -60,7 +60,7 @@ class TestActivity : MGBaseActivity(), MainView {
 
         test1.setOnClickListener {
             logE("点击添加")
-            iTaskManager?.add(SpiderTask("https://www.dytt8.net/html/gndy/dyzz/index.html", Config.TAG_DYTT,1, 0))
+            iTaskManager?.add(SpiderTask("https://www.dytt8.net/html/gndy/dyzz/index.html", MovieConfig.TAG_DYTT,1, 0))
         }
 
         test_main.setOnClickListener {

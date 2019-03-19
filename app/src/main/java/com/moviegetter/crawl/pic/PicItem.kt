@@ -1,5 +1,7 @@
 package com.moviegetter.crawl.pic
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 import com.moviegetter.crawl.base.Item
@@ -10,7 +12,8 @@ import com.moviegetter.crawl.base.Item
  *Date:2018/6/23
  *Description:
  */
-data class PicItem(val picId: Int, val picName: String, val pic_update_time: String?,
+@Entity(tableName = "pic_table")
+data class PicItem(@PrimaryKey val picId: Int, val picName: String, val pic_update_time: String?,
                    var pics: String? = null, var update_time: String? = null,
                    var create_time: String? = null, var pic_update_timestamp: Long = 0,
                    var thumb: String? = null, var position: Int? = null,

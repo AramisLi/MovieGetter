@@ -1,7 +1,7 @@
 package com.moviegetter.crawl.xfyy
 
 import android.content.Context
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.BaseCrawler
@@ -24,7 +24,7 @@ class XfyyCrawler : BaseCrawler() {
 
     fun startCrawlLite(context: Context?, position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
         fun superAdd(url: String) {
-            super.startedAdd(url, position, Config.TAG_XFYY)
+            super.startedAdd(url, position, MovieConfig.TAG_XFYY)
         }
         when (position) {
             0 -> superAdd("$baseUrl/toupai/")
@@ -38,7 +38,7 @@ class XfyyCrawler : BaseCrawler() {
             8 -> superAdd("$baseUrl/zhongwen/")
         }
         parser.pages = pages
-        super.startCrawlLite(context, Config.TAG_XFYY, position, parser, pipeline, onFinished)
+        super.startCrawlLite(context, MovieConfig.TAG_XFYY, position, parser, pipeline, onFinished)
     }
 
     override fun preDownloadCondition(context: Context?, node: CrawlNode): Boolean {

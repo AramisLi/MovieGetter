@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Handler
 import com.aramis.library.aramis.ArBus
 import com.aramis.library.extentions.logE
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.utils.OKhttpUtils
 import org.jetbrains.anko.doAsync
@@ -51,7 +51,7 @@ open class BaseCrawler : Crawler {
                         if (response != null && response.isSuccessful) {
                             logE("获取html成功 code:${response.code()}")
                             try {
-                                onFetchSuccess(context, tag, position, node, response.body().bytes(), parser, pipeline, null, sub = null)
+                                onFetchSuccess(context, tag, position, node, response.body()!!.bytes(), parser, pipeline, null, sub = null)
                             } catch (e: Exception) {
                                 logE("处理html时报错:" + e.message)
 
@@ -59,7 +59,7 @@ open class BaseCrawler : Crawler {
                             }
                         } else {
                             logE("获取html失败 code:${response?.code()}")
-                            if (node.tag == Config.TAG_ADY && node.level == 0) {
+                            if (node.tag == MovieConfig.TAG_ADY && node.level == 0) {
                                 logE("重置ADY baseUrl")
                                 MGsp.resetIpzBaseUrl()
                             }

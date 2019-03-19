@@ -37,7 +37,7 @@
 -keep class com.moviegetter.widget.**{*;}
 
 # for DexGuard only
-#-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+#-keepresourcexmlelements manifest/application/meta-data@description=GlideModule
 #====================Glide end
 
 -keep class * extends java.lang.annotation.Annotation { *; }

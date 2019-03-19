@@ -47,22 +47,22 @@ class SpiderService : Service() {
         super.onCreate()
         log("服务启动了 onCreate")
 
-        crawlManager.executeCallback = { crawlNode ->
-            callback {
-                it.onNewNodeGet(crawlNode)
-            }
-        }
-
-        crawlManager.taskFinishedListener = {
-            callback {
-                it.onFinished()
-            }
-        }
-        crawlManager.onErrorListener = { errorCode, errorMsg ->
-            callback {
-                it.onError(errorCode, errorMsg)
-            }
-        }
+//        crawlManager.executeCallback = { crawlNode ->
+//            callback {
+//                it.onNewNodeGet(crawlNode)
+//            }
+//        }
+//
+//        crawlManager.taskFinishedListener = {
+//            callback {
+//                it.onFinished()
+//            }
+//        }
+//        crawlManager.onErrorListener = { errorCode, errorMsg ->
+//            callback {
+//                it.onError(errorCode, errorMsg)
+//            }
+//        }
     }
 
     private fun callback(what: (IOnNewNodeGetListener) -> Unit) {

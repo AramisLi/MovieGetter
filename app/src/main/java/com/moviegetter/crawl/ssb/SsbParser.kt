@@ -2,10 +2,13 @@ package com.moviegetter.crawl.ssb
 
 import com.aramis.library.extentions.logE
 import com.moviegetter.config.MGsp
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.base.Parser
 import com.moviegetter.crawl.base.Pipeline
 import com.moviegetter.crawl.ipz.IPZItem
+import com.moviegetter.crawl.pic.PicItem
+import com.moviegetter.db.MovieDatabase
 import org.jsoup.Jsoup
 import java.nio.charset.Charset
 
@@ -15,7 +18,21 @@ import java.nio.charset.Charset
  *Description:
  */
 class SsbParser(override var pages: Int) : Parser {
+    override val tag:String
+        get() = MovieConfig.TAG_SSB
     private var baseUrl = MGsp.getSsbBaseUrl()
+
+    override fun skipCondition(database: MovieDatabase, node: CrawlNode): Boolean {
+        if (node.item != null && node.item is IPZItem) {
+            val movieId = (node.item as IPZItem).movieId
+            if (database.getIpzDao().count(movieId,tag)>0) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     override fun startParse(node: CrawlNode, response: ByteArray, pipeline: Pipeline?): List<CrawlNode>? {
         val html = String(response, Charset.forName("UTF-8"))
         return when (node.level) {
@@ -56,7 +73,7 @@ class SsbParser(override var pages: Int) : Parser {
             val updateTime = element.select("div.info > p > i")[0].text()
             val movieUpdateTime = updateTime.substring(updateTime.indexOf("更新：") + 3, updateTime.length - 1)
             val thumb = element.select("a.p > img").attr("src")
-            val item = IPZItem(movieId, movieName, movieUpdateTime, position = originNode.position, thumb = thumb)
+            val item = IPZItem(movieId,tag, movieName, movieUpdateTime, position = originNode.position, thumb = thumb)
             CrawlNode(baseUrl + href, 1, originNode, null, item, false, originNode.tag, originNode.position)
         }.toMutableList()
 

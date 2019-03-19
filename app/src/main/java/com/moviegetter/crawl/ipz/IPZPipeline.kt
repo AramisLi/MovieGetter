@@ -28,7 +28,7 @@ class IPZPipeline(val tableName: String = DBConfig.TABLE_NAME_ADY) : BasePipelin
                     logE("update update update")
                     val dbItem = select(tableName).whereArgs("movieId = {movieId}", "movieId" to it.movieId).parseList(object : RowParser<IPZItem> {
                         override fun parseRow(columns: Array<Any?>): IPZItem {
-                            return IPZItem((columns[0] as Long).toInt(), columns[1] as String, columns[2] as String?, columns[3] as String?)
+                            return IPZItem((columns[0] as Long).toInt(), columns[1] as String, columns[2] as String, columns[3] as String?, columns[4] as String?)
                         }
                     })[0]
 

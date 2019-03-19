@@ -19,10 +19,11 @@ import com.aramis.library.base.BasePresenter
 import com.aramis.library.component.adapter.DefaultFrgPagerAdapter
 import com.aramis.library.component.dialog.DefaultHintDialog
 import com.aramis.library.extentions.logE
+import com.aramis.library.widget.NoScrollGridView
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.bean.MgVersion
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.CrawlLiteSubscription
@@ -35,10 +36,10 @@ import com.moviegetter.ui.ipz.activity.IPZActivity
 import com.moviegetter.ui.main.activity.SettingActivity
 import com.moviegetter.ui.main.activity.UserActivity
 import com.moviegetter.ui.main.adapter.MainSimpleAdapter
-import com.moviegetter.ui.main.fragment.MovieFragment
-import com.moviegetter.ui.main.fragment.TVFragment
-import com.moviegetter.ui.main.fragment.UserFragment
-import com.moviegetter.ui.main.fragment.VideoFragment
+import com.moviegetter.ui.main.fragment.MainMovieFragment
+import com.moviegetter.ui.main.fragment.MainTVFragment
+import com.moviegetter.ui.main.fragment.MainUserFragment
+import com.moviegetter.ui.main.fragment.MainVideoFragment
 import com.moviegetter.ui.main.pv.MainPresenter
 import com.moviegetter.ui.main.pv.MainView
 import com.moviegetter.utils.BottomNavigationViewHelper
@@ -97,7 +98,7 @@ class MainActivity : MGBaseActivity(), MainView {
                     logE("添加")
                     // http://www.zhiboo.net/
                     iTaskManager?.registerListener(presenter.iOnNewNodeGetListener)
-//                    iTaskManager?.add(SpiderTask("http://www.dytt8.net/html/gndy/dyzz/index.html", Config.TAG_DYTT, 1, 0))
+//                    iTaskManager?.add(SpiderTask("http://www.dytt8.net/html/gndy/dyzz/index.html", MovieConfig.TAG_DYTT, 1, 0))
                 }
             }
 
@@ -133,7 +134,7 @@ class MainActivity : MGBaseActivity(), MainView {
     private fun initBus() {
 
         crawlSubscription = CrawlLiteSubscription().getCrawlCountSubscription({
-            it.tag == Config.TAG_DYTT
+            it.tag == MovieConfig.TAG_DYTT
         }, { total, update, fail, finished ->
             formatCrawlStatusView(total, update, fail, finished)
             if (finished) {
@@ -239,7 +240,7 @@ class MainActivity : MGBaseActivity(), MainView {
 
         optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "设置"))
 
-        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(MovieFragment(), TVFragment(), VideoFragment(), UserFragment()))
+        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(MainMovieFragment(), MainTVFragment(), MainVideoFragment(), MainUserFragment()))
         viewpager_main.adapter = fragmentAdapter
         viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
@@ -280,7 +281,7 @@ class MainActivity : MGBaseActivity(), MainView {
 //        }
 
 
-        versionHintDialog = VersionHintDialog(this, Config.apkPath)
+        versionHintDialog = VersionHintDialog(this, MovieConfig.apkPath)
         versionHintDialog?.onFinishClickListener = { finish() }
     }
 
@@ -344,12 +345,12 @@ class MainActivity : MGBaseActivity(), MainView {
 
     override fun onMarkInSuccess(markId: Int) {
         this.markInId = markId
-        Config.markInId = markId
+        MovieConfig.markInId = markId
     }
 
     override fun finish() {
         super.finish()
-        Config.isMainBackClick = true
+        MovieConfig.isMainBackClick = true
     }
 
     override fun onDestroy() {

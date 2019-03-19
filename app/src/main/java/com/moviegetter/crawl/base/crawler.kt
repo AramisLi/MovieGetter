@@ -1,9 +1,12 @@
 package com.moviegetter.crawl.base
 
+import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import android.os.Handler
 import android.os.Parcel
 import android.os.Parcelable
+import com.moviegetter.config.MovieConfig
+import com.moviegetter.db.MovieDatabase
 import java.io.Serializable
 
 /**
@@ -18,8 +21,14 @@ interface Crawler {
 
 interface Parser {
     var pages: Int
+    val tag: String
     fun startParse(node: CrawlNode, response: ByteArray, pipeline: Pipeline? = null): List<CrawlNode>?
-//    fun preCheck(context: Context?, node: CrawlNode): Boolean
+    /**
+     * 跳过条件，满足条件将跳过
+     * true:跳过
+     * false:不跳过
+     */
+    fun skipCondition(database: MovieDatabase, node: CrawlNode): Boolean
 }
 
 interface Pipeline {

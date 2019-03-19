@@ -9,7 +9,7 @@ import com.aramis.library.component.dialog.DefaultHintDialog
 import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseFragment
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlLiteMessage
 import com.moviegetter.crawl.base.CrawlerHandlerWhat
 import com.moviegetter.crawl.ipz.IPZItem
@@ -84,9 +84,9 @@ abstract class IPZFragment : MGBaseFragment() {
             dataList.addAll(it)
             adapter.notifyDataSetChanged()
             val tag = when (presenter?.currentMenuPosition) {
-                1 -> Config.TAG_XFYY
-                2 -> Config.TAG_SSB
-                else -> Config.TAG_ADY
+                1 -> MovieConfig.TAG_XFYY
+                2 -> MovieConfig.TAG_SSB
+                else -> MovieConfig.TAG_ADY
             }
             presenter?.postTitleMessage(tag, position, dataList.size)
 
