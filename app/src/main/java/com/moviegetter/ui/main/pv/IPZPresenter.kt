@@ -2,19 +2,22 @@ package com.moviegetter.ui.main.pv
 
 //import android.widget.Toast
 import android.app.Activity
-import com.aramis.library.aramis.ArBus
 import com.aramis.library.base.BaseView
 import com.aramis.library.extentions.getTimestamp
 import com.aramis.library.extentions.logE
 import com.aramis.library.extentions.now
 import com.kymjs.rxvolley.toolbox.RxVolleyContext.toast
+import com.moviegetter.R
 import com.moviegetter.api.Api
 import com.moviegetter.base.MGBasePresenter
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.ipz.IPZCrawler
 import com.moviegetter.crawl.ipz.IPZItem
+import com.moviegetter.crawl.ssb.SsbCrawler
+import com.moviegetter.crawl.xfyy.XfyyCrawler
+import com.moviegetter.ui.ipz.activity.IPZActivity
 import com.moviegetter.utils.DYTTDBHelper
 import com.moviegetter.utils.database
 import org.jetbrains.anko.db.SqlOrderDirection
@@ -31,6 +34,10 @@ import java.io.Serializable
 class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
     private val playDownloadUrl = "http://down.xfplay.com/xfplay.apk"
     private val crawler = IPZCrawler()
+    private val xfyyCrawler = XfyyCrawler()
+    private val ssbCrawler = SsbCrawler()
+    var currentMenuPosition: Int = 0
+
 
     fun downloadPlayer() {
         DYTTDBHelper.toPlayer(activity, playDownloadUrl) {
@@ -40,40 +47,61 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
 
 
     fun startCrawlLite(position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
-        crawler.startCrawlLite((mView as? Activity), position, pages, onFinished)
+        val currentMenuPosition = (activity as? IPZActivity)?.getCurrentMenuPosition() ?: -1
+        when (currentMenuPosition) {
+            0 -> {
+//                 MovieConfig.TAG_ADY
+                crawler.startCrawlLite((mView as? Activity), position, pages, onFinished)
+            }
+            1 -> {
+//                 MovieConfig.TAG_XFYY
+                xfyyCrawler.startCrawlLite((mView as? Activity), position, pages, onFinished)
+            }
+
+            2 -> {
+//                MovieConfig.TAG_SSB
+                ssbCrawler.startCrawlLite((mView as? Activity), position, pages, onFinished)
+            }
+        }
     }
 
 
     fun getData(position: Int, onSuccess: (results: List<IPZItem>) -> Unit, onFail: (errorCode: Int, errorMsg: String) -> Unit) {
-        doAsync {
-            (mView as? Activity)?.database?.use {
-                DYTTDBHelper.addColumn(this, DBConfig.TABLE_NAME_ADY)
-                val count = select(DBConfig.TABLE_NAME_ADY)
-                        .whereArgs("position={position}", "position" to position)
-                        .exec { this.count }
-                if (count > 0) {
-                    val list = select(DBConfig.TABLE_NAME_ADY)
+        val currentMenuPosition = (activity as? IPZActivity)?.getCurrentMenuPosition() ?: -1
+        val tabName = when (currentMenuPosition) {
+            0 -> DBConfig.TABLE_NAME_ADY
+            1 -> DBConfig.TABLE_NAME_XFYY
+            2 -> DBConfig.TABLE_NAME_SSB
+            else -> ""
+        }
+        if (tabName.isNotBlank()) {
+            doAsync {
+                (mView as? Activity)?.database?.use {
+                    DYTTDBHelper.addColumn(this, tabName)
+                    val count = select(tabName)
                             .whereArgs("position={position}", "position" to position)
-                            .orderBy("movie_update_timestamp", SqlOrderDirection.DESC)
-                            .parseList(IPZRowParser())
-                    uiThread {
-                        mView?.onGetDataSuccess(list)
-                        onSuccess.invoke(list)
-                    }
+                            .exec { this.count }
+                    if (count > 0) {
+                        val list = select(tabName)
+                                .whereArgs("position={position}", "position" to position)
+                                .orderBy("movie_update_timestamp", SqlOrderDirection.DESC)
+                                .parseList(IPZRowParser())
+                        uiThread {
+                            mView?.onGetDataSuccess(list)
+                            onSuccess.invoke(list)
+                        }
 
-                } else {
-                    uiThread {
-                        mView?.onGetDataFail(1, "列表为空")
-                        onFail.invoke(1, "列表为空")
+                    } else {
+                        uiThread {
+                            mView?.onGetDataFail(1, "列表为空")
+                            onFail.invoke(1, "列表为空")
+                        }
                     }
                 }
             }
         }
     }
 
-    fun postTitleMessage(position: Int, count: Int) {
-        ArBus.getDefault().post(TitleItemBean(Config.TAG_ADY, position, count))
-    }
 
     fun saveDownloaded(movieId: Int, movieName: String, onSuccess: () -> Unit) {
         doAsync {
@@ -97,6 +125,30 @@ class IPZPresenter(view: IPZView) : MGBasePresenter<IPZView>(view) {
         }))
     }
 
+    fun getBottomTextArray(activity: Activity, flag: Int): Array<String> {
+        return when (flag) {
+            0 -> activity.resources.getStringArray(R.array.text_navigator_ipz)
+            1 -> activity.resources.getStringArray(R.array.text_navigator_xyff)
+            2 -> activity.resources.getStringArray(R.array.text_navigator_ssb)
+            else -> arrayOf()
+        }
+    }
+
+    fun getCurrentTag(currentPosition: Int): String {
+        return when (currentPosition) {
+            1 -> MovieConfig.TAG_XFYY
+            2 -> MovieConfig.TAG_SSB
+            else -> MovieConfig.TAG_ADY
+        }
+    }
+
+    fun initTitleItemCountArray(): Array<IntArray> {
+        return arrayOf(intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0),
+                intArrayOf(0, 0, 0, 0, 0, 0, 0))
+    }
+
+
 }
 
 interface IPZView : BaseView {
@@ -104,6 +156,21 @@ interface IPZView : BaseView {
     fun onGetDataFail(errorCode: Int, errorMsg: String)
 
     fun handleCrawlStatus(total: Int, update: Int, fail: Int, finished: Boolean)
+}
+
+interface IPZDetailView:IPZView{
+    override fun onGetDataFail(errorCode: Int, errorMsg: String) {
+
+    }
+
+    override fun onGetDataSuccess(result: List<IPZItem>) {
+
+
+    }
+
+    override fun handleCrawlStatus(total: Int, update: Int, fail: Int, finished: Boolean) {
+
+    }
 }
 
 data class TitleItemBean(val tag: String, val position: Int, val count: Int) : Serializable

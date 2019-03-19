@@ -2,6 +2,8 @@ package com.aramis.library.extentions
 
 import com.aramis.library.utils.LogUtils
 import java.math.RoundingMode
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -12,6 +14,27 @@ import java.util.*
  */
 fun Any.logE(str: String? = "null") {
     LogUtils.e("===${javaClass.simpleName}===", str)
+}
+
+fun String.MD5(): String {
+    try {
+        val instance: MessageDigest = MessageDigest.getInstance("MD5")//获取md5加密对象
+        val digest: ByteArray = instance.digest(this.toByteArray())//对字符串加密，返回字节数组
+        val sb: StringBuffer = StringBuffer()
+        for (b in digest) {
+            val i: Int = b.toInt() and 0xff//获取低八位有效值
+            var hexString = Integer.toHexString(i)//将整数转化为16进制
+            if (hexString.length < 2) {
+                hexString = "0$hexString"//如果是一位的话，补0
+            }
+            sb.append(hexString)
+        }
+        return sb.toString()
+
+    } catch (e: NoSuchAlgorithmException) {
+        e.printStackTrace()
+    }
+    return this
 }
 
 fun now(format: String = "yyyy-MM-dd HH:mm:ss"): String {
@@ -33,10 +56,14 @@ fun tryBlock(block: () -> Unit) {
     }
 }
 
-fun keep(d: Double): String {
-    val decimalFormat = DecimalFormat("#0.00")
+fun Double.keep(n: Int = 2): String {
+    val sb = StringBuilder()
+    for (i in 0 until n) {
+        sb.append("0")
+    }
+    val decimalFormat = DecimalFormat("#0." + sb.toString())
     decimalFormat.roundingMode = RoundingMode.HALF_UP
-    return decimalFormat.format(d)
+    return decimalFormat.format(this)
 }
 
 fun <T> MutableCollection<T>.shift(): T {

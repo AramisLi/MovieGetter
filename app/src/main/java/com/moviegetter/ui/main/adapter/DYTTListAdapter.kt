@@ -40,6 +40,7 @@ class DYTTListAdapter(list: List<Item>) : CrawlerBaseListAdapter(list) {
             } else {
                 View.GONE
             }
+            holder.text_sync_multi.visibility = View.GONE
 //            logE("刷新 movieId=${item.movieId},position=$position,item.downloaded=${item.downloaded}")
         }
 

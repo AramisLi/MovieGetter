@@ -2,20 +2,20 @@ package com.moviegetter.utils
 
 import com.google.gson.Gson
 import okhttp3.*
-import java.lang.Exception
-import java.net.SocketTimeoutException
+import java.util.concurrent.TimeUnit
 
 /**
  *Created by Aramis
  *Date:2018/6/22
  *Description:
  */
-class OKhttpUtils {
+object OKhttpUtils {
 
     fun fetch(url: String, method: String, header: Map<String, String>? = null, params: Map<String, String>? = null, jsonParams: Boolean = true): Response? {
         try {
             println("==============fetch url:$url")
-            val client = OkHttpClient.Builder().build()
+            val client = OkHttpClient.Builder().connectTimeout(90, TimeUnit.SECONDS).readTimeout(90,TimeUnit.SECONDS).build()
+//            val client = OkHttpClient.Builder().build()
             val requestBuilder = Request.Builder().url(url)
             if (method != "GET") {
                 if (jsonParams) {
@@ -37,8 +37,6 @@ class OKhttpUtils {
             }
             val call = client.newCall(requestBuilder.build())
             return call.execute()
-        } catch (e: SocketTimeoutException) {
-            e.printStackTrace()
         } catch (e: Exception) {
             e.printStackTrace()
         }

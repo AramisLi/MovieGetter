@@ -4,4 +4,6 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_photo">Camera</string>
     <string name="btn_gallery">Gallery</string>
+
+    <string name="str_doubleclick_quit">再按一次退出</string>
 </resources>

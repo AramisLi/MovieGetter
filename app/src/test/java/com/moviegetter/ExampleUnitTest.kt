@@ -1,12 +1,23 @@
 package com.moviegetter
 
+import android.os.Bundle
 import com.aramis.library.extentions.logE
+import com.google.gson.Gson
+import com.kymjs.rxvolley.RxVolley
 import com.kymjs.rxvolley.client.HttpCallback
-import com.moviegetter.crawl.base.Downloader
-import com.moviegetter.test.Detalhtml
+import com.moviegetter.api.ShuDu
 import com.moviegetter.utils.OKhttpUtils
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.jetbrains.anko.bundleOf
 import org.junit.Test
-import org.seimicrawler.xpath.JXDocument
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.Charset
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -14,160 +25,259 @@ import org.seimicrawler.xpath.JXDocument
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
+
     @Test
-    fun addition_isCorrect() {
-        val jxDocument = JXDocument.create(Detalhtml.html)
-//        val sel = jxDocument.sel("//div[@id='Zoom']//table//td/a")
-//        for (i in sel){
-//            println(i.toString())
-//        }
-
-        val href = jxDocument.sel("//div[@id='Zoom']//table//td/a/@href").iterator().next()
-        println("href===$href")
-        val name = jxDocument.sel("//div[@id='Zoom']//table//td/a/text()").iterator().next()
-        println("name===$name")
-//        val encode = BASE64Encoder().encode(href.toString().toByteArray())
-
-//        println("encode==="+encode)
-//        println(BASE64Encoder().encode("头号玩家".toByteArray()))
-////        assertEquals(4, 2 + 2)
-//        val url="ftp://ygdy8:ygdy8@yg72.dydytt.net:8231/阳光电影www.ygdy8.com.头号玩家.HD.720p.中英双字幕.mkv"
-//        println("我猜的===${BASE64Encoder().encode(("AA"+url+"ZZ").toByteArray())}")
-
-//        val left="thunder://"+BASE64Encoder().encode(("AA"+url+"ZZ").toByteArray())
-//        val right="thunder://QUFmdHA6Ly95Z2R5ODp5Z2R5OEB5ZzcyLmR5ZHl0dC5uZXQ6ODIzMS8lRTklOTglQjMlRTUlODUlODklRTclOTQlQjUlRTUlQkQlQjF3d3cueWdkeTguY29tLiVFNSVBNCVCNCVFNSU4RiVCNyVFNyU4RSVBOSVFNSVBRSVCNi5IRC43MjBwLiVFNCVCOCVBRCVFOCU4QiVCMSVFNSU4RiU4QyVFNSVBRCU5NyVFNSVCOSU5NS5ta3ZaWg=="
-////        assertEquals(left, right)
-//
-//        "thunder://QUFmdHA6Ly95Z2R5ODp5Z2R5OEB5ZzcyLmR5ZHl0dC5uZXQ6ODIzMS/pmLPlhYnnlLXlvbF3d3cueWdkeTguY29tLuWktOWPt+eOqeWuti5IRC43MjBwLuS4reiLseWPjOWtl+W5lS5ta3ZaWg=="
-//        "thunder://QUFmdHA6Ly95Z2R5ODp5Z2R5OEB5ZzcyLmR5ZHl0dC5uZXQ6ODIzMS8lRTklOTglQjMlRTUlODUlODklRTclOTQlQjUlRTUlQkQlQjF3d3cueWdkeTguY29tLiVFNSVBNCVCNCVFNSU4RiVCNyVFNyU4RSVBOSVFNSVBRSVCNi5IRC43MjBwLiVFNCVCOCVBRCVFOCU4QiVCMSVFNSU4RiU4QyVFNSVBRCU5NyVFNSVCOSU5NS5ta3ZaWg=="
-//        "thunder://QUFmdHA6Ly95Z2R5ODp5Z2R5OEB5ZzcyLmR5ZHl0dC5uZXQ6ODIzMS/pmLPlhYnnlLXlvbF3d3cueWdkeTguY29tLuWktOWPt+eOqeWuti5IRC43MjBwLuS4reiLseWPjOWtl+W5lS5ta3ZaWg=="
-//
-//        val test_th="thunder://QUFodHRwOi8vdG9vbC5sdS90ZXN0LnppcFpa"
-//        println(BASE64Decoder().decodeBuffer("QUFodHRwOi8vdG9vbC5sdS90ZXN0LnppcFpa"))
-//        println(ThunderSiteConverUtil().conver(test_th))
-//
-//        println(ThunderSiteConverUtil().encode(url))
+    fun ff() {
+        val updateTime = "更新：2018-07-16"
+        println(updateTime.indexOf("更新："))
+        println(updateTime.indexOf("更新："))
+        val movieUpdateTime = updateTime.substring(updateTime.indexOf("更新：") + 3, updateTime.length - 1)
+        println(movieUpdateTime)
     }
 
     @Test
-    fun testDownloader() {
-        val url = "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
-        Downloader.get(url, object : HttpCallback() {
-            override fun onSuccess(response: String?) {
-                super.onSuccess(response)
-//                println("onSuccess(response: String?)")
-//                println(response)
-                logE("onSuccess")
-            }
+    fun nextPage() {
+        val url = "http://www.ssssbb.com/yyxf/index1123423.html"
+        val next1 = url.substring(0, url.lastIndexOf(".")) + "-2.html"
+        println(next1)
 
-            override fun onSuccess(headers: MutableMap<String, String>?, t: ByteArray?) {
-                super.onSuccess(headers, t)
-//                println("onSuccess(headers: MutableMap<String, String>?, t: ByteArray?)")
+        val url2 = "http://www.ssssbb.com/yyxf/index1900-2.html"
+        val nextInt = url2.substring(url2.indexOf("-") + 1, url2.lastIndexOf(".")).toInt()
+        val next2 = url2.substring(0, url2.lastIndexOf("-") + 1) + (nextInt + 1) + ".html"
+        print(next2)
+    }
+
+    @Test
+    fun aa() {
+        val a = intArrayOf(0, 1, 2)
+        a.forEach {
+            print(it)
+            print(",")
+        }
+
+        val b = a
+        b[0] = 9
+        println()
+        a.forEach {
+            print(it)
+            print(",")
+        }
+
+    }
+
+    @Test
+    fun bb() {
+//        val da = "var VideoListJson=[['xfplay',['\u7B2C1\u96C6\$xfplay://dna=meMcD0IbmeDZDHAfDZpWmxHXDHAbDxiXDGLZEwi0mda1AGL2D0m0ED|dx=177263274|mz=\u9152\u5E97\u5927\u621898\u5E74\u6E05\u7EAF\u5C0F\u5E08\u59B9,\u4E0D\u6562\u592A\u5927\u58F0\u53EB\u6015\u9694\u58C1\u6295\u8BC9,\u4E0D\u592A\u8010\u64CD\u641E\u5B8C\u540E\u53C8\u4ECB\u7ECD\u62A4\u58EB\u73ED\u6027\u611F\u6F02\u4EAE\u5C0F\u5E08\u59B9\u7B2C\u4E8C\u5929\u7ED9\u6211\u64CD!_onekeybatch.mp4|zx=nhE0pdOVl3P5mF5xqzD5Ac5wo206BGa4mc94MzXPozS|zx=nhE0pdOVl3Ewpc5xqzD4AF5wo206BGa4mc94MzXPozS\$xfplay']]],urlinfo='http://'+document.domain+'/toupai/2018-8/105078/player.html?105078-<from>-<pos>';"
+
+        val da = "var VideoListJson=[['xfplay',['\\u7B2C01\\u96C6\$xfplay://dna=EwL3mwqfmZyfAZybDwi2BdffBefeDwfbA0e1D0MgAGLZBefdEGDXAa|dx=348414433|mz=\\u66F4\\u591A\\u5185\\u5BB9www.ady69.com@62gbr018.mp4|zx=nhE0pdOVlZe5Bc4YAGHUBdpUAZL6BGa4mc94MzXPozS|zx=nhE0pdOVlZe5Bc4YAGHUBdpUAZp6BGa4mc94MzXPozS\$xfplay','\\u7B2C02\\u96C6\$xfplay://dna=m0jdEdeZDxD0AefgBGbememXBGi5DxeZDwx3AGEfA0EeAGe0m0jcED|dx=94217796|mz=\\u66F4\\u591A\\u5185\\u5BB9www.ady69.com@62gbr018-t.mp4|zx=nhE0pdOVlZe5Bc4YAGHUBdpUAZL6BGa4mc94MzXPozS|zx=nhE0pdOVlZe5Bc4YAGHUBdpUAZp6BGa4mc94MzXPozS\$xfplay']]],urlinfo='http://'+document.domain+'/player/index39919.html?39919-<from>-<pos>';"
+//        val a = da.indexOf("\'xfplay\'") + 8
+//        val b = da.indexOf(",urlinfo")
+//
+//        val fa = da.substring(a, b)
+        val sb = StringBuilder()
+        val fa = """'(.*?)'""".toRegex().findAll(da)
+        val ga = fa.filter { it.value.contains("xfplay://") }.map { it.value }.toList().map {
+            var d = it.substring(it.indexOf("xfplay://"), it.lastIndexOf("xfplay") + 6)
+            d = d.replace(",", "")
+            d
+        }.joinToString(",")
+//                .forEach {
+//            sb.append(it)
+//            sb.append(",")
+//        }
+//        if (sb.isNotEmpty()) {
+//            sb.deleteCharAt(sb.length - 1)
+//        }
+
+        val a = "&"
+        val l = listOf<Int>(1, 2, 3, 4, 5, 6)
+        l.joinToString(",")
+
+        println(ga)
+
+    }
+
+    @Test
+    fun ee() {
+        val url = "http://s.ygdy8.com/plus/so.php?kwtype=0&searchtype=title&keyword=%E5%93%88%E5%88%A9%E6%B3%A2%E7%89%B9"
+//       ArRxVolley.get(url,object :HttpCallback(){
+//           override fun onSuccess(t: String?) {
+//               super.onSuccess(t)
+//               println("success")
+//               println("$t")
+//           }
+//
+//           override fun onFailure(errorNo: Int, strMsg: String?) {
+//               super.onFailure(errorNo, strMsg)
+//               println("fial")
+//               println("errorNo:$errorNo,strMsg:$strMsg")
+//           }
+//       })
+//        val callback=object :HttpCallback(){
+//            override fun onSuccess(t: String?) {
+//                super.onSuccess(t)
+//                println("success")
+//                println("$t")
+//            }
+//
+//            override fun onFailure(errorNo: Int, strMsg: String?) {
+//                super.onFailure(errorNo, strMsg)
+//                println("fial")
+//                println("errorNo:$errorNo,strMsg:$strMsg")
+//            }
+//        }
+//        ArRxVolley.Builder().httpMethod(RxVolley.Method.GET).url(url).useServerControl(true).callback(callback).doTask()
+
+        val okHttpClient = OkHttpClient()
+        val request = Request.Builder().url(url).get().build()
+        val call = okHttpClient.newCall(request)
+        val res = call.execute()
+
+        val html = String(res.body()!!.bytes(), Charset.forName("GBK"))
+        println("${html}")
+//        call.enqueue(object :Callback{
+//            override fun onFailure(call: Call, e: IOException) {
+//                println("fial")
+//                println("IOException:${e.message}")
+//            }
+//
+//            override fun onResponse(call: Call, response: Response) {
+//                println("success")
+//                println("${response.body()}")
+//            }
+//
+//        })
+    }
+
+
+    @Test
+    fun gg() {
+        val s = URLEncoder.encode("哈利波特", "gb2312")
+        val s1 = URLEncoder.encode("哈利波特", "utf-8")
+
+        val p = URLDecoder.decode("%B9%FE%C0%FB%B2%A8%CC%D8", "gb2312")
+        val p1 = URLDecoder.decode("%E5%93%88%E5%88%A9%E6%B3%A2%E7%89%B9", "utf-8")
+        println(s)
+        println(s1)
+        println(p)
+        println(p1)
+
+        "keyword=%B9%FE%C0%FB%B2%A8%CC%D8&Submit=%CB%D1%CB%F7"
+        val p2 = URLDecoder.decode("%B9%FE%C0%FB%B2%A8%CC%D8", "gb2312")
+        val p3 = URLDecoder.decode("%CB%D1%CB%F7", "gb2312")
+        println(p2)
+        println(p3)
+
+
+        val url = "http://s.ygdy8.com/plus/so.php"
+        val okHttpClient = OkHttpClient()
+        val formBody = FormBody.Builder()
+        formBody.add("keyword", "哈利波特")
+        formBody.add("Submit", "搜索")
+        val request = Request.Builder().url(url).post(formBody.build()).build()
+        val call = okHttpClient.newCall(request)
+        val res = call.execute()
+
+        val html = String(res.body()!!.bytes(), Charset.forName("GBK"))
+        println(html)
+
+//        val httpParams=HttpParams()
+//        httpParams.put("keyword","%B9%FE%C0%FB%B2%A8%CC%D8")
+//        httpParams.put("Submit","%CB%D1%CB%F7")
+//        RxVolley.post(url,httpParams,object :HttpCallback(){
+//            override fun onSuccess(t: String?) {
+//                super.onSuccess(t)
+//                println("$t")
+//            }
+//
+//            override fun onFailure(error: VolleyError?) {
+//                super.onFailure(error)
+//            }
+//        })
+
+    }
+
+    @Test
+    fun hh() {
+
+        val shuDu = ShuDu.generateShuDu()
+        // 输出结果
+        for (i in 0..8) {
+            for (j in 0..8) {
+                print(shuDu[i][j].toString() + " ")
+            }
+            println()
+        }
+    }
+
+    @Test
+    fun aaa() {
+//        val okhttpUtils=OKhttpUtils()
+//        val url="http://www.dytt8.net/html/gndy/dyzz/index.html"
+//        val response = okhttpUtils.fetch(url, "GET")
+//
+//        println(response?.body()?.string())
+    }
+
+    @Test
+    fun bbb(){
+        RxVolley.get("https://www.dytt8.net/html/gndy/dyzz/index.html",object:HttpCallback(){
+            override fun onSuccess(t: String?) {
+                super.onSuccess(t)
+
+                println(t)
             }
 
             override fun onFailure(errorNo: Int, strMsg: String?) {
                 super.onFailure(errorNo, strMsg)
-//                println("onFailure(errorNo: Int, strMsg: String?)")
-//                println("errorNo:$errorNo,strMsg:$strMsg")
-                logE("onFailure")
+
+                println("errorNo:$errorNo,strMsg:$strMsg")
             }
         })
     }
 
     @Test
-    fun testOkhttp() {
-        val util = OKhttpUtils()
-        val url = "http://www.dytt8.net/html/gndy/dyzz/list_23_1.html"
-        val url2 = "http://www.dytt8.net/html/gndy/dyzz/20180525/56896.html"
-        val response = util.fetch(url2, "GET", jsonParams = false)
-        if (response != null) {
-            println(response.code())
-            println(response.body().string())
-        }
-    }
+    fun ccc(){
+        fun cccInner(vararg lala:Pair<String,String>){
+            println(lala::class.java.name)
+            println(lala::javaClass)
+            println(lala[0].toString())
 
-    @Test
-    fun textNextPage() {
-//        val url = "http://www.dytt8.net/html/gndy/dyzz/index.html"
-        val url = "http://www.dytt8.net/html/gndy/dyzz/list_23_2.html"
-        fun nextPage(url: String): String {
-            val fore = url.lastIndexOf("/")
-            val back = url.lastIndexOf(".")
-            val _index = url.substring(fore + 1, back)
-            if (_index == "index") {
-                return url.substring(0, fore + 1) + "list_23_2.html"
-            } else {
-                val fore_2 = url.lastIndexOf("_")
-                val num = url.substring(fore_2 + 1, back).toInt()
-                return url.substring(0, fore_2 + 1) + (num + 1) + ".html"
+            for ( i in lala){
+                println(i::class.java.name)
             }
         }
 
-        println(nextPage(url))
+
+
+        cccInner("cc" to "cc","dd" to "dd")
     }
 
     @Test
-    fun testDate() {
-//        val date_a="2018-04-30 19:49:07"
-//
-//        println(date_a.getTimestamp())
-        val movieId = getMovieId("/view/index40227.html")
-        println(movieId)
-        println(5 in 0..4)
+    fun ddd(){
+        val s1="""{"result": {"access_token": "2b0cfbe96c66b782dbdd39f3ac1d6627","refresh_token": "2f2dacdc86a7f8e2","token_type": "read_write","expires_in": 604800,"userinfo": {"id": 1092989,"nickName": "testhalflogin","sex": -1,"avatarUrl": "https://pre-file.welike.in/download/moren.png/","firstLogin": false,"followUsersCount": 0,"followedUsersCount": 0,"block": false,"blocked": false,"introduction": "This guy's lazy, he didn't write anything.","interests": [],"finishLevel": 4,"allowUpdateNickName": true,"allowUpdateSex": true,"status": 3,"type": 0,"registerDate": 1542971448398}},"resultMsg": "OK","code": 1000}""".trimIndent()
 
-
-    }
-
-    private fun getMovieId(href: String): String {
-//        /view/index40227.html
-        return href.substring(href.indexOf("index") + 5, href.indexOf("."))
+        val s2="""{"access_token": "2b0cfbe96c66b782dbdd39f3ac1d6627","refresh_token": "2f2dacdc86a7f8e2","token_type": "read_write","expires_in": 604800,"userinfo": {"id": 1092989,"nickName": "testhalflogin","sex": -1,"avatarUrl": "https://pre-file.welike.in/download/moren.png/","firstLogin": false,"followUsersCount": 0,"followedUsersCount": 0,"block": false,"blocked": false,"introduction": "This guy's lazy, he didn't write anything.","interests": [],"finishLevel": 4,"allowUpdateNickName": true,"allowUpdateSex": true,"status": 3,"type": 0,"registerDate": 1542971448398}}"""
+        val resultBean = Gson().fromJson(s2, ResultBean::class.java)
+        println(resultBean.toString())
     }
 
     @Test
-    fun testJson() {
-        val linkList = listOf(56910, 56912, 56913, 56914, 56926, 56942, 56943, 56945, 56959, 56980, 56981, 56983)
+    fun fff(){
+        val bundle= bundleOf("a" to 1,"b" to 2)
+        println(bundle.getInt("a"))
 
-        val a = linkList.joinToString { "," }.toString()
-        val b = linkList.joinToString(",")
-        println(a)
-        println(b)
-        val c = "movieId in (%s)".format(linkList.joinToString(","))
-        println(c)
-    }
+        val bundle2=Bundle()
+        bundle2.putAll(bundle)
+        println(bundle2.getInt("a"))
 
-    @Test
-    fun testNextPage() {
-        val url = "http://www.54xfw.com/list/index1.html"
-        val url2 = "http://www.54xfw.com/list/index1_11.html"
-        val url_1 = "http://www.54xfw.com/list/index12.html"
-        val re = """index(\d+)""".toRegex()
-        val a = re.findAll(url).iterator()
-        val b = re.findAll(url_1).iterator()
-        val c = re.containsMatchIn(url)
-        val d = re.matchEntire(url)?.value
-        println("123")
-        println(a.next().value)
-        println(b.next().value)
-        println(c)
-        println(d)
-
-        val index2 = url.substring(0, url.lastIndexOf(".")) + "_2" + url.substring(url.lastIndexOf("."), url.length)
-        println(index2)
-
-        val index_child = url2.substring(url2.lastIndexOf("_") + 1, url2.lastIndexOf(".")).toInt()
-        println(index_child)
-
-        val next_page = url2.substring(0, url2.lastIndexOf("_") + 1) + (index_child + 1) +
-                url2.substring(url2.lastIndexOf("."), url2.length)
-        println(next_page)
-    }
-
-    @Test
-    fun testChongFu() {
-        val list = listOf(1, 2, 2, 3, 3, 4, 5, 4, 1, 2, 3, 4, 1, 2)
-        val list2 = list.toSet().toList()
-        println(list2)
-
+        val bundle3=Bundle()
+        bundle3.putInt("a",3)
+        bundle3.putString("w","www")
+        println(bundle3.getInt("a"))
+        println(bundle3.getString("w"))
 
     }
+
+
 }

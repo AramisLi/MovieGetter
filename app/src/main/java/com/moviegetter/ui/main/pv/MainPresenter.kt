@@ -2,6 +2,7 @@ package com.moviegetter.ui.main.pv
 
 import android.app.Activity
 import android.os.Environment
+import android.os.Handler
 import com.aramis.library.base.BaseView
 import com.aramis.library.extentions.logE
 import com.aramis.library.extentions.now
@@ -12,11 +13,13 @@ import com.moviegetter.base.MGBasePresenter
 import com.moviegetter.bean.IPBean
 import com.moviegetter.bean.MgVersion
 import com.moviegetter.bean.User
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
+import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.dytt.DYTTCrawler
 import com.moviegetter.crawl.dytt.DYTTItem
+import com.moviegetter.service.IOnNewNodeGetListener
 import com.moviegetter.utils.DYTTDBHelper
 import com.moviegetter.utils.MovieGetterHelper
 import com.moviegetter.utils.database
@@ -27,7 +30,6 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import java.io.File
-import java.nio.charset.Charset
 
 
 /**
@@ -41,21 +43,28 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
     private var versionName = ""
     private var ipBean: IPBean? = null
 
-    fun findIpzUrl() {
-        get(MGsp.getIpzBaseUrl() + "/js/ads/caonimei.js", object : HttpCallback() {
-            override fun onSuccess(t: String?) {
-                super.onSuccess(t)
-                t?.apply {
-                    val resJs = String(t.toByteArray(), Charset.forName("GBK"))
-                    val matchResult = """<b>(www.*?)</b>""".toRegex().find(resJs)
-                    matchResult?.value?.apply {
-                        val url = "http://" + this.substring(3, this.length - 4)
-                        MGsp.putIpzBaseUrl(url)
-                    }
-                }
+    private var listenerHandler = Handler(Handler.Callback {
+        mView?.onNewNodeGet(it.obj as CrawlNode)
+        false
+    })
+
+    val iOnNewNodeGetListener = object : IOnNewNodeGetListener.Stub() {
+        override fun onError(errorCode: Int, errorMsg: String?) {
+        }
+
+        override fun onFinished() {
+        }
+
+        override fun onNewNodeGet(crawlNode: CrawlNode?) {
+            crawlNode?.apply {
+                val message = listenerHandler.obtainMessage()
+                message.obj = this
+                listenerHandler.sendMessage(message)
             }
-        })
+        }
     }
+
+
 
     fun checkVersion() {
         activity?.apply {
@@ -63,20 +72,34 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
             versionCode = packageInfo.versionCode
             versionName = packageInfo.versionName
 
-//            post(Api.checkVersion, mapOf("version_code" to versionCode, "version_name" to versionName), getDefaultHttpObject<MgVersion>({
-//                mView?.onCheckVersionSuccess(it)
+//            fun getDescription(obj: JSONObject, key: String): String? {
+//                return if (obj.has(key)) obj.getString(key) else null
+//            }
+//            mapOf("version_code" to versionCode, "version_name" to versionName),
+//            get(Api.checkVersion, getHttpCallBack({
+//                logE("version $it")
+////                val obj = JSONObject(it)
+////                if (obj.getInt("code") == 200) {
+////                    val obj1 = obj.getJSONObject("result")
+////                    mView?.onCheckVersionSuccess(versionCode, MgVersion(obj1.getInt("version_code"),
+////                            obj1.getString("version_name"),
+////                            obj1.getInt("is_current"), getDescription(obj1, "message"), getDescription(obj1, "url"),
+////                            if (obj1.has("is_force")) obj1.getInt("is_force") else 0))
+////                }
 //            }, { errorCode, errorMsg ->
 //                mView?.onCheckVersionFail(errorCode, errorMsg)
 //            }))
 
-            post(Api.checkVersion, mapOf("version_code" to versionCode, "version_name" to versionName), getHttpCallBack({
-                val obj = JSONObject(it)
-                if (obj.getInt("code") == 200) {
-                    val obj1 = obj.getJSONObject("result")
-                    mView?.onCheckVersionSuccess(versionCode,MgVersion(obj1.getInt("version_code"),
-                            obj1.getString("version_name"),
-                            obj1.getInt("is_current")))
-                }
+//            get(Api.checkVersion,getMGCallback({t, result ->
+//                logE("result $result")
+//
+//                logE("${result?.javaClass?.name}")
+//            },{errorCode, errorMsg ->
+//                mView?.onCheckVersionFail(errorCode, errorMsg)
+//            }))
+            get(Api.checkVersion, getMGTypeCallback<MgVersion>({
+                //                logE("MgVersion $it")
+                mView?.onCheckVersionSuccess(versionCode, it)
             }, { errorCode, errorMsg ->
                 mView?.onCheckVersionFail(errorCode, errorMsg)
             }))
@@ -128,7 +151,7 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
         if (dyttCrawler.isRunning()) {
             mView?.onCrawlFail(0, "正在同步中，请稍后")
         } else {
-            dyttCrawler.startCrawlLite((mView as? Activity), Config.TAG_DYTT, position, pages, onFinished)
+            dyttCrawler.startCrawlLite((mView as? Activity), MovieConfig.TAG_DYTT, position, pages, onFinished)
         }
     }
 
@@ -137,18 +160,6 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
      */
     fun checkNewWorld(imei: String?) {
         imei?.apply {
-            //            doAsync {
-//                activity?.database?.use {
-//                    val userList = select(DBConfig.TABLE_NAME_USER).whereArgs("imei=${this@apply}").parseList(UserRowParser())
-//                    if (userList.isNotEmpty() && (userList[0].role == DBConfig.USER_ROLE_VIP
-//                                    || userList[0].role == DBConfig.USER_ROLE_MANAGER
-//                                    || userList[0].role == DBConfig.USER_ROLE_ROOT)) {
-//                        uiThread {
-//                            mView?.checkNewWorld(userList[0])
-//                        }
-//                    }
-//                }
-//            }
             //由本地检查改为服务器检查
             post(Api.getRole, mapOf("imei" to this), getMGCallback({ t, result ->
                 logE("访问getRole成功")
@@ -202,9 +213,9 @@ class MainPresenter(view: MainView) : MGBasePresenter<MainView>(view) {
 
     fun requestMarkIn() {
 
-        if (MGsp.getImei().isNotBlank()) {
-//            logE("requestMarkIn imei:${MGsp.getImei()}")
-//            logE("ip ${MovieGetterHelper.getWiFiIpAddress(activity)}")
+        if (MGsp.getImei().isNotBlank() && MGsp.getImei() != "868897020889812") {
+            logE("requestMarkIn imei:${MGsp.getImei()}")
+//            logE("ip ${MovieGetterHelper.getWiFiIpAddress(application)}")
             val dataMap = mutableMapOf("imei" to MGsp.getImei(), "login_time" to now(),
                     "version_code" to versionCode, "version_name" to versionName)
             val ip = MovieGetterHelper.getLocalIpAddress()
@@ -274,9 +285,11 @@ interface MainView : BaseView {
 
     fun onMarkInSuccess(markId: Int)
 
-    fun onCheckVersionSuccess(versionCode:Int,bean: MgVersion)
+    fun onCheckVersionSuccess(versionCode: Int, bean: MgVersion)
 
     fun onCheckVersionFail(errorCode: Int, errorMsg: String)
+
+    fun onNewNodeGet(crawlNode: CrawlNode)
 }
 
 class UserRowParser : RowParser<User> {

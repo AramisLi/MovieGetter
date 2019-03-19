@@ -1,0 +1,250 @@
+/**
+ * Shared file between builds so that they can all use the same dependencies and
+ * maven repositories.
+ *
+ * about life cycle: https://developer.android.com/topic/libraries/architecture/adding-components.html
+ **/
+ext.deps = [:]
+def versions = [:]
+//versions.arch = hasProperty("ARCH_VERSION") ? getProperty("ARCH_VERSION") : "1.0.0"
+versions.arch = "1.1.1"
+versions.room = "1.1.1"
+versions.kotlin = "1.3.11"
+versions.constraint_layout = "1.1.2"
+versions.stetho = "1.5.0"
+versions.facebook = "4.33.0"
+versions.support = "28.0.0"
+versions.okhttp3 = "3.10.0"
+versions.life_runtime = "1.1.1"
+//---
+versions.logger = "2.1.1"
+versions.dagger = "2.11"
+versions.junit = "4.12"
+versions.espresso = "3.0.1"
+versions.retrofit = "2.4.0"
+versions.mockwebserver = "3.8.1"
+versions.apache_commons = "2.5"
+versions.mockito = "2.7.19"
+versions.mockito_all = "1.10.19"
+versions.dexmaker = "2.2.0"
+versions.glide = "3.8.0"
+versions.timber = "4.5.1"
+versions.android_gradle_plugin = "3.0.1"
+versions.rxjava2 = "2.1.6"
+versions.rx_android = "2.0.1"
+versions.atsl_runner = "1.0.1"
+versions.atsl_rules = "1.0.1"
+versions.hamcrest = "1.3"
+versions.paging = "1.0.0-alpha3"
+versions.multidex = "1.0.3"
+versions.work = "1.0.0-alpha10"
+
+//- google service
+versions.google_play_service = "15.0.0"
+versions.google_play_auth = "15.0.1"
+//- FCM
+versions.core = "16.0.1"
+versions.messaging = "17.1.0"
+versions.jobdispatcher = "0.8.5"
+versions.dynamiclink = "16.0.1"
+//other
+versions.pagerslidingtabstrip = "1.0.1"
+versions.flowlayout = "1.1.2"
+versions.arouter_api = "1.3.1"
+versions.arouter_compiler = "1.1.4"
+versions.arouter_register = "1.0.2"
+versions.banner = "1.4.10"
+versions.appsflyer = "4.8.13@aar"
+versions.installreferrer = "1.0"
+versions.materialdaterangepicker = "1.9"
+versions.fresco = "1.8.1"
+versions.swipelayout = "1.2.0"
+versions.lottie = "2.5.1"
+versions.fastjson = "1.2.39"
+versions.greendao = "3.2.2"
+versions.eventbus = "3.1.1"
+versions.jsoup = "1.9.2"
+versions.protobuf = "3.5.1"
+versions.exoplayer = "2.6.1"
+versions.gson = "2.8.4"
+versions.crashlytics = "2.9.6@aar"
+versions.easypermissions = "1.2.0"
+versions.videocache = "2.7.0"
+//versions.xTablayout = "1.1.4"
+versions.okdownload = "1.0.3"
+versions.flexbox = "1.0.0"
+versions.alioss = "2.9.2"
+versions.anko = "0.10.8"
+
+def deps = [:]
+
+def gms = [:]
+gms.location = "com.google.android.gms:play-services-location:$versions.google_play_service"
+gms.base = "com.google.android.gms:play-services-base:$versions.google_play_service"
+gms.analytics = "com.google.android.gms:play-services-analytics:$versions.google_play_service"
+gms.auth = "com.google.android.gms:play-services-auth:$versions.google_play_auth"
+deps.gms = gms
+
+def firebase = [:]
+firebase.core = "com.google.firebase:firebase-core:$versions.core"
+firebase.messaging = "com.google.firebase:firebase-messaging:$versions.messaging"
+firebase.jobdispatcher = "com.firebase:firebase-jobdispatcher:$versions.jobdispatcher"
+firebase.dynamiclink = "com.google.firebase:firebase-dynamic-links:$versions.dynamiclink"
+deps.firebase = firebase
+
+def support = [:]
+support.annotations = "com.android.support:support-annotations:$versions.support"
+support.app_compat = "com.android.support:appcompat-v7:$versions.support"
+support.recyclerview = "com.android.support:recyclerview-v7:$versions.support"
+support.cardview = "com.android.support:cardview-v7:$versions.support"
+support.design = "com.android.support:design:$versions.support"
+support.v4 = "com.android.support:support-v4:$versions.support"
+support.core_utils = "com.android.support:support-core-utils:$versions.support"
+support.fragment = "com.android.support:support-fragment:$versions.support"
+support.exifinterface = "com.android.support:exifinterface:$versions.support"
+support.emoji = "com.android.support:support-emoji:$versions.support"
+deps.support = support
+
+def room = [:]
+room.runtime = "android.arch.persistence.room:runtime:$versions.room"
+room.compiler = "android.arch.persistence.room:compiler:$versions.room"
+room.rxjava2 = "android.arch.persistence.room:rxjava2:$versions.room"
+room.testing = "android.arch.persistence.room:testing:$versions.room"
+deps.room = room
+
+def lifecycle = [:]
+lifecycle.runtime = "android.arch.lifecycle:runtime:$versions.life_runtime"
+lifecycle.extensions = "android.arch.lifecycle:extensions:$versions.arch"
+lifecycle.java8 = "android.arch.lifecycle:common-java8:$versions.arch"
+lifecycle.compiler = "android.arch.lifecycle:compiler:$versions.arch"
+deps.lifecycle = lifecycle
+
+def arch_core = [:]
+arch_core.testing = "android.arch.core:core-testing:$versions.arch"
+deps.arch_core = arch_core
+
+def retrofit = [:]
+retrofit.base = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+retrofit.rxjava2 = "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+deps.retrofit = retrofit
+
+def stetho = [:]
+stetho.base = "com.facebook.stetho:stetho:$versions.stetho"
+stetho.support_okhttp3 = "com.facebook.stetho:stetho-okhttp3:$versions.stetho"
+deps.stetho = stetho
+
+def dagger = [:]
+dagger.runtime = "com.google.dagger:dagger:$versions.dagger"
+dagger.android = "com.google.dagger:dagger-android:$versions.dagger"
+dagger.android_support = "com.google.dagger:dagger-android-support:$versions.dagger"
+dagger.compiler = "com.google.dagger:dagger-compiler:$versions.dagger"
+dagger.android_support_compiler = "com.google.dagger:dagger-android-processor:$versions.dagger"
+
+deps.dagger = dagger
+
+def espresso = [:]
+espresso.core = "com.android.support.test.espresso:espresso-core:$versions.espresso"
+espresso.contrib = "com.android.support.test.espresso:espresso-contrib:$versions.espresso"
+espresso.intents = "com.android.support.test.espresso:espresso-intents:$versions.espresso"
+deps.espresso = espresso
+
+def atsl = [:]
+atsl.runner = "com.android.support.test:runner:$versions.atsl_runner"
+atsl.rules = "com.android.support.test:rules:$versions.atsl_runner"
+deps.atsl = atsl
+
+def mockito = [:]
+mockito.core = "org.mockito:mockito-core:$versions.mockito"
+mockito.all = "org.mockito:mockito-all:$versions.mockito_all"
+deps.mockito = mockito
+
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
+kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
+kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+
+deps.kotlin = kotlin
+deps.paging = "android.arch.paging:runtime:$versions.paging"
+deps.multidex = "com.android.support:multidex:$versions.multidex"
+deps.okhttp3 = "com.squareup.okhttp3:okhttp:$versions.okhttp3"
+deps.logger = "com.orhanobut:logger:$versions.logger"
+deps.glide = "com.github.bumptech.glide:glide:$versions.glide"
+deps.dexmaker = "com.linkedin.dexmaker:dexmaker-mockito:$versions.dexmaker"
+deps.constraint_layout = "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
+deps.timber = "com.jakewharton.timber:timber:$versions.timber"
+deps.junit = "junit:junit:$versions.junit"
+deps.mock_web_server = "com.squareup.okhttp3:mockwebserver:$versions.mockwebserver"
+deps.rxjava2 = "io.reactivex.rxjava2:rxjava:$versions.rxjava2"
+deps.rx_android = "io.reactivex.rxjava2:rxandroid:$versions.rx_android"
+deps.hamcrest = "org.hamcrest:hamcrest-all:$versions.hamcrest"
+deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+
+def arouter = [:]
+arouter.api = "com.alibaba:arouter-api:$versions.arouter_api"
+arouter.compiler = "com.alibaba:arouter-compiler:$versions.arouter_compiler"
+arouter.register = "com.alibaba:arouter-register:$versions.arouter_register"
+deps.arouter = arouter
+
+def facebook = [:]
+facebook.login = "com.facebook.android:facebook-login:$versions.facebook"
+facebook.share = "com.facebook.android:facebook-share:$versions.facebook"
+deps.facebook = facebook
+
+def okdownload = [:]
+okdownload.okdownload = "com.liulishuo.okdownload:okdownload:$versions.okdownload"
+okdownload.sqlite = "com.liulishuo.okdownload:sqlite:$versions.okdownload"
+okdownload.okhttp = "com.liulishuo.okdownload:okhttp:$versions.okdownload"
+deps.okdownload = okdownload
+
+def fresco = [:]
+fresco.base = "com.facebook.fresco:fresco:$versions.fresco"
+fresco.imagepipeline = "com.facebook.fresco:imagepipeline-okhttp3:$versions.fresco"
+fresco.animated_webp = "com.facebook.fresco:animated-webp:$versions.fresco"
+fresco.webpsupport = "com.facebook.fresco:webpsupport:$versions.fresco"
+fresco.animated_gif = "com.facebook.fresco:animated-gif:$versions.fresco"
+deps.fresco = fresco
+
+deps.pagerslidingtabstrip = "com.astuetz:pagerslidingtabstrip:$versions.pagerslidingtabstrip"
+deps.flowlayout = "com.hyman:flowlayout-lib:$versions.flowlayout"
+deps.banner = "com.youth.banner:banner:$versions.banner"
+deps.appsflyer = "com.appsflyer:af-android-sdk:$versions.appsflyer"
+deps.installreferrer = "com.android.installreferrer:installreferrer:$versions.installreferrer"
+deps.materialdaterangepicker = "com.borax12.materialdaterangepicker:library:$versions.materialdaterangepicker"
+deps.swipelayout = "com.daimajia.swipelayout:library:$versions.swipelayout"
+deps.lottie = "com.airbnb.android:lottie:$versions.lottie"
+deps.fastjson = "com.alibaba:fastjson:$versions.fastjson"
+deps.greendao = "org.greenrobot:greendao:$versions.greendao"
+deps.eventbus = "org.greenrobot:eventbus:$versions.eventbus"
+deps.jsoup = "org.jsoup:jsoup:$versions.jsoup"
+deps.protobuf = "com.google.protobuf:protobuf-java:$versions.protobuf"
+deps.exoplayer = "com.google.android.exoplayer:exoplayer:$versions.exoplayer"
+deps.gson = "com.google.code.gson:gson:$versions.gson"
+deps.easypermissions = "pub.devrel:easypermissions:$versions.easypermissions"
+deps.videocache = "com.danikula:videocache:$versions.videocache"
+deps.crashlytics = "com.crashlytics.sdk.android:crashlytics:$versions.crashlytics"
+//deps.xTablayout = "com.androidkun:XTabLayout:$versions.xTablayout"
+deps.flexbox = "com.google.android:flexbox:$versions.flexbox"
+deps.workmanager = "android.arch.work:work-runtime:$versions.work"
+deps.alioss = "com.aliyun.dpa:oss-android-sdk:$versions.alioss"
+deps.anko = "org.jetbrains.anko:anko:$versions.anko"
+
+
+ext.deps = deps
+
+def build_versions = [:]
+build_versions.min_sdk = 19
+build_versions.target_sdk = 26
+build_versions.build_tools = "26.0.2"
+ext.build_versions = build_versions
+
+def addRepos(RepositoryHandler handler) {
+    handler.google()
+    handler.jcenter()
+    handler.maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots', 'https://maven.fabric.io/public'
+    }
+
+}
+
+ext.addRepos = this.&addRepos

@@ -165,7 +165,7 @@ public class ThunderSiteConverUtil {
             int accum = 0; // excess bits
             int index = 0;
 
-            // we now go through the entire array (NOT using the 'tempLen' value)
+            // we now go through the entire array (NOT using the 'tempLen' description)
             for (int ix = 0; ix < data.length; ix++) {
                 int value = (data[ix] > 255) ? -1 : codes[data[ix]];
 
@@ -234,7 +234,7 @@ public class ThunderSiteConverUtil {
                 .toCharArray();
 
         //
-        // lookup table for converting base64 characters to value in range 0..63
+        // lookup table for converting base64 characters to description in range 0..63
         //
         private byte[] codes = new byte[256];
 

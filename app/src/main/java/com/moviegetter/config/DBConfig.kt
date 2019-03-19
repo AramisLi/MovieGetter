@@ -10,6 +10,12 @@ object DBConfig {
     const val TABLE_NAME_DYTT = "dytt"
     const val TABLE_NAME_DYTT_LINK = "dytt_link"
     const val TABLE_NAME_ADY = "ady"
+    const val TABLE_NAME_XFYY = "xfyy"
+    const val TABLE_NAME_SSB = "ssb"
+    const val TABLE_NAME_PIC = "pics"
+    const val TABLE_NAME_TV = "tv"
+    const val TABLE_NAME_DYG = "dyg"
+
 
     const val USER_ROLE_ROOT = "root"
     const val USER_ROLE_MANAGER = "manager"

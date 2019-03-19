@@ -20,4 +20,50 @@
     <string name="text_navigator_ipz_h">国产</string>
     <string name="text_navigator_ipz_i">熟女</string>
     <string name="text_navigator_ipz_j">有码</string>
+    <string name="text_navigator_ipz_l">强奸</string>
+    <string name="text_navigator_ipz_k">人妻</string>
+    <string name="text_navigator_ipz_m">无码</string>
+    <string name="text_navigator_ipz_n">中文</string>
+    <array name="text_navigator_ipz">
+        <item>@string/text_navigator_ipz_a</item>
+        <item>@string/text_navigator_ipz_b</item>
+        <item>@string/text_navigator_ipz_c</item>
+        <item>@string/text_navigator_ipz_d</item>
+        <item>@string/text_navigator_ipz_e</item>
+        <item>@string/text_navigator_ipz_f</item>
+        <item>@string/text_navigator_ipz_g</item>
+        <item>@string/text_navigator_ipz_h</item>
+        <item>@string/text_navigator_ipz_i</item>
+        <item>@string/text_navigator_ipz_j</item>
+    </array>
+    <array name="text_navigator_xyff">
+        <item>@string/text_navigator_ipz_h</item>
+        <item>@string/text_navigator_ipz_a</item>
+        <item>@string/text_navigator_ipz_b</item>
+        <item>@string/text_navigator_ipz_c</item>
+        <item>@string/text_navigator_ipz_f</item>
+        <item>@string/text_navigator_ipz_l</item>
+        <item>@string/text_navigator_ipz_k</item>
+        <item>@string/text_navigator_ipz_m</item>
+        <item>@string/text_navigator_ipz_n</item>
+    </array>
+    <array name="text_navigator_pic">
+        <item>@string/text_navigator_ipz_d</item>
+        <item>@string/text_navigator_ipz_a</item>
+        <item>丝袜</item>
+        <item>@string/text_navigator_ipz_b</item>
+        <item>@string/text_navigator_ipz_i</item>
+        <item>清纯</item>
+        <item>@string/text_navigator_ipz_c</item>
+        <item>套图</item>
+    </array>
+    <array name="text_navigator_ssb">
+        <item>@string/text_navigator_ipz_a</item>
+        <item>@string/text_navigator_ipz_f</item>
+        <item>@string/text_navigator_ipz_b</item>
+        <item>@string/text_navigator_ipz_d</item>
+        <item>@string/text_navigator_ipz_g</item>
+        <item>另类</item>
+        <item>@string/text_navigator_ipz_c</item>
+    </array>
 </resources>

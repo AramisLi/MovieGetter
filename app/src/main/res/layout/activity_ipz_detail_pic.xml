@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/layout_title"
+        layout="@layout/view_toolbar_mg" />
+
+    <TextView
+        android:id="@+id/text_ipz_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_title"
+        android:gravity="center" />
+
+    <ListView
+        android:id="@+id/list_ipz_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/text_ipz_name" />
+
+    <TextView
+        android:id="@+id/text_pic_preview"
+        android:layout_width="100dp"
+        android:layout_height="34dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="50dp"
+        android:background="@drawable/bg_btn_pic_gray"
+        android:gravity="center"
+        android:text="上一页"
+        android:textColor="#fff" />
+
+    <TextView
+        android:id="@+id/text_pic_next"
+        android:layout_width="100dp"
+        android:layout_height="34dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/bg_btn_pic_blue"
+        android:gravity="center"
+        android:text="下一页"
+        android:textColor="#fff" />
+</RelativeLayout>

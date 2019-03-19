@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Handler
 import com.aramis.library.aramis.ArBus
 import com.aramis.library.extentions.logE
+import com.moviegetter.config.MovieConfig
+import com.moviegetter.config.MGsp
 import com.moviegetter.utils.OKhttpUtils
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -20,7 +22,6 @@ open class BaseCrawler : Crawler {
         return isRunning
     }
 
-    private val okhttpUtils = OKhttpUtils()
     private val array = mutableListOf<String>()
     private val nodeList = mutableListOf<CrawlNode>()
     private var isRunning = false
@@ -33,36 +34,6 @@ open class BaseCrawler : Crawler {
         return true
     }
 
-//    protected fun startCrawl(context: Context?, parser: Parser?, pipeline: Pipeline?, handler: Handler?) {
-//        Thread(Runnable {
-//            isRunning = true
-//            while (nodeList.size > 0) {
-//                val node = savePop()
-//                if (node != null) {
-//                    if (preDownloadCondition(context, node)) {
-//                        val doUrl = node.url
-//                        sendMessage(handler, CrawlerHandlerWhat.CRAWLER_START, doUrl)
-//                        val response = okhttpUtils.fetch(doUrl, "GET")
-//                        if (response != null && response.isSuccessful) {
-//                            try {
-//                                onFetchSuccess(context, null, null, node, response.body().bytes(), parser, pipeline, handler,null)
-//                            } catch (e: Exception) {
-//                                logE("=========================onFetchSuccess" + node.level)
-//                                e.printStackTrace()
-//                            }
-//                        } else {
-//                            sendMessage(handler, CrawlerHandlerWhat.CRAWLER_HTML_FAIL, response?.code().toString() + " " + doUrl)
-//                        }
-//                    } else {
-//                        //跳过
-//                        sendMessage(handler, CrawlerHandlerWhat.CRAWLER_SKIP)
-//                    }
-//                }
-//            }
-//            sendMessage(handler, CrawlerHandlerWhat.CRAWLER_FINISHED)
-//            isRunning = false
-//        }).start()
-//    }
 
     protected fun startCrawlLite(context: Context?, tag: String, position: Int, parser: Parser?, pipeline: Pipeline?,
                                  onFinished: (() -> Unit)? = null) {
@@ -76,11 +47,11 @@ open class BaseCrawler : Crawler {
                         logE("开始爬取 url:$doUrl")
                         postMessage(tag, position, CrawlerHandlerWhat.CRAWLER_START, doUrl)
 
-                        val response = okhttpUtils.fetch(doUrl, "GET")
+                        val response = OKhttpUtils.fetch(doUrl, "GET")
                         if (response != null && response.isSuccessful) {
                             logE("获取html成功 code:${response.code()}")
                             try {
-                                onFetchSuccess(context, tag, position, node, response.body().bytes(), parser, pipeline, null, sub = null)
+                                onFetchSuccess(context, tag, position, node, response.body()!!.bytes(), parser, pipeline, null, sub = null)
                             } catch (e: Exception) {
                                 logE("处理html时报错:" + e.message)
 
@@ -88,6 +59,10 @@ open class BaseCrawler : Crawler {
                             }
                         } else {
                             logE("获取html失败 code:${response?.code()}")
+                            if (node.tag == MovieConfig.TAG_ADY && node.level == 0) {
+                                logE("重置ADY baseUrl")
+                                MGsp.resetIpzBaseUrl()
+                            }
                             postMessage(tag, position, CrawlerHandlerWhat.CRAWLER_HTML_FAIL, response?.code().toString() + " " + doUrl)
                         }
                     } else {
@@ -106,11 +81,9 @@ open class BaseCrawler : Crawler {
         }
     }
 
+
     private fun postMessage(tag: String, position: Int, what: Int, obj: Any? = null) {
         ArBus.getDefault().post(CrawlLiteMessage(what, obj, tag, position))
-//        if (sub!=null){
-//            Observable.create<CrawlLiteMessage> { CrawlLiteMessage(what, obj, tag, position) }.observeOn(AndroidSchedulers.mainThread()).subscribe(sub)
-//        }
     }
 
     private fun onFetchSuccess(context: Context?, tag: String, position: Int, node: CrawlNode, responseBytes: ByteArray?, parser: Parser?, pipeline: Pipeline?, handler: Handler?, sub: Observer<CrawlLiteMessage>?) {
@@ -167,9 +140,6 @@ open class BaseCrawler : Crawler {
         nodeList.add(CrawlNode(url, 0, null, mutableListOf(), null, false, tag, position))
     }
 
-//    protected fun startedAdds(urls: List<String>) {
-//        nodeList.addAll(urls.map { CrawlNode(it, 0, null, mutableListOf(), null, false) })
-//    }
 
     private fun sendMessage(handler: Handler?, what: Int, obj: Any? = null) {
         val message = handler?.obtainMessage()

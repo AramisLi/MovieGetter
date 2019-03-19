@@ -17,12 +17,15 @@ import com.moviegetter.R
 import com.moviegetter.api.Api
 import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.bean.IPBean
-import com.moviegetter.config.DBConfig
+import com.moviegetter.bean.MgVersion
+import com.moviegetter.bean.SettingOption
 import com.moviegetter.config.MGsp
+import com.moviegetter.config.MovieConfig
+import com.moviegetter.ui.component.VersionHintDialog
 import com.moviegetter.ui.main.pv.SettingPresenter
 import com.moviegetter.ui.main.pv.SettingView
 import kotlinx.android.synthetic.main.activity_setting.*
-import java.io.Serializable
+import org.jetbrains.anko.toast
 
 /**
  *Created by Aramis
@@ -30,6 +33,18 @@ import java.io.Serializable
  *Description:
  */
 class SettingActivity : MGBaseActivity(), SettingView {
+    override fun onCheckVersionSuccess(versionCode: Int, bean: MgVersion) {
+        if (versionCode >= bean.version_code) {
+            toast("已经是最新版本啦！")
+        } else {
+            formatVersionDialog(versionHintDialog, bean)
+            versionHintDialog?.show()
+        }
+    }
+
+    override fun onCheckVersionFail(errorCode: Int, errorMsg: String) {
+    }
+
     private val presenter = SettingPresenter(this)
     private var configSP: SharedPreferences? = null
     private var versionCode: Int = 0
@@ -37,6 +52,7 @@ class SettingActivity : MGBaseActivity(), SettingView {
     private var testCount = 0
     private var ip = ""
     private var testIndexStr = "running"
+    private var versionHintDialog: VersionHintDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,12 +69,15 @@ class SettingActivity : MGBaseActivity(), SettingView {
 
     private fun setListener() {
         list_setting.setOnItemClickListener { parent, view, position, id ->
-            if (position == 0) {
-                testCount++
-                if (testCount == 5) {
-                    testCount = 0
-                    text_setting_info.visibility = View.VISIBLE
-                    text_setting_info.text = getTestInfo()
+            when (position) {
+                0 -> presenter.checkVersion()
+                1 -> {
+                    testCount++
+                    if (testCount == 5) {
+                        testCount = 0
+                        text_setting_info.visibility = View.VISIBLE
+                        text_setting_info.text = getTestInfo()
+                    }
                 }
             }
         }
@@ -90,22 +109,24 @@ class SettingActivity : MGBaseActivity(), SettingView {
         val packageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
         versionCode = packageInfo.versionCode
         versionName = packageInfo.versionName
-        list_setting.adapter = ListViewAdapter(createTypeBeanList())
+        list_setting.adapter = ListViewAdapter(SettingOption.getOptions(versionName))
+
+        versionHintDialog = VersionHintDialog(this, MovieConfig.apkPath)
     }
 
-    private fun createTypeBeanList(): List<SettingHolderBean> {
-        fun createTypeBean(name: String, type: Int = 0, value: String? = null): SettingHolderBean {
-            return SettingHolderBean(name, type, value)
-        }
-
-        val list = mutableListOf(createTypeBean("当前版本", 1, versionName),
-                createTypeBean("显示图片", value = "显示新世界图片的开关"),
-                createTypeBean("标记已下载", value = "打开后，会在点击下载按钮的时候标记并显示在页面上"))
-        if (MGsp.getRole() != DBConfig.USER_ROLE_NORMAL) {
-            list.add(createTypeBean("显示新世界", value = "显示新世界的开关"))
-        }
-        return list
-    }
+//    private fun createTypeBeanList(): List<SettingOption> {
+//        fun createTypeBean(name: String, type: Int = 0, value: String? = null): SettingOption {
+//            return SettingOption(name, type, value)
+//        }
+//
+//        val list = mutableListOf(createTypeBean("当前版本", 1, versionName),
+//                createTypeBean("显示图片", value = "显示新世界图片的开关"),
+//                createTypeBean("标记已下载", value = "打开后，会在点击下载按钮的时候标记并显示在页面上"))
+//        if (MGsp.getRole() != DBConfig.USER_ROLE_NORMAL) {
+//            list.add(createTypeBean("显示新世界", value = "显示新世界的开关"))
+//        }
+//        return list
+//    }
 
     override fun onGetIPSuccess(ipBean: IPBean) {
         ip = ipBean.ip
@@ -123,10 +144,10 @@ class SettingActivity : MGBaseActivity(), SettingView {
         testIndexStr = "fail"
     }
 
-    private inner class ListViewAdapter(dataList: List<SettingHolderBean>) : SimpleBaseAdapter<SettingHolderBean>(dataList) {
+    private inner class ListViewAdapter(dataList: List<SettingOption>) : SimpleBaseAdapter<SettingOption>(dataList) {
 //        private val explains = arrayOf("显示新世界图片的开关", "打开后，会在点击下载按钮的时候标记并显示在页面上")
 
-        override fun initDatas(holder: SimpleBaseAdapterHolder, bean: SettingHolderBean, position: Int) {
+        override fun initDatas(holder: SimpleBaseAdapterHolder, bean: SettingOption, position: Int) {
             (holder as ViewHolder).apply {
                 when (bean.type) {
                     0 -> {
@@ -134,7 +155,7 @@ class SettingActivity : MGBaseActivity(), SettingView {
                         layout_setting_text.visibility = View.GONE
                         text_setting_name.text = bean.name
 
-                        text_setting_explain.text = bean.value
+                        text_setting_explain.text = bean.description
                         switch_setting.setOnCheckedChangeListener { buttonView, isChecked ->
                             //                            logE("click position:$position,isChecked:$isChecked")
                             when (position) {
@@ -157,7 +178,7 @@ class SettingActivity : MGBaseActivity(), SettingView {
                         layout_setting_switch.visibility = View.GONE
                         layout_setting_text.visibility = View.VISIBLE
                         text_setting_text_name.text = bean.name
-                        text_setting_text_value.text = bean.value
+                        text_setting_text_value.text = bean.description
                     }
                 }
             }
@@ -186,7 +207,7 @@ class SettingActivity : MGBaseActivity(), SettingView {
 
     }
 
-    private class SettingHolderBean(val name: String, val type: Int, val value: String?) : Serializable
+
 
     override fun getPresenter(): BasePresenter<*>? = presenter
 }

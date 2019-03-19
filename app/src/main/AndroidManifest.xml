@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.moviegetter">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,13 +16,24 @@
     <application
         android:name=".base.MGApplication"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+
+        </activity>
+        <activity
+            android:name=".ui.MainActivity2"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -34,7 +46,7 @@
             android:name=".ui.main.activity.MovieDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.main.activity.IPZActivity"
+            android:name=".ui.ipz.activity.IPZActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.main.activity.UserActivity"
@@ -44,6 +56,44 @@
             android:screenOrientation="portrait">
 
         </activity>
+        <activity
+            android:name=".ui.ipz.activity.IPZDetailActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".ui.ipz.activity.IPZPicActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ipz.activity.IPZPicDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.event.EventActivity"
+            android:screenOrientation="portrait" />
+
+        <service android:name=".service.VersionService" />
+        <service
+            android:name=".service.SpiderService"
+            android:process=":spider" />
+        <service android:name=".service.SpiderServiceLocal" />
+
+        <activity
+            android:name=".test.TestActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".ui.main.activity.VersionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.main.activity.MovieListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".aac.RedditActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ipz.activity.IPZActivity2"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

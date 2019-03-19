@@ -3,6 +3,7 @@ package com.moviegetter.ui.main.pv
 import com.aramis.library.extentions.logE
 import com.moviegetter.crawl.dytt.DYTTItem
 import com.moviegetter.crawl.ipz.IPZItem
+import com.moviegetter.crawl.pic.PicItem
 import org.jetbrains.anko.db.RowParser
 
 /**
@@ -10,34 +11,68 @@ import org.jetbrains.anko.db.RowParser
  *Date:2018/7/12
  *Description:
  */
-class IPZRowParser : RowParser<IPZItem> {
-    override fun parseRow(columns: Array<Any?>): IPZItem {
-        logE("columns.size:${columns.size}")
-        return IPZItem(
-                //movieId
+class IPZPicRowParser : RowParser<PicItem> {
+    override fun parseRow(columns: Array<Any?>): PicItem {
+//        logE("size:"+columns.size.toString())
+//        columns.forEachIndexed { index, any ->
+//            logE("index:$index,${any?.toString()}")
+//        }
+        return PicItem(
+                //picId
                 (columns[0] as Long).toInt(),
-                //movieName
+                //picName
                 columns[1] as String,
-                //movie_update_time
+                //pic_update_time
                 columns[2] as String,
-                //xf_url
+                //pics
                 columns[3] as? String?,
                 //update_time
                 columns[4] as? String?,
                 //create_time
                 columns[5] as? String?,
-                //movie_update_timestamp
+                //pic_update_timestamp
                 (columns[6] as? Long ?: 0L),
                 //thumb
                 columns[7] as? String?,
-                //images
-                columns[8] as? String?,
                 //position
+                (columns[8] as Long).toInt(),
+                //watched
                 (columns[9] as Long).toInt(),
-                //downloaded
+                //watched_time
+                columns[10] as? String?)
+    }
+
+}
+class IPZRowParser : RowParser<IPZItem> {
+    override fun parseRow(columns: Array<Any?>): IPZItem {
+//        logE("columns.size:${columns.size}")
+        return IPZItem(
+                //movieId
+                (columns[0] as Long).toInt(),
+                //tag
+                columns[1] as String,
+                //movieName
+                columns[2] as String,
+                //movie_update_time
+                columns[3] as String,
+                //xf_url
+                columns[4] as? String?,
+                //update_time
+                columns[5] as? String?,
+                //create_time
+                columns[6] as? String?,
+                //movie_update_timestamp
+                (columns[7] as? Long ?: 0L),
+                //thumb
+                columns[8] as? String?,
+                //images
+                columns[9] as? String?,
+                //position
                 (columns[10] as Long).toInt(),
+                //downloaded
+                (columns[11] as Long).toInt(),
                 //downloaded_time
-                columns[11] as? String?)
+                columns[12] as? String?)
     }
 }
 

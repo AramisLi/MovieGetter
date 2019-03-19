@@ -7,12 +7,22 @@
     android:layout_height="@dimen/height_toolbar"
     android:background="@color/colorPrimary">
 
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_caidan"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_iconfont_caidan" />
+
     <RelativeLayout
         android:id="@+id/layout_sync_mg"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/image_caidan"
         android:visibility="gone">
 
         <RelativeLayout
@@ -56,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/progress_mg"
-                android:text="同步:120"
+                android:text="同步:0"
                 android:textColor="#fff"
                 android:textSize="10sp" />
 
@@ -66,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/text_mg_total"
-                android:text="更新:120"
+                android:text="更新:0"
                 android:textColor="#fff"
                 android:textSize="10sp" />
 
@@ -76,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/text_mg_update"
-                android:text="失败:120"
+                android:text="失败:0"
                 android:textColor="#f00"
                 android:textSize="10sp" />
         </LinearLayout>

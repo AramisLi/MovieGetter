@@ -1,6 +1,7 @@
 package com.moviegetter.base
 
 import android.app.Activity
+import com.aramis.library.aramis.ArBus
 import com.aramis.library.base.BasePresenter
 import com.aramis.library.base.BaseView
 import com.aramis.library.extentions.logE
@@ -13,12 +14,14 @@ import com.kymjs.rxvolley.client.HttpParams
 import com.kymjs.rxvolley.client.ProgressListener
 import com.moviegetter.bean.BaseBean
 import com.moviegetter.crawl.base.Item
+import com.moviegetter.ui.main.pv.TitleItemBean
 import com.moviegetter.utils.database
 import org.jetbrains.anko.db.RowParser
 import org.jetbrains.anko.db.SqlOrderDirection
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.json.JSONObject
 import java.io.File
 
 /**
@@ -27,6 +30,11 @@ import java.io.File
  *Description:
  */
 open class MGBasePresenter<T : BaseView>(view: T) : BasePresenter<T>(view) {
+
+    fun postTitleMessage(tag: String, position: Int, count: Int) {
+        ArBus.getDefault().post(TitleItemBean(tag, position, count))
+    }
+
     protected fun getMGCallback(onSuccess: (t: String, result: String?) -> Unit, onFail: ((errorCode: Int, errorMsg: String) -> Unit)): HttpCallback {
         return object : HttpCallback() {
             override fun onSuccess(t: String?) {
@@ -51,6 +59,36 @@ open class MGBasePresenter<T : BaseView>(view: T) : BasePresenter<T>(view) {
                 onFail.invoke(errorNo, strMsg ?: "")
             }
         }
+    }
+
+    protected inline fun <reified M> getMGTypeCallback(crossinline onSuccess: (result: M) -> Unit, crossinline onFail: ((errorCode: Int, errorMsg: String) -> Unit)): HttpCallback {
+        return object : HttpCallback() {
+            override fun onSuccess(t: String?) {
+                super.onSuccess(t)
+                if (t != null) {
+//                    logE(t)
+                    val obj = JSONObject(t)
+                    val code = if (obj.has("code")) obj.getInt("code") else 0
+                    val msg = if (obj.has("msg")) obj.getString("msg") else ""
+                    val result = if (obj.has("result")) obj.getString("result") else ""
+                    if (code == 200 && result.isNotBlank()) {
+                        val gson = Gson()
+                        val m: M = gson.fromJson(result, M::class.java)
+                        onSuccess.invoke(m)
+                    } else {
+                        onFail.invoke(code, msg)
+                    }
+                } else {
+                    onFail.invoke(0, "返回数据为空")
+                }
+            }
+
+            override fun onFailure(errorNo: Int, strMsg: String?) {
+                super.onFailure(errorNo, strMsg)
+                onFail.invoke(errorNo, strMsg ?: "")
+            }
+        }
+
     }
 
     protected fun getHttpParams(data: Map<String, Any>?, useJson: Boolean = false): HttpParams {

@@ -11,8 +11,10 @@ import com.aramis.library.http.ArRxVolley
 import com.kymjs.rxvolley.RxVolley
 import com.kymjs.rxvolley.client.HttpParams
 import com.moviegetter.api.Api
-import com.moviegetter.config.Config
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.MGsp
+import com.moviegetter.db.MovieDatabaseManager
+import com.moviegetter.extentions.AccountManager
 import com.moviegetter.utils.DBHelper
 
 /**
@@ -21,6 +23,7 @@ import com.moviegetter.utils.DBHelper
  *Description:
  */
 class MGApplication : BunnyApplication() {
+
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
     }
@@ -28,9 +31,10 @@ class MGApplication : BunnyApplication() {
     override fun onCreate() {
         super.onCreate()
         MGsp.init(this)
+        val dbHelper = DBHelper.getInstance(this@MGApplication)
         //首次打开
         if (MGsp.firstOpen()) {
-            DBHelper.getInstance(this@MGApplication).initUser()
+            dbHelper.initUser()
             //默认为开启新世界图片
             MGsp.getConfigSP(this)?.edit()?.putBoolean("showADYPicture", true)?.apply()
             MGsp.getConfigSP(this)?.edit()?.putBoolean("signADYDownloaded", true)?.apply()
@@ -67,14 +71,17 @@ class MGApplication : BunnyApplication() {
             }
 
         })
+
+        dbHelper.onVersionUpdate(this)
+        MovieDatabaseManager.create(this)
     }
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        if (!Config.isMainBackClick) {
-            logE("Recent Apps Click: " + Config.markInId)
+        if (!MovieConfig.isMainBackClick) {
+            logE("Recent Apps Click: " + MovieConfig.markInId)
             val httpParams = HttpParams()
-            httpParams.put("mark_id", Config.markInId)
+            httpParams.put("mark_id", MovieConfig.markInId)
             httpParams.put("logout_time", now())
             ArRxVolley.Builder().url(Api.markOut).params(httpParams).httpMethod(RxVolley.Method.POST)
                     .doTask()

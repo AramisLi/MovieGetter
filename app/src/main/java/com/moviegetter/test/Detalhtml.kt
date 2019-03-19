@@ -72,12 +72,12 @@ object Detalhtml {
             "window.clipboardData.setData(\"Text\",clipBoardContent);\n" +
             "alert(\"网址已复制，粘贴给好友请按Crtl+V！\");\n" +
             "} \n" +
-            "document.write(\"<input name=\"urlText\"   id=\"urlText\" class=\"InputTextBox\" value=\"\");document.write(location.href);document.write(\"\"  size=\"38\" />\");\n" +
+            "document.write(\"<input name=\"urlText\"   id=\"urlText\" class=\"InputTextBox\" description=\"\");document.write(location.href);document.write(\"\"  size=\"38\" />\");\n" +
             "</script> \n" +
             "\n" +
             "<input type=\"button\" name=\"Submit2\" onClick='dygod()' \n" +
-            "value=\"点此复制给好友\">\n" +
-            "<INPUT type=\"button\" value='收藏本影片' id=\"copy\" onclick=\"javascript:d=document;window.external.AddFavorite(''+d.location.href+'', ''+d.title+'')\">\n" +
+            "description=\"点此复制给好友\">\n" +
+            "<INPUT type=\"button\" description='收藏本影片' id=\"copy\" onclick=\"javascript:d=document;window.external.AddFavorite(''+d.location.href+'', ''+d.title+'')\">\n" +
             "\n" +
             "</ul></div>\n" +
             "<!--{start:body content-->\n" +

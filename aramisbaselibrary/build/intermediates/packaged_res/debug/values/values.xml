@@ -8,8 +8,6 @@
     <color name="color_user_line">#e4e4e4</color>
     <color name="transparent">#00000000</color>
     <color name="white">#ffffff</color>
-    <declare-styleable name="PickerView"><attr format="boolean" name="isLoop"/></declare-styleable>
-    <declare-styleable name="TitleDropView"><attr format="integer|reference" name="resViewId"/></declare-styleable>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="height_dialog">253dp</dimen>
@@ -18,6 +16,7 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_gallery">Gallery</string>
     <string name="btn_photo">Camera</string>
+    <string name="str_doubleclick_quit">再按一次退出</string>
     <style name="ActionSheetDialogStyle" parent="@android:style/Theme.Dialog">
 
         <!-- 背景透明 -->
@@ -81,4 +80,8 @@
             <item name="android:windowContentOverlay">@null</item>
             <item name="android:windowBackground">@color/white</item>
         </style>
+    <declare-styleable name="PickerView"><attr format="boolean" name="isLoop"/></declare-styleable>
+    <declare-styleable name="TitleDropView">
+        <attr format="integer|reference" name="resViewId"/>
+    </declare-styleable>
 </resources>

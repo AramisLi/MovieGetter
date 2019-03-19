@@ -1,7 +1,8 @@
 package com.moviegetter.crawl.ipz
 
 import android.content.Context
-import com.moviegetter.config.Config
+import com.aramis.library.extentions.logE
+import com.moviegetter.config.MovieConfig
 import com.moviegetter.config.DBConfig
 import com.moviegetter.config.MGsp
 import com.moviegetter.crawl.base.BaseCrawler
@@ -15,14 +16,15 @@ import org.jetbrains.anko.db.select
  *Description:
  */
 class IPZCrawler : BaseCrawler() {
-    private val parser = IPZParser()
+    private val parser = IPZParser(1)
     private var pipeline = IPZPipeline()
     private var baseUrl = MGsp.getIpzBaseUrl()
 
 
     fun startCrawlLite(context: Context?, position: Int, pages: Int, onFinished: (() -> Unit)? = null) {
+        logE("baseUrl:$baseUrl")
         fun superAdd(url: String) {
-            super.startedAdd(url, position, Config.TAG_ADY)
+            super.startedAdd(url, position, MovieConfig.TAG_ADY)
         }
         when (position) {
             0 -> superAdd("$baseUrl/list/index1.html")
@@ -37,7 +39,7 @@ class IPZCrawler : BaseCrawler() {
             9 -> superAdd("$baseUrl/list/index27.html")
         }
         parser.pages = pages
-        super.startCrawlLite(context, Config.TAG_ADY, position, parser, pipeline, onFinished)
+        super.startCrawlLite(context, MovieConfig.TAG_ADY, position, parser, pipeline, onFinished)
     }
 
     override fun preDownloadCondition(context: Context?, node: CrawlNode): Boolean {
