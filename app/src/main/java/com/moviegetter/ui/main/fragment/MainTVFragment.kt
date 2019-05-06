@@ -51,6 +51,7 @@ class MainTVFragment : MGBaseFragment() {
 
     private fun setListener() {
         adapter.onItemClickListener = {
+            logE("电视台:${it.name},链接:${it.sourceUrl}")
             toast("电视台:${it.name},链接:${it.sourceUrl}")
         }
 
@@ -58,29 +59,6 @@ class MainTVFragment : MGBaseFragment() {
             //            logE("我是tv")
             viewModel.startCrawl(1)
 
-//            Observable.from(arrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9))
-//                    .doOnNext {
-//                        if (it==2){
-//                            logE("我是2  "+Thread.currentThread().name)
-//                        }
-//                    }
-//                    .filter { it % 2 == 0 }
-//                    .delay(1L, TimeUnit.SECONDS)
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribeOn(Schedulers.io())
-//                    .subscribe {
-//                        logE(Thread.currentThread().name)
-//                        logE(it.toString())
-//                    }
-
-//            logE("开始试验")
-//            doAsync {
-//                (0 until 10).forEach {
-////                    logE("post:$it")
-//                    ArBus.getDefault().post(it)
-//                    Thread.sleep(800)
-//                }
-//            }
         }
 
         ArBus.getDefault().take(java.lang.Integer::class.java)

@@ -7,6 +7,7 @@ import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.base.Parser
 import com.moviegetter.crawl.dyg.DygParser
 import com.moviegetter.crawl.dytt.DYTTParser
+import com.moviegetter.crawl.hu.HuParser
 import com.moviegetter.crawl.ipz.IPZParser
 import com.moviegetter.crawl.pic.PicParser
 import com.moviegetter.crawl.ssb.SsbParser
@@ -153,8 +154,9 @@ class CrawlManager {
     }
 
     fun start(spiderTask: SpiderTask) {
-        logE(database.toString())
-        val crawlNode = CrawlNode(spiderTask.url, 0, null, null, null, false, spiderTask.tag, spiderTask.position)
+//        logE(database.toString())
+//        val crawlNode = CrawlNode(spiderTask.url, 0, null, null, null, false, spiderTask.tag, spiderTask.position)
+        val crawlNode = CrawlNode.createRootNode(spiderTask.url, spiderTask.tag, spiderTask.position)
         start(crawlNode, spiderTask.pages)
     }
 
@@ -197,11 +199,6 @@ class CrawlManager {
     }
 
 
-//    private fun executeCallback(crawlNode: CrawlNode) {
-//        executeCallback?.invoke(crawlNode)
-//    }
-
-
     @Synchronized
     private fun getParser(crawlNode: CrawlNode): Parser? {
         crawlNode.tag?.apply {
@@ -216,6 +213,7 @@ class CrawlManager {
                     MovieConfig.TAG_XFYY -> parserMap[this] = XfyyParser(crawlPages)
                     MovieConfig.TAG_TV -> parserMap[this] = TvParser(crawlPages)
                     MovieConfig.TAG_DYG -> parserMap[this] = DygParser(crawlPages)
+                    MovieConfig.TAG_HU -> parserMap[this] = HuParser(crawlPages)
                     else -> {
                         return null
                     }

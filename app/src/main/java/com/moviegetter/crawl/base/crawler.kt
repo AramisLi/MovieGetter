@@ -39,7 +39,7 @@ interface Item : Serializable, Parcelable
 
 class CrawlNode(val url: String, val level: Int, val parentNode: CrawlNode?,
                 var childrenNodes: List<CrawlNode>?, var item: Item?, var isItem: Boolean,
-                var tag: String? = null, var position: Int) : Serializable, Parcelable {
+                var tag: String? = null, var position: Int, var positionName: String = "") : Serializable, Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readInt(),
@@ -48,7 +48,8 @@ class CrawlNode(val url: String, val level: Int, val parentNode: CrawlNode?,
             parcel.readParcelable(Item::class.java.classLoader),
             parcel.readByte() != 0.toByte(),
             parcel.readString(),
-            parcel.readInt()) {
+            parcel.readInt(),
+            parcel.readString()) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -60,6 +61,7 @@ class CrawlNode(val url: String, val level: Int, val parentNode: CrawlNode?,
         parcel.writeByte(if (isItem) 1 else 0)
         parcel.writeString(tag)
         parcel.writeInt(position)
+        parcel.writeString(positionName)
     }
 
     override fun describeContents(): Int {
@@ -67,6 +69,9 @@ class CrawlNode(val url: String, val level: Int, val parentNode: CrawlNode?,
     }
 
     companion object CREATOR : Parcelable.Creator<CrawlNode> {
+        val LEVEL_ROOT = 0
+        val LEVEL_LIST = 1
+        val LEVEL_DETAIL = 2
         override fun createFromParcel(parcel: Parcel): CrawlNode {
             return CrawlNode(parcel)
         }
@@ -74,7 +79,24 @@ class CrawlNode(val url: String, val level: Int, val parentNode: CrawlNode?,
         override fun newArray(size: Int): Array<CrawlNode?> {
             return arrayOfNulls(size)
         }
+
+        fun createRootNode(url: String, tag: String?, position: Int = 0): CrawlNode {
+            return CrawlNode(url, LEVEL_ROOT, null, null, null, false, tag, position)
+        }
+
+        fun createListNode(url: String, parentNode: CrawlNode?, item: Item?, positionName: String = ""): CrawlNode {
+            return CrawlNode(url, LEVEL_LIST, parentNode, null, item, false, parentNode?.tag, parentNode?.position
+                    ?: 2, positionName)
+        }
+
+        fun createDetailNode(url: String, parentNode: CrawlNode, item: Item): CrawlNode {
+            return CrawlNode(url, LEVEL_DETAIL, parentNode, null, item, false, parentNode.tag, parentNode.position
+                    , parentNode.positionName)
+        }
+
     }
+
+
 }
 
 

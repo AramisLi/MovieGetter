@@ -15,6 +15,7 @@ object DBConfig {
     const val TABLE_NAME_PIC = "pics"
     const val TABLE_NAME_TV = "tv"
     const val TABLE_NAME_DYG = "dyg"
+    const val TABLE_NAME_HU = "hu"
 
 
     const val USER_ROLE_ROOT = "root"

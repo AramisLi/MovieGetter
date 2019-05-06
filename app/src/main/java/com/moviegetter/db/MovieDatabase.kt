@@ -2,6 +2,7 @@ package com.moviegetter.db
 
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.*
+import android.arch.persistence.room.migration.Migration
 import android.content.Context
 import com.aramis.library.extentions.logE
 import com.aramis.library.extentions.now
@@ -9,6 +10,7 @@ import com.moviegetter.bean.User
 import com.moviegetter.config.DBConfig
 import com.moviegetter.crawl.dyg.DygItem
 import com.moviegetter.crawl.dytt.DYTTItem
+import com.moviegetter.crawl.hu.HuItem
 import com.moviegetter.crawl.ipz.IPZItem
 import com.moviegetter.crawl.pic.PicItem
 import com.moviegetter.crawl.tv.TvItem
@@ -39,7 +41,7 @@ object MovieDatabaseManager {
 
 }
 
-@Database(entities = [DYTTItem::class, IPZItem::class, TvItem::class, PicItem::class, DygItem::class, User::class], version = 1, exportSchema = false)
+@Database(entities = [DYTTItem::class, IPZItem::class, TvItem::class, PicItem::class, DygItem::class, User::class,HuItem::class], version = 2, exportSchema = false)
 abstract class MovieDatabase : RoomDatabase() {
 
     abstract fun getMovieDao(): MovieDao
@@ -64,11 +66,18 @@ abstract class MovieDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(context.applicationContext, MovieDatabase::class.java, "movie_getter")
                             .fallbackToDestructiveMigration()
                             .addCallback(databaseCallback)
+//                            .addMigrations(VERSION_1_2)
                             .build()
                 }
             }
 
             return instance!!
+        }
+
+        private val  VERSION_1_2=object:Migration(1,2){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("")
+            }
         }
 
         private val databaseCallback = object : RoomDatabase.Callback() {

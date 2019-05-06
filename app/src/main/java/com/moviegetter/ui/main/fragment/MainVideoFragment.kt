@@ -34,7 +34,7 @@ class MainVideoFragment : MGBaseFragment() {
         val test4="http://221.120.177.59/hls/i3d7ragr.m3u8"
         val test5="http://main.gslb.ku6.com/broadcast/sub?channel=910"
         val jzvdStd = mRootView.videoplayer
-        jzvdStd.setUp(test5, "饺子闭眼睛", Jzvd.SCREEN_WINDOW_NORMAL)
+        jzvdStd.setUp(test4, "饺子闭眼睛", Jzvd.SCREEN_WINDOW_NORMAL)
 //        jzvdStd.thumbImageView.setImage("http://p.qpic.cn/videoyun/0/2449_43b6f696980311e59ed467f22794e792_1/640")
 //        jzvdStd.thumbImageView.setimage
     }

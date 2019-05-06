@@ -16,6 +16,7 @@ object MovieConfig {
     const val TAG_PIC = DBConfig.TABLE_NAME_PIC
     const val TAG_TV = DBConfig.TABLE_NAME_TV
     const val TAG_DYG = DBConfig.TABLE_NAME_DYG
+    const val TAG_HU = DBConfig.TABLE_NAME_HU
 
     var markInId = 0
     var isMainBackClick = false

@@ -12,8 +12,10 @@ import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
 import com.moviegetter.bean.MgVersion
 import com.moviegetter.config.MovieConfig
+import com.moviegetter.crawl.base.BaseCrawler
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.dytt.DYTTItem
+import com.moviegetter.extentions.startCrawl
 import com.moviegetter.service.ITaskManager
 import com.moviegetter.service.SpiderService
 import com.moviegetter.service.SpiderTask
@@ -60,7 +62,9 @@ class TestActivity : MGBaseActivity(), MainView {
 
         test1.setOnClickListener {
             logE("点击添加")
-            iTaskManager?.add(SpiderTask("https://www.dytt8.net/html/gndy/dyzz/index.html", MovieConfig.TAG_DYTT,1, 0))
+//            iTaskManager?.add(SpiderTask("https://www.dytt8.net/html/gndy/dyzz/index.html", MovieConfig.TAG_DYTT,1, 0))
+
+            testHu()
         }
 
         test_main.setOnClickListener {
@@ -72,6 +76,10 @@ class TestActivity : MGBaseActivity(), MainView {
         }
 
         list_result_test.adapter = adapter
+    }
+
+    private fun testHu(){
+        SpiderTask.getHuSpiderTask(2,0).startCrawl(this)
     }
 
     override fun getPresenter(): BasePresenter<*>? = presenter

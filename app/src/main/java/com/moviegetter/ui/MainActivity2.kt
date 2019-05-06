@@ -16,6 +16,7 @@ import android.widget.AdapterView
 import android.widget.TextView
 import com.aramis.library.component.adapter.DefaultFrgPagerAdapter
 import com.aramis.library.component.dialog.DefaultHintDialog
+import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.aac.AACActivity
 import com.moviegetter.aac.MainViewModel
@@ -198,9 +199,9 @@ class MainActivity2 : AACActivity() {
     }
 
     private fun getImei() {
-//        logE("文件读取权限:${ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED}")
+        logE("文件读取权限:${ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED}")
         return if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             //            toast("需要动态获取权限");
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 1001)
         } else {

@@ -1,12 +1,13 @@
 package com.moviegetter
 
 import android.os.Bundle
-import com.aramis.library.extentions.logE
 import com.google.gson.Gson
 import com.kymjs.rxvolley.RxVolley
 import com.kymjs.rxvolley.client.HttpCallback
 import com.moviegetter.api.ShuDu
-import com.moviegetter.utils.OKhttpUtils
+import com.moviegetter.config.MovieConfig
+import com.moviegetter.crawl.base.BaseCrawler
+import com.moviegetter.service.SpiderTask
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -15,9 +16,6 @@ import org.junit.Test
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.Charset
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -220,8 +218,8 @@ class ExampleUnitTest {
     }
 
     @Test
-    fun bbb(){
-        RxVolley.get("https://www.dytt8.net/html/gndy/dyzz/index.html",object:HttpCallback(){
+    fun bbb() {
+        RxVolley.get("https://www.dytt8.net/html/gndy/dyzz/index.html", object : HttpCallback() {
             override fun onSuccess(t: String?) {
                 super.onSuccess(t)
 
@@ -237,47 +235,45 @@ class ExampleUnitTest {
     }
 
     @Test
-    fun ccc(){
-        fun cccInner(vararg lala:Pair<String,String>){
+    fun ccc() {
+        fun cccInner(vararg lala: Pair<String, String>) {
             println(lala::class.java.name)
             println(lala::javaClass)
             println(lala[0].toString())
 
-            for ( i in lala){
+            for (i in lala) {
                 println(i::class.java.name)
             }
         }
 
 
 
-        cccInner("cc" to "cc","dd" to "dd")
+        cccInner("cc" to "cc", "dd" to "dd")
     }
 
     @Test
-    fun ddd(){
-        val s1="""{"result": {"access_token": "2b0cfbe96c66b782dbdd39f3ac1d6627","refresh_token": "2f2dacdc86a7f8e2","token_type": "read_write","expires_in": 604800,"userinfo": {"id": 1092989,"nickName": "testhalflogin","sex": -1,"avatarUrl": "https://pre-file.welike.in/download/moren.png/","firstLogin": false,"followUsersCount": 0,"followedUsersCount": 0,"block": false,"blocked": false,"introduction": "This guy's lazy, he didn't write anything.","interests": [],"finishLevel": 4,"allowUpdateNickName": true,"allowUpdateSex": true,"status": 3,"type": 0,"registerDate": 1542971448398}},"resultMsg": "OK","code": 1000}""".trimIndent()
+    fun ddd() {
+        val s1 = """{"result": {"access_token": "2b0cfbe96c66b782dbdd39f3ac1d6627","refresh_token": "2f2dacdc86a7f8e2","token_type": "read_write","expires_in": 604800,"userinfo": {"id": 1092989,"nickName": "testhalflogin","sex": -1,"avatarUrl": "https://pre-file.welike.in/download/moren.png/","firstLogin": false,"followUsersCount": 0,"followedUsersCount": 0,"block": false,"blocked": false,"introduction": "This guy's lazy, he didn't write anything.","interests": [],"finishLevel": 4,"allowUpdateNickName": true,"allowUpdateSex": true,"status": 3,"type": 0,"registerDate": 1542971448398}},"resultMsg": "OK","code": 1000}""".trimIndent()
 
-        val s2="""{"access_token": "2b0cfbe96c66b782dbdd39f3ac1d6627","refresh_token": "2f2dacdc86a7f8e2","token_type": "read_write","expires_in": 604800,"userinfo": {"id": 1092989,"nickName": "testhalflogin","sex": -1,"avatarUrl": "https://pre-file.welike.in/download/moren.png/","firstLogin": false,"followUsersCount": 0,"followedUsersCount": 0,"block": false,"blocked": false,"introduction": "This guy's lazy, he didn't write anything.","interests": [],"finishLevel": 4,"allowUpdateNickName": true,"allowUpdateSex": true,"status": 3,"type": 0,"registerDate": 1542971448398}}"""
+        val s2 = """{"access_token": "2b0cfbe96c66b782dbdd39f3ac1d6627","refresh_token": "2f2dacdc86a7f8e2","token_type": "read_write","expires_in": 604800,"userinfo": {"id": 1092989,"nickName": "testhalflogin","sex": -1,"avatarUrl": "https://pre-file.welike.in/download/moren.png/","firstLogin": false,"followUsersCount": 0,"followedUsersCount": 0,"block": false,"blocked": false,"introduction": "This guy's lazy, he didn't write anything.","interests": [],"finishLevel": 4,"allowUpdateNickName": true,"allowUpdateSex": true,"status": 3,"type": 0,"registerDate": 1542971448398}}"""
         val resultBean = Gson().fromJson(s2, ResultBean::class.java)
         println(resultBean.toString())
     }
 
     @Test
-    fun fff(){
-        val bundle= bundleOf("a" to 1,"b" to 2)
+    fun fff() {
+        val bundle = bundleOf("a" to 1, "b" to 2)
         println(bundle.getInt("a"))
 
-        val bundle2=Bundle()
+        val bundle2 = Bundle()
         bundle2.putAll(bundle)
         println(bundle2.getInt("a"))
 
-        val bundle3=Bundle()
-        bundle3.putInt("a",3)
-        bundle3.putString("w","www")
+        val bundle3 = Bundle()
+        bundle3.putInt("a", 3)
+        bundle3.putString("w", "www")
         println(bundle3.getInt("a"))
         println(bundle3.getString("w"))
 
     }
-
-
 }
