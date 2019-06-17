@@ -5,8 +5,8 @@ add_library( ara_file_secret
              src/main/cpp/nihaoya.c)
 
 find_library(
-           log-lib
-           log )
+        log-lib
+        log )
 
 target_link_libraries(
                       ara_file_secret

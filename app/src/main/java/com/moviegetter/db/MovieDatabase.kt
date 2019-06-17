@@ -41,7 +41,7 @@ object MovieDatabaseManager {
 
 }
 
-@Database(entities = [DYTTItem::class, IPZItem::class, TvItem::class, PicItem::class, DygItem::class, User::class,HuItem::class], version = 2, exportSchema = false)
+@Database(entities = [DYTTItem::class, IPZItem::class, TvItem::class, PicItem::class, DygItem::class, User::class, HuItem::class], version = 2, exportSchema = false)
 abstract class MovieDatabase : RoomDatabase() {
 
     abstract fun getMovieDao(): MovieDao
@@ -55,6 +55,8 @@ abstract class MovieDatabase : RoomDatabase() {
     abstract fun getDygDao(): DygDao
 
     abstract fun getUserDao(): UserDao
+
+    abstract fun getHuDao(): HuDao
 
 
     companion object {
@@ -74,7 +76,7 @@ abstract class MovieDatabase : RoomDatabase() {
             return instance!!
         }
 
-        private val  VERSION_1_2=object:Migration(1,2){
+        private val VERSION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("")
             }
@@ -157,7 +159,7 @@ interface DygDao {
     fun delete(dygItem: DygItem): Int
 
     @Query("SELECT * FROM dyg_table WHERE position=:position ORDER BY update_time")
-    fun getAll(position: Int=0): List<DygItem>
+    fun getAll(position: Int = 0): List<DygItem>
 
 
     @Query("SELECT count(*) FROM dyg_table WHERE movieId=:id")
@@ -223,6 +225,27 @@ interface PicDao {
 
     @Query("SELECT count(*) FROM pic_table WHERE picId=:id")
     fun count(id: Int): Int
+}
+
+@Dao
+interface HuDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(huItem: HuItem)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun inserts(huItems: List<HuItem>)
+
+    @Delete
+    fun delete(huItem: HuItem): Int
+
+    @Query("SELECT * FROM hu_table")
+    fun getAll(): List<HuItem>
+
+    @Query("SELECT * FROM hu_table WHERE movieId = :movieId")
+    fun select(movieId: Int): HuItem
+
+    @Query("SELECT count(*) FROM hu_table WHERE movieId=:movieId")
+    fun count(movieId: Int): Int
 }
 
 

@@ -32,32 +32,6 @@ class IPZPipeline(val tableName: String = DBConfig.TABLE_NAME_ADY) : BasePipelin
                         }
                     })[0]
 
-//                    it.xf_url = formatXfurl(it.xf_url)
-//
-//                    val save_xf_url = if (dbItem.xf_url != null) {
-//                        if (dbItem.xf_url!!.contains(",")) {
-//                            var b = false
-//                            for (i in dbItem.xf_url!!.split(",")) {
-//                                if (i == it.xf_url) {
-//                                    b = true
-//                                    break
-//                                }
-//                            }
-//                            if (b) {
-//                                dbItem.xf_url
-//                            } else {
-//                                dbItem.xf_url + "," + it.xf_url
-//                            }
-//                        } else {
-//                            if (dbItem.xf_url == it.xf_url) {
-//                                it.xf_url
-//                            } else {
-//                                dbItem.xf_url + "," + it.xf_url
-//                            }
-//                        }
-//                    } else {
-//                        it.xf_url
-//                    }
                     if (dbItem.xf_url == it.xf_url) {
                         logE("update url相同 略过")
                     } else {

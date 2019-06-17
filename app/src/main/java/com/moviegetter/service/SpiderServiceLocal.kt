@@ -27,6 +27,9 @@ class SpiderServiceLocal : Service() {
         intent?.getParcelableExtra<SpiderTask>("spiderTask")?.apply {
             addTask(this)
         }
+//        intent?.getSerializableExtra("spiderTask")?.apply {
+//            addTask(this as SpiderTask)
+//        }
         return super.onStartCommand(intent, flags, startId)
     }
 

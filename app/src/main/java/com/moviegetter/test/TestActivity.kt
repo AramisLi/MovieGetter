@@ -10,6 +10,7 @@ import com.aramis.library.base.BasePresenter
 import com.aramis.library.extentions.logE
 import com.moviegetter.R
 import com.moviegetter.base.MGBaseActivity
+import com.moviegetter.base.web.WebViewActivity
 import com.moviegetter.bean.MgVersion
 import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.BaseCrawler
@@ -76,10 +77,20 @@ class TestActivity : MGBaseActivity(), MainView {
         }
 
         list_result_test.adapter = adapter
+
+        test_webview.setOnClickListener {
+            val url="http://www.6620yy.com"
+//            val url="https://www.131nv.com/"
+            startActivity<WebViewActivity>("loadUrl" to url)
+        }
+
+        test_TestTester.setOnClickListener {
+            TestTester().test()
+        }
     }
 
-    private fun testHu(){
-        SpiderTask.getHuSpiderTask(2,0).startCrawl(this)
+    private fun testHu() {
+        SpiderTask.getHuSpiderTask(2, 0).startCrawl(this)
     }
 
     override fun getPresenter(): BasePresenter<*>? = presenter

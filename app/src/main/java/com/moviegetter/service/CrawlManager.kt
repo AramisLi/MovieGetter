@@ -5,9 +5,12 @@ import com.aramis.library.extentions.logE
 import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlNode
 import com.moviegetter.crawl.base.Parser
+import com.moviegetter.crawl.base.Pipeline
+import com.moviegetter.crawl.base.PipelineSync
 import com.moviegetter.crawl.dyg.DygParser
 import com.moviegetter.crawl.dytt.DYTTParser
 import com.moviegetter.crawl.hu.HuParser
+import com.moviegetter.crawl.hu.HuPipeline
 import com.moviegetter.crawl.ipz.IPZParser
 import com.moviegetter.crawl.pic.PicParser
 import com.moviegetter.crawl.ssb.SsbParser
@@ -58,14 +61,9 @@ class CrawlManager {
     private var itemCount = 0
 
     private val parserMap = ConcurrentHashMap<String, Parser>()
+    private val pipelineMap = ConcurrentHashMap<String, PipelineSync>()
 
-    //    var executeCallback: ((CrawlNode) -> Unit)? = null
-//
-//    var taskFinishedListener: ((CrawlNode) -> Unit)? = null
-//
-//    var onErrorListener: ((errorCode: Int, errorMsg: String) -> Unit)? = null
     //数据库操作类
-//    private val database = MovieDatabase.create(context)
     private val database = MovieDatabaseManager.database()
 
 
@@ -82,7 +80,8 @@ class CrawlManager {
                         val skipCondition = parser.skipCondition(database, crawlNode)
 
                         if (!skipCondition) {
-                            val response = OKhttpUtils.fetch(crawlNode.url, "GET")
+                            val header = if (crawlNode.tag == MovieConfig.TAG_HU) HuParser.getHeader() else null
+                            val response = OKhttpUtils.fetch(crawlNode.url, "GET", header)
 
                             if (!isCancel) {
                                 if (response != null) {
@@ -91,9 +90,6 @@ class CrawlManager {
                                     synchronized(this) {
                                         if (!isCancel) {
 
-                                            if (crawlNode.url == "http://www.dygang.net/ys/index_2.htm") {
-                                                logE("来了")
-                                            }
                                             val nodeList = this.startParse(crawlNode, response.body()!!.bytes())
                                             logE("解析完成 ${nodeList?.size}")
                                             nodeList?.forEach {
@@ -101,6 +97,7 @@ class CrawlManager {
                                                     itemCount++
                                                     //是结果-->1. 执行回调 2.保存数据库
                                                     logE("it.isItem:${it.isItem}，是结果")
+//                                                    it.item?.apply { getPipeline(it)?.pipe(this) }
                                                     postSuccess(it)
                                                 } else {
                                                     if (!isCancel) {
@@ -220,6 +217,24 @@ class CrawlManager {
                 }
             }
             return parserMap[this]
+        }
+        return null
+    }
+
+    private fun getPipeline(crawlNode: CrawlNode): PipelineSync? {
+        crawlNode.tag?.apply {
+            if (pipelineMap.containsKey(this) || pipelineMap[this] != null) {
+//                pipelineMap[this]?.pages = crawlPages
+            } else {
+                when (crawlNode.tag) {
+                    MovieConfig.TAG_HU -> pipelineMap[this] = HuPipeline()
+                    else -> {
+                        return null
+                    }
+                }
+            }
+
+            return pipelineMap[this]
         }
         return null
     }

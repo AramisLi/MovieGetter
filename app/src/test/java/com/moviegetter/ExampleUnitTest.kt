@@ -1,21 +1,22 @@
 package com.moviegetter
 
-import android.os.Bundle
+import com.aramis.library.extentions.logE
 import com.google.gson.Gson
 import com.kymjs.rxvolley.RxVolley
 import com.kymjs.rxvolley.client.HttpCallback
 import com.moviegetter.api.ShuDu
-import com.moviegetter.config.MovieConfig
-import com.moviegetter.crawl.base.BaseCrawler
-import com.moviegetter.service.SpiderTask
 import okhttp3.FormBody
+import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.jetbrains.anko.bundleOf
+import org.jsoup.Jsoup
 import org.junit.Test
+import java.io.RandomAccessFile
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.nio.ByteBuffer
 import java.nio.charset.Charset
+import java.util.concurrent.TimeUnit
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -262,18 +263,188 @@ class ExampleUnitTest {
 
     @Test
     fun fff() {
-        val bundle = bundleOf("a" to 1, "b" to 2)
-        println(bundle.getInt("a"))
+//        val bundle = bundleOf("a" to 1, "b" to 2)
+//        println(bundle.getInt("a"))
+//
+//        val bundle2 = Bundle()
+//        bundle2.putAll(bundle)
+//        println(bundle2.getInt("a"))
+//
+//        val bundle3 = Bundle()
+//        bundle3.putInt("a", 3)
+//        bundle3.putString("w", "www")
+//        println(bundle3.getInt("a"))
+//        println(bundle3.getString("w"))
 
-        val bundle2 = Bundle()
-        bundle2.putAll(bundle)
-        println(bundle2.getInt("a"))
+        val timestamp = System.currentTimeMillis() / 1000
+        println(timestamp)
+        val loc_time = timestamp
+        val min_behot_time = loc_time + 12061942
+        val last_refresh_sub_entrance_interval = -10498
 
-        val bundle3 = Bundle()
-        bundle3.putInt("a", 3)
-        bundle3.putString("w", "www")
-        println(bundle3.getInt("a"))
-        println(bundle3.getString("w"))
+        println(loc_time - min_behot_time)
+        println(loc_time - last_refresh_sub_entrance_interval)
+    }
+
+    fun getTTHomeHtml(path: String): String {
+        val htmlFile = RandomAccessFile(path, "r")
+
+        val channel = htmlFile.channel
+        val buffer = ByteBuffer.allocate(1024)
+        var length = channel.read(buffer)
+        val stringBuffer = StringBuffer()
+        while (length > 0) {
+//            println("length:$length")
+            val byteArray = mutableListOf<Byte>()
+            buffer.flip()
+            while (buffer.hasRemaining()) {
+                byteArray.add(buffer.get())
+            }
+            stringBuffer.append(String(byteArray.toByteArray()))
+            buffer.clear()
+            length = channel.read(buffer)
+        }
+
+        return stringBuffer.toString()
+
+//        println(stringBuffer.toString())
+    }
+
+    @Test
+    fun parseHome() {
+        val html = getTTHomeHtml("/Users/daining/Documents/project/python/test/src/hu/huHome.html")
+        val doc = Jsoup.parse(html)
+        val elements = doc.select("div#example-navbar-collapse").select("li#nav-dianshiju > a")
+        val urls = mutableListOf<String>()
+        elements.forEach {
+            urls.add(it.attr("href"))
+        }
+
+        println(urls)
+    }
+
+    @Test
+    fun parseList() {
+        val html = getTTHomeHtml("/Users/daining/Documents/project/python/test/src/hu/huList.html")
+        val doc = Jsoup.parse(html)
+        val elements = doc.select("li.col-md-2.col-sm-3.col-xs-4")
+//                .select("h5")
+        elements.forEach {
+            //            println(it.text())
+            val title = it.child(0).attr("href")
+            println(title)
+        }
+    }
+
+    @Test
+    fun parseDetail() {
+        val html = getTTHomeHtml("/Users/daining/Documents/project/python/test/src/hu/huDetail.html")
+        val doc = Jsoup.parse(html)
+        val elements = doc.select("div.ui-box.border-gray")
+                .select("a")
+        elements.forEach { println(it) }
+    }
+
+    @Test
+    fun parseDownload() {
+        val html = getTTHomeHtml("/Users/daining/Documents/project/python/test/src/hu/hu_dowmload.html")
+        val doc = Jsoup.parse(html)
+        val elements = doc.select("script")
+        elements.filter { it.attr("src").length == 0 && it.toString().contains("downurls") }.forEach {
+            val find = """\".*?\$(.*?)\"""".toRegex().find(it.toString())
+            if (find != null) {
+                val replace = find.value.replace("\"", "")
+                val split = replace.split("$")
+                if (split.size > 1) {
+                    println(split[1])
+                }
+            }
+
+        }
+//        elements.forEach { it.text() }
+    }
+
+    @Test
+    fun qq() {
+//        val url="https://www.baidu.com/"
+        val url = "https://www.131dk.com/"
+        val headerMap = getHeaderMap(url)
+        println("headerMap:$headerMap")
+
+        val client = OkHttpClient.Builder().connectTimeout(90, TimeUnit.SECONDS).readTimeout(90, TimeUnit.SECONDS).build()
+        val requestBuilder = Request.Builder().url(url)
+
+        val builder = Headers.Builder()
+        for ((k, v) in headerMap) {
+            builder.set(k,v)
+        }
+        requestBuilder.headers(builder.build())
+
+        val request = requestBuilder.build()
+//        val requestHeaders = request.headers()
+//        for (name in requestHeaders.names()) {
+//            println("requestHeaders k->$name,v->${requestHeaders[name]}")
+//        }
+        val call = client.newCall(request)
+        val response = call.execute()
+        val networkResponse = response.networkResponse()
+        println("networkResponse?.body()?.string().length:${networkResponse?.body()?.string()?.length}")
+        println("response.body()?.contentLength():${response.body()?.contentLength()}")
+        println("response.body()?.contentType():${response.body()?.contentType()}")
+        val resText = response.body()?.bytes()
+        val responseHeaders = response.headers()
+//        for (name in responseHeaders.names()) {
+//            println("responseHeaders k->$name,v->${responseHeaders[name]}")
+//        }
+
+        println("length:${resText?.size}")
+//        println("length:${resText?.length}")
+        resText?.apply {
+            resText.forEach { byte ->   print("$byte,") }
+            println()
+            println("====")
+            println(String(resText, Charset.forName("UTF-8")))
+            println("====")
+            println(String(resText, Charset.forName("GBK")))
+            println("====")
+            println(String(resText, Charset.forName("GB2312")))
+        }
+
 
     }
+
+    private fun getHeaderMap(url: String): Map<String, String> {
+        val authority = if (url.contains("//")) {
+            val start = url.indexOf("//") + 2
+            val end = if (url.endsWith("/")) url.lastIndexOf("/") else url.length
+            url.substring(start, end)
+
+        } else url
+        logE("authority:$authority")
+        return mapOf(":method" to "GET",
+                ":authority" to authority,
+                ":scheme" to "https",
+                ":path" to "/",
+                "accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                "upgrade-insecure-requests" to "1",
+                "user-agent" to "Mozilla/5.0 (Linux; Android 6.0; Letv X501 Build/DBXCNOP5902812084S; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/49.0.2623.91 Mobile Safari/537.36",
+                "accept-encoding" to "gzip, deflate",
+                "accept-language" to "zh-CN,en-US;q=0.8",
+                "x-requested-with" to "com.moviegetter",
+                "cookie" to "__cfduid=da4a8ffefd08c3b474624e5b4ba98eeb11560155329; expires=Tue, 09-Jun-20 08:28:49 GMT; path=/; domain=.131dk.com; HttpOnly; Secure")
+    }
+
+    @Test
+    fun rr(){
+
+//        for (i in (-128..128)) {
+//            val b:Byte=i.toByte()
+//            println("int:$i,byte:$b")
+//        }
+
+        val stringBuffer=StringBuffer("abcd")
+        stringBuffer.deleteCharAt(stringBuffer.length-1)
+        println(stringBuffer.toString())
+    }
+
 }

@@ -32,13 +32,13 @@ class DygParser(override var pages: Int) : Parser {
     }
 
     private fun nextPageUrl(url: String): String? {
-        logE("要next的url:$url")
+//        logE("要next的url:$url")
         val currentPage = if (!url.contains("index")) {
             1
         } else {
             url.substring(url.indexOf("index") + 6, url.lastIndexOf(".")).toInt()
         }
-        logE("currentPage:$currentPage")
+//        logE("currentPage:$currentPage")
         if (currentPage < pages) {
             return if (currentPage == 1) {
                 url + "index_2.htm"

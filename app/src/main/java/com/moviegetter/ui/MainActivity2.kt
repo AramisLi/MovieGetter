@@ -28,10 +28,7 @@ import com.moviegetter.ui.ipz.activity.IPZActivity
 import com.moviegetter.ui.main.activity.MovieListActivity
 import com.moviegetter.ui.main.activity.SettingActivity
 import com.moviegetter.ui.main.activity.UserActivity
-import com.moviegetter.ui.main.fragment.MainMovieFragment
-import com.moviegetter.ui.main.fragment.MainTVFragment
-import com.moviegetter.ui.main.fragment.MainUserFragment
-import com.moviegetter.ui.main.fragment.MainVideoFragment
+import com.moviegetter.ui.main.fragment.*
 import com.moviegetter.utils.BottomNavigationViewHelper
 import kotlinx.android.synthetic.main.activity_main2.*
 import org.jetbrains.anko.startActivity
@@ -134,7 +131,8 @@ class MainActivity2 : AACActivity() {
 
         optionPop = OptionsPop(this, listOf("同步1页", "同步10页", "设置"))
 
-        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(MainMovieFragment(), MainTVFragment(), MainVideoFragment(), MainUserFragment()))
+//        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(MainMovieFragment(), MainTVFragment(), MainVideoFragment(), MainUserFragment()))
+        fragmentAdapter = DefaultFrgPagerAdapter(supportFragmentManager, listOf(MainMovieFragment(), MainHuFragment(), MainUserFragment()))
         viewpager_main.offscreenPageLimit = 4
         viewpager_main.adapter = fragmentAdapter
         viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

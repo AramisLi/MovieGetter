@@ -74,7 +74,7 @@ class MainMovieFragment : MGBaseFragment() {
         //新数据监听
         viewModel.newDygList.observe(this, Observer {
             //            logE("MainMovieFragment observe:$it")
-            logE("蒋婷监听")
+//            logE("蒋婷监听")
             it?.apply {
                 if (this.isNotEmpty()) {
                     mRootView.view_empty.visibility = View.GONE
@@ -88,7 +88,7 @@ class MainMovieFragment : MGBaseFragment() {
         })
 
         viewModel.dbLiveData.observe(this, Observer {
-            logE("收到数据啦 ${it?.items?.size}")
+//            logE("收到数据啦 ${it?.items?.size}")
             it?.apply {
                 if (this.position == 0) {
                     if (this.items.isNotEmpty()){

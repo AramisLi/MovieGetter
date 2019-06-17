@@ -31,6 +31,25 @@
         android:gravity="center"
         android:text="取消" />
 
+    <TextView
+        android:id="@+id/test_webview"
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_btn_normal"
+        android:gravity="center"
+        android:text="WebView" />
+    <TextView
+        android:id="@+id/test_TestTester"
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_btn_normal"
+        android:gravity="center"
+        android:text="TestTester" />
+
 
     <ListView
         android:id="@+id/list_result_test"

@@ -33,7 +33,8 @@ class SpiderTask(val url: String, val tag: String, val pages: Int, val position:
     }
 
     companion object CREATOR : Parcelable.Creator<SpiderTask> {
-        const val HU_ROOT_URL = "http://www.6620yy.com"
+//        const val HU_ROOT_URL = "http://www.6620yy.com"
+        const val HU_ROOT_URL = "https://www.131dk.com"
 
         override fun createFromParcel(parcel: Parcel): SpiderTask {
             return SpiderTask(parcel)

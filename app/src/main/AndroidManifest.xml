@@ -36,11 +36,11 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.main.activity.MovieDetailActivity"
@@ -80,11 +80,11 @@
         <activity
             android:name=".test.TestActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity
             android:name=".ui.main.activity.VersionActivity"
@@ -97,6 +97,15 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.ipz.activity.IPZActivity2"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.player.PlayVideoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.download.DownloadActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".base.web.WebViewActivity"
             android:screenOrientation="portrait" />
     </application>
 

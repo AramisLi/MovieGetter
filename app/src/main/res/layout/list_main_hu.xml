@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="100dp">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_hu_thumb"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="@dimen/left_default"
+        android:layout_marginTop="10dp"
+        android:background="#adc"
+        android:visibility="visible"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_hu_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:lines="2"
+        android:textColor="#333"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toRightOf="@id/image_hu_thumb"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/image_hu_thumb" />
+
+    <TextView
+        android:id="@+id/text_hu_download"
+        android:layout_width="80dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="@dimen/right_default"
+        android:background="@drawable/bg_btn_normal"
+        android:gravity="center"
+        android:text="下载"
+        android:textColor="#fff"
+        android:textSize="14sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_hu_name" />
+
+    <TextView
+        android:id="@+id/text_hu_play"
+        android:layout_width="80dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="@dimen/right_default"
+        android:background="@drawable/bg_btn_normal_accent"
+        android:gravity="center"
+        android:text="播放"
+        android:textColor="#fff"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintRight_toLeftOf="@id/text_hu_download"
+        app:layout_constraintTop_toBottomOf="@id/text_hu_name" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        app:layout_constraintTop_toBottomOf="@id/image_hu_thumb" />
+
+
+</android.support.constraint.ConstraintLayout>

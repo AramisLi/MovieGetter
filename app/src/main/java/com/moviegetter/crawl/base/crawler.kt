@@ -35,11 +35,16 @@ interface Pipeline {
     fun pipe(context: Context?, items: List<Item>, handler: Handler?, statusCallback: ((what: Int, obj: Any?) -> Unit)? = null)
 }
 
+interface PipelineSync {
+    fun pipe(item:Item)
+}
+
 interface Item : Serializable, Parcelable
 
 class CrawlNode(val url: String, val level: Int, val parentNode: CrawlNode?,
                 var childrenNodes: List<CrawlNode>?, var item: Item?, var isItem: Boolean,
-                var tag: String? = null, var position: Int, var positionName: String = "") : Serializable, Parcelable {
+                var tag: String? = null, var position: Int, var positionName: String = "",
+                var header: Map<String, String>? = null) : Serializable, Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readInt(),
@@ -80,18 +85,18 @@ class CrawlNode(val url: String, val level: Int, val parentNode: CrawlNode?,
             return arrayOfNulls(size)
         }
 
-        fun createRootNode(url: String, tag: String?, position: Int = 0): CrawlNode {
-            return CrawlNode(url, LEVEL_ROOT, null, null, null, false, tag, position)
+        fun createRootNode(url: String, tag: String?, position: Int = 0,header:Map<String,String>?=null): CrawlNode {
+            return CrawlNode(url, LEVEL_ROOT, null, null, null, false, tag, position,header=header)
         }
 
-        fun createListNode(url: String, parentNode: CrawlNode?, item: Item?, positionName: String = ""): CrawlNode {
+        fun createListNode(url: String, parentNode: CrawlNode?, item: Item?, positionName: String = "",header:Map<String,String>?=null): CrawlNode {
             return CrawlNode(url, LEVEL_LIST, parentNode, null, item, false, parentNode?.tag, parentNode?.position
-                    ?: 2, positionName)
+                    ?: 2, positionName,header=header)
         }
 
-        fun createDetailNode(url: String, parentNode: CrawlNode, item: Item): CrawlNode {
+        fun createDetailNode(url: String, parentNode: CrawlNode, item: Item,header:Map<String,String>?=null): CrawlNode {
             return CrawlNode(url, LEVEL_DETAIL, parentNode, null, item, false, parentNode.tag, parentNode.position
-                    , parentNode.positionName)
+                    , parentNode.positionName,header=header)
         }
 
     }

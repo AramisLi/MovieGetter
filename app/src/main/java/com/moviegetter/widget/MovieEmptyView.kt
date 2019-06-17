@@ -34,6 +34,8 @@ class MovieEmptyView : LinearLayout {
     }
 
     private var button: TextView? = null
+    private var content = "暂无数据，是否立即同步？"
+    private var buttonText = "立即同步"
 
     private fun initView() {
         val image = AppCompatImageView(context)
@@ -42,14 +44,14 @@ class MovieEmptyView : LinearLayout {
         image.layoutParams = imageLayoutParams
 
         val textView = TextView(context)
-        textView.text = "暂无数据，是否立即同步？"
+        textView.text = content
         val textLayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
         textLayoutParams.setMargins(0, dip(15), 0, 0)
         textView.textColor = ContextCompat.getColor(context, R.color.text_color_gray)
         textView.layoutParams = textLayoutParams
 
         button = TextView(context)
-        button?.text = "立即同步"
+        button?.text = buttonText
         button?.gravity = Gravity.CENTER
         button?.textColor = 0xffffffff.toInt()
         button?.backgroundResource = R.drawable.bg_btn_normal
@@ -62,6 +64,14 @@ class MovieEmptyView : LinearLayout {
         this.addView(image)
         this.addView(textView)
         this.addView(button)
+    }
+
+    fun setContent(content: String) {
+        this.content = content
+    }
+
+    fun setButtonText(text: String) {
+        this.buttonText = text
     }
 
     fun setClickListener(listener: View.OnClickListener) {
