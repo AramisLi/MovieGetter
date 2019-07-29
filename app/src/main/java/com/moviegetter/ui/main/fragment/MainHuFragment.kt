@@ -12,6 +12,7 @@ import com.moviegetter.crawl.hu.HuItem
 import com.moviegetter.ui.main.adapter.MainHuAdapter
 import com.moviegetter.ui.main.pv.MainHuViewModel
 import kotlinx.android.synthetic.main.frg_main.view.*
+import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.toast
 
 /**
@@ -58,7 +59,9 @@ class MainHuFragment : MGBaseFragment() {
                 }
             }
         })
+
         viewModel.newDataLiveData.observe(this, Observer {
+            mRootView.view_empty.visibility = View.GONE
             if (it != null) {
                 dataList.add(0, it)
                 adapter.notifyDataSetChanged()
@@ -66,6 +69,7 @@ class MainHuFragment : MGBaseFragment() {
         })
 
         viewModel.completedLiveData.observe(this, Observer {
+            mRootView.swipeRefreshLayout.isRefreshing = false
             toast("同步完成")
         })
     }
@@ -80,6 +84,10 @@ class MainHuFragment : MGBaseFragment() {
         mRootView.view_empty.setClickListener(View.OnClickListener {
             viewModel.startCrawl(activity)
         })
+
+        mRootView.swipeRefreshLayout.onRefresh {
+            viewModel.startCrawl(activity)
+        }
     }
 
     private fun initView() {

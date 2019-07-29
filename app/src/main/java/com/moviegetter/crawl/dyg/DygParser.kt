@@ -66,7 +66,7 @@ class DygParser(override var pages: Int) : Parser {
                 val href = info.attr("href")
                 if (href.isNotBlank()) {
                     try {
-                         val id=href.substring(href.lastIndexOf("/") + 1, href.lastIndexOf(".")).toInt()
+                        val id = href.substring(href.lastIndexOf("/") + 1, href.lastIndexOf(".")).toInt()
                         val name = info.getElementsByTag("img").attr("alt")
                         val image = info.getElementsByTag("img").attr("src")
                         val movieUpdateTime = if (updateTimes.size == movieInfos.size) updateTimes[i] else null
@@ -75,7 +75,7 @@ class DygParser(override var pages: Int) : Parser {
                             item.movie_update_timestamp = this.text().getTimestamp("yyyy-MM-dd")
                         }
                         results.add(CrawlNode(href, 1, originNode, null, item, false, originNode.tag, originNode.position))
-                    }catch (e:Exception){
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
 
@@ -99,11 +99,15 @@ class DygParser(override var pages: Int) : Parser {
 //        val downRoot = doc.select("body > table > tbody > tr > td[valign=top] > table > tbody > tr > td[valign=top] > table")[3]
 //                .select("tbody > tr > td > table > tbody > tr > td > table")[0]
 
-        val downRoot2 = doc.select("td[style=word-break: break-all; line-height: 18px]:has(a)")
-        logE("downRoot2.size:${downRoot2.size}")
+        var downRoot2 = doc.select("td[style=word-break: break-all; line-height: 18px]:has(a)")
+        val downRoot3 = doc.select("td[style=line-height: 18px; word-break: break-all]")
+
         if (downRoot2.size > 0) {
             downRoot2.forEach { logE(it.toString()) }
+        } else if (downRoot3.size > 0) {
+            downRoot2 = downRoot3
         }
+        logE("downRoot2.size:${downRoot2.size}")
         if (downRoot2.size > 0) {
             val nameBuilder = StringBuilder()
             val urlBuilder = StringBuilder()

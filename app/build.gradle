@@ -90,6 +90,7 @@ dependencies {
 //    implementation deps.retrofit.gson
 //    implementation deps.retrofit.rxjava2
 
+    implementation 'io.reactivex:rxjava:1.1.0'
 
 
     implementation project(':aramisbaselibrary')

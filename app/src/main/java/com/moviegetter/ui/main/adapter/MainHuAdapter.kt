@@ -27,11 +27,11 @@ class MainHuAdapter(list: List<HuItem>) : SimpleBaseAdapter<Item>(list) {
         if (glide == null) glide = Glide.with(mContext!!)
         if (holder is ViewHolder && bean is HuItem) {
             bean.apply {
-                if (this.thumb != null) {
-                    val glideUrl = GlideUrl(this.thumb) { HuParser.getHeader() }
-                    Glide.with(mContext!!).applyDefaultRequestOptions(requestOption).load(glideUrl).into(holder.image_hu_thumb)
-                }
-                holder.text_hu_name.text = this.movieName
+//                if (this.thumb != null) {
+//                    val glideUrl = GlideUrl(this.thumb) { HuParser.getHeader() }
+//                    Glide.with(mContext!!).applyDefaultRequestOptions(requestOption).load(glideUrl).into(holder.image_hu_thumb)
+//                }
+//                holder.text_hu_name.text = this.movieName
                 holder.text_hu_download.setOnClickListener { onDownloadClickListener?.invoke(this) }
                 holder.text_hu_play.setOnClickListener { onPlayClickListener?.invoke(this) }
             }

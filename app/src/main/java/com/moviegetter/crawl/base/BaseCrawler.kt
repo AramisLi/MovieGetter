@@ -11,6 +11,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import rx.Observer
 import java.lang.Exception
+import java.util.HashMap
 
 /**
  *Created by Aramis

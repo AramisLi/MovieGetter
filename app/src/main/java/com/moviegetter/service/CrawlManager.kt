@@ -45,7 +45,7 @@ class CrawlManager {
     //异步任务集合
     private val arrayBlockingQueue = ArrayBlockingQueue<Runnable>(80)
 
-    private val pool = ThreadPoolExecutor(6, 10, 30, TimeUnit.SECONDS, arrayBlockingQueue)
+    private val pool = ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, arrayBlockingQueue)
 
     private var beginTime = 0L
 

@@ -3,12 +3,10 @@ package com.moviegetter.aac
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import com.aramis.library.aramis.ArBus
 import com.aramis.library.extentions.logE
-import com.aramis.library.utils.LogUtils
 import com.moviegetter.api.Api
 import com.moviegetter.config.MovieConfig
 import com.moviegetter.crawl.base.CrawlNode
@@ -17,12 +15,9 @@ import com.moviegetter.crawl.dytt.DYTTItem
 import com.moviegetter.crawl.tv.TvItem
 import com.moviegetter.db.MovieDatabaseManager
 import com.moviegetter.extentions.AccountManager
-import com.moviegetter.extentions.getSpiderSubscription
 import com.moviegetter.extentions.startCrawl
-import com.moviegetter.service.SpiderServiceLocal
 import com.moviegetter.service.SpiderTask
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 
@@ -53,48 +48,48 @@ class MainViewModel(val application: Application) : ViewModel() {
         spiderErrorListener.add(l)
     }
 
-    private val listenerBusSubscription2 = getSpiderSubscription(onNextAsync = {
-        LogUtils.e("doOnNext", "thread:${Thread.currentThread().name}")
-        when {
-            it.getBoolean(MovieConfig.KEY_SPIDER_NEW_NODE) -> {
-//                        onNewNode?.invoke(it.getParcelable("node")!!)
-                val node = it.getParcelable<CrawlNode>("node")!!
-                when (node.tag) {
-                    MovieConfig.TAG_DYTT -> {
-                        val dyttItem = node.item as DYTTItem
-                        newMovieList.postValue(listOf(dyttItem))
-                        movieDao.insert(dyttItem)
-                    }
-                    MovieConfig.TAG_TV -> {
-                        val tvItem = node.item as TvItem
-                        newTvList.postValue(listOf(node.item as TvItem))
-                        tvDao.insert(tvItem)
-                    }
-                    MovieConfig.TAG_DYG -> {
-                        val dygItem = node.item as DygItem
-                        newDygList.postValue(listOf(dygItem))
-                        dygDap.insert(dygItem)
-                    }
-                }
-                updateCount++
-            }
-
-        }
-    }, subscribeSync = {
-        when {
-            it.getBoolean(MovieConfig.KEY_SPIDER_COMPLETE) -> {
-                val node = it.getParcelable<CrawlNode>(MovieConfig.KEY_NODE)!!
-                val second = it.getLong(MovieConfig.KEY_COMPLETE_TIME)
-                spiderCompletedListener.forEach { l -> l.invoke(node, second) }
-            }
-            it.getBoolean(MovieConfig.KEY_SPIDER_ERROR) -> {
-                val node = it.getParcelable<CrawlNode>(MovieConfig.KEY_NODE)!!
-                val errorCode = it.getInt(MovieConfig.KEY_ERROR_CODE)
-                val errorMsg = it.getString(MovieConfig.KEY_ERROR_MSG) ?: ""
-                spiderErrorListener.forEach { l -> l.invoke(node, errorCode, errorMsg) }
-            }
-        }
-    })
+//    private val listenerBusSubscription2 = getSpiderSubscription(onNextAsync = {
+//        LogUtils.e("doOnNext", "thread:${Thread.currentThread().name}")
+//        when {
+//            it.getBoolean(MovieConfig.KEY_SPIDER_NEW_NODE) -> {
+////                        onNewNode?.invoke(it.getParcelable("node")!!)
+//                val node = it.getParcelable<CrawlNode>("node")!!
+//                when (node.tag) {
+//                    MovieConfig.TAG_DYTT -> {
+//                        val dyttItem = node.item as DYTTItem
+//                        newMovieList.postValue(listOf(dyttItem))
+//                        movieDao.insert(dyttItem)
+//                    }
+//                    MovieConfig.TAG_TV -> {
+//                        val tvItem = node.item as TvItem
+//                        newTvList.postValue(listOf(node.item as TvItem))
+//                        tvDao.insert(tvItem)
+//                    }
+//                    MovieConfig.TAG_DYG -> {
+//                        val dygItem = node.item as DygItem
+//                        newDygList.postValue(listOf(dygItem))
+//                        dygDap.insert(dygItem)
+//                    }
+//                }
+//                updateCount++
+//            }
+//
+//        }
+//    }, subscribeSync = {
+//        when {
+//            it.getBoolean(MovieConfig.KEY_SPIDER_COMPLETE) -> {
+//                val node = it.getParcelable<CrawlNode>(MovieConfig.KEY_NODE)!!
+//                val second = it.getLong(MovieConfig.KEY_COMPLETE_TIME)
+//                spiderCompletedListener.forEach { l -> l.invoke(node, second) }
+//            }
+//            it.getBoolean(MovieConfig.KEY_SPIDER_ERROR) -> {
+//                val node = it.getParcelable<CrawlNode>(MovieConfig.KEY_NODE)!!
+//                val errorCode = it.getInt(MovieConfig.KEY_ERROR_CODE)
+//                val errorMsg = it.getString(MovieConfig.KEY_ERROR_MSG) ?: ""
+//                spiderErrorListener.forEach { l -> l.invoke(node, errorCode, errorMsg) }
+//            }
+//        }
+//    })
 
 
     fun getCrawlFinishedSubscription(tag: String, subscribe: (Bundle) -> Unit): Subscription {
@@ -181,7 +176,7 @@ class MainViewModel(val application: Application) : ViewModel() {
 //        MovieDatabaseManager.database().close()
         spiderCompletedListener.clear()
         spiderErrorListener.clear()
-        listenerBusSubscription2.unsubscribe()
+//        listenerBusSubscription2.unsubscribe()
     }
 
     fun refreshUserInfo(imei: String) {

@@ -94,7 +94,8 @@ class HuParser(override var pages: Int) : Parser {
             }
             item.downloadUrl = stringBuffer.toString()
             parentNode.isItem = true
-            listOf(parentNode)
+            val crawlNode = CrawlNode(parentNode.url, 0, null, null, item, true, parentNode.tag, parentNode.position)
+            listOf(crawlNode)
         } else null
     }
 
@@ -121,10 +122,10 @@ class HuParser(override var pages: Int) : Parser {
             val authority = url.substring(url.indexOf("://") + 3,url.indexOf(".com")+4)
             logE("authority:$authority")
             return mapOf(
-                    "method" to "GET",
-                    "authority" to authority,
-                    "scheme" to "https",
-                    "path" to "/",
+//                    "method" to "GET",
+//                    "authority" to authority,
+//                    "scheme" to "https",
+//                    "path" to "/",
                     "accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
                     "upgrade-insecure-requests" to "1",
                     "user-agent" to "Mozilla/5.0 (Linux; Android 6.0; Letv X501 Build/DBXCNOP5902812084S; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/49.0.2623.91 Mobile Safari/537.36",
